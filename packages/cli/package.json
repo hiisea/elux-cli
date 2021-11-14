@@ -1,0 +1,78 @@
+{
+  "name": "@elux/cli",
+  "version": "0.1.25",
+  "description": "Command line interface for rapid elux project",
+  "repository": "https://github.com/hiisea/elux/tree/master/packages/cli",
+  "author": "hiisea <hiisea@qq.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "bin": {
+    "elux": "./bin/elux.js"
+  },
+  "files": [
+    "bin/",
+    "dist/"
+  ],
+  "scripts": {
+    "eslint": "cross-env NODE_ENV=production eslint --fix --cache **/*.{js,ts}",
+    "prebuild": "rimraf ./dist && copyfiles -f ./src/*.d.ts ./dist",
+    "build": "tsc --build ./src"
+  },
+  "templateResources": [
+    {
+      "title": "Github from Zip",
+      "url": "direct:https://github.com/hiisea/elux-project-templates-simple/archive/refs/heads/main.zip",
+      "count": 6
+    },
+    {
+      "title": "Github from Git Http",
+      "url": "github:hiisea/elux-project-templates-simple",
+      "count": 6
+    },
+    {
+      "title": "Github from Git Clone",
+      "url": "clone://github:hiisea/elux-project-templates-simple",
+      "count": 6
+    },
+    {
+      "title": "Gitee from Zip",
+      "url": "direct:https://gitee.com/hiisea/elux-project-templates-simple/repository/archive/master.zip",
+      "count": 6
+    },
+    {
+      "title": "Gitee from Git Http",
+      "url": "gitee.com:hiisea/elux-project-templates-simple.git",
+      "count": 6
+    },
+    {
+      "title": "Gitee from Git Clone",
+      "url": "clone://gitee.com:hiisea/elux-project-templates-simple.git",
+      "count": 6
+    }
+  ],
+  "bundledDependencies": [
+    "@elux/cli-mock"
+  ],
+  "devDependencies": {
+    "@types/ejs": "^3.0.6",
+    "@types/inquirer": "^7.3.1",
+    "@types/mem-fs-editor": "^7.0.1"
+  },
+  "dependencies": {
+    "@elux/cli-utils": "^0.1.25",
+    "commander": "^7.0.0",
+    "download-git-repo": "^3.0.2",
+    "inquirer": "^8.2.0",
+    "leven": "^3.1.0",
+    "mem-fs": "^2.2.1",
+    "mem-fs-editor": "^9.3.0",
+    "typescript-json-schema": "^0.51.0",
+    "validate-npm-package-name": "^3.0.0"
+  },
+  "gitHead": "c2d8bb9ed8d10102413bdf655c7326e94f4a4464"
+}

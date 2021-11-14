@@ -1,0 +1,13 @@
+{
+  "packages": ["packages/cli", "packages/cli-mock", "packages/cli-utils", "packages/cli-webpack"],
+  "command": {
+    "publish": {
+      "message": "chore(release): publish %s",
+      "npmClient": "npm",
+      "ignoreChanges": ["**/tests/**", "**/dist/**"]
+    }
+  },
+  "npmClient": "yarn",
+  "useWorkspaces": false,
+  "version": "0.1.25"
+}

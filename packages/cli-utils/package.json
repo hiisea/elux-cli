@@ -1,0 +1,36 @@
+{
+  "name": "@elux/cli-utils",
+  "version": "0.1.25",
+  "description": "shared utilities for development tools",
+  "repository": "https://github.com/hiisea/elux/tree/master/packages/cli-utils",
+  "author": "hiisea <hiisea@qq.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "eslint": "cross-env NODE_ENV=production eslint --fix --cache **/*.{js,ts}",
+    "prebuild": "rimraf ./dist && copyfiles -f ./src/*.d.ts ./dist",
+    "build": "tsc --build ./src"
+  },
+  "dependencies": {
+    "@types/fs-extra": "^9.0.13",
+    "chalk": "^4.1.2",
+    "deep-extend": "^0.6.0",
+    "execa": "^5.1.1",
+    "fs-extra": "^9.1.0",
+    "got": "^11.8.2",
+    "minimist": "^1.2.5",
+    "ora": "^5.4.1",
+    "semver": "^7.3.5",
+    "strip-ansi": "^6.0.0"
+  },
+  "gitHead": "c2d8bb9ed8d10102413bdf655c7326e94f4a4464"
+}
