@@ -43,4 +43,4 @@ export interface ITemplate {
 }
 export const TEMPLATE_CREATOR: string = 'elux.template.js';
 export const PACKAGE_INFO_GITEE: string = 'https://gitee.com/hiisea/elux-cli/raw/master/packages/cli/package.json';
-export const PACKAGE_INFO_GITHUB: string = 'https://raw.githubusercontent.com/hiisea/elux-cli/main/package.json';
+export const PACKAGE_INFO_GITHUB: string = 'https://raw.githubusercontent.com/hiisea/elux-cli/main/packages/cli/package.json';

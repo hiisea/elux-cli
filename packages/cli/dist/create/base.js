@@ -20,4 +20,4 @@ var CSS;
 })(CSS = exports.CSS || (exports.CSS = {}));
 exports.TEMPLATE_CREATOR = 'elux.template.js';
 exports.PACKAGE_INFO_GITEE = 'https://gitee.com/hiisea/elux-cli/raw/master/packages/cli/package.json';
-exports.PACKAGE_INFO_GITHUB = 'https://raw.githubusercontent.com/hiisea/elux-cli/main/package.json';
+exports.PACKAGE_INFO_GITHUB = 'https://raw.githubusercontent.com/hiisea/elux-cli/main/packages/cli/package.json';
