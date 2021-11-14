@@ -2,7 +2,7 @@ import path from 'path';
 import validateProjectName from 'validate-npm-package-name';
 import {log, chalk, fs, semver, ora, readDirSync, got} from '@elux/cli-utils';
 import inquirer from 'inquirer';
-import {CommandOptions, PackageJson, TemplateResources, ITemplate, TEMPLATE_CREATOR, PACKAGE_INFO_GITEE, PACKAGE_INFO_GITHUB} from './create/base';
+import {CommandOptions, PackageJson, TemplateResources, ITemplate, TEMPLATE_CREATOR, PACKAGE_INFO_GITEE} from './create/base';
 import {loadRepository} from './create/loadRepository';
 import Creator from './create';
 
@@ -183,8 +183,15 @@ function parseTemplates(floder: string): ITemplate[] {
 }
 async function main(options: CommandOptions): Promise<void> {
   const spinner = ora('Check the latest data...').start();
-  const requestOptions = {timeout: 15000, retry: 0, responseType: 'json' as const};
-  const response: PackageJson = await Promise.race([got(PACKAGE_INFO_GITEE, requestOptions), got(PACKAGE_INFO_GITHUB, requestOptions)]).then(
+  const requestOptions = {
+    timeout: 15000,
+    retry: 1,
+    responseType: 'json' as const,
+    headers: {
+      'user-agent': 'PostmanRuntime/7.28.1',
+    },
+  };
+  const response: PackageJson = await Promise.race([got(PACKAGE_INFO_GITEE, requestOptions)]).then(
     (response) => {
       spinner.stop();
       return response.body as PackageJson;

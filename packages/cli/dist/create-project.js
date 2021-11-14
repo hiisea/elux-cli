@@ -174,8 +174,15 @@ function parseTemplates(floder) {
 }
 async function main(options) {
     const spinner = cli_utils_1.ora('Check the latest data...').start();
-    const requestOptions = { timeout: 15000, retry: 0, responseType: 'json' };
-    const response = await Promise.race([cli_utils_1.got(base_1.PACKAGE_INFO_GITEE, requestOptions), cli_utils_1.got(base_1.PACKAGE_INFO_GITHUB, requestOptions)]).then((response) => {
+    const requestOptions = {
+        timeout: 15000,
+        retry: 1,
+        responseType: 'json',
+        headers: {
+            'user-agent': 'PostmanRuntime/7.28.1',
+        },
+    };
+    const response = await Promise.race([cli_utils_1.got(base_1.PACKAGE_INFO_GITEE, requestOptions)]).then((response) => {
         spinner.stop();
         return response.body;
     }, () => {
