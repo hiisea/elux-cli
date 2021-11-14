@@ -1,6 +1,6 @@
 {
   "name": "@elux/cli-webpack",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "description": "development tools",
   "repository": "https://github.com/hiisea/elux/tree/master/packages/cli-webpack",
   "author": "hiisea <hiisea@qq.com>",
