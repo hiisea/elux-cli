@@ -3613,14 +3613,6 @@ atob@^2.1.2:
   resolved "https://registry.nlark.com/atob/download/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha1-bZUX654DDSQ2ZmZR6GvZ9vE1M8k=
 
-attempt-x@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.npm.taobao.org/attempt-x/download/attempt-x-2.1.2.tgz#75c9c801158b46da7411c6a6e1b85aba56cea13d"
-  integrity sha1-dcnIARWLRtp0Ecam4bhaulbOoT0=
-  dependencies:
-    simple-call-x "^1.0.3"
-    util-pusher-x "^1.0.3"
-
 autoprefixer@^9.0.0:
   version "9.8.8"
   resolved "https://registry.npmmirror.com/autoprefixer/download/autoprefixer-9.8.8.tgz#fd4bd4595385fa6f06599de749a4d5f7a474957a"
@@ -7256,11 +7248,6 @@ has-bigints@^1.0.1:
   resolved "https://registry.npm.taobao.org/has-bigints/download/has-bigints-1.0.1.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fhas-bigints%2Fdownload%2Fhas-bigints-1.0.1.tgz#64fe6acb020673e3b78db035a5af69aa9d07b113"
   integrity sha1-ZP5qywIGc+O3jbA1pa9pqp0HsRM=
 
-has-boxed-string-x@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.npmmirror.com/has-boxed-string-x/download/has-boxed-string-x-2.1.1.tgz#8356e83786969ab9764009bc435c6ac3f4d86b87"
-  integrity sha1-g1boN4aWmrl2QAm8Q1xqw/TYa4c=
-
 has-flag@^3.0.0:
   version "3.0.0"
   resolved "https://registry.nlark.com/has-flag/download/has-flag-3.0.0.tgz#b5d454dc2199ae225699f3467e5a07f3b955bafd"
@@ -7276,14 +7263,6 @@ has-symbol-support-x@^1.4.1:
   resolved "https://registry.npm.taobao.org/has-symbol-support-x/download/has-symbol-support-x-1.4.2.tgz#1409f98bc00247da45da67cee0a36f282ff26455"
   integrity sha1-FAn5i8ACR9pF2mfO4KNvKC/yZFU=
 
-has-symbol-support-x@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.npm.taobao.org/has-symbol-support-x/download/has-symbol-support-x-2.1.2.tgz#1e9b8088cb800d41f3855969c34eba09ccaadfdb"
-  integrity sha1-HpuAiMuADUHzhVlpw066Ccyq39s=
-  dependencies:
-    attempt-x "^2.1.2"
-    is-symbol "^1.0.2"
-
 has-symbols@^1.0.1, has-symbols@^1.0.2:
   version "1.0.2"
   resolved "https://registry.nlark.com/has-symbols/download/has-symbols-1.0.2.tgz#165d3070c00309752a1236a479331e3ac56f1423"
@@ -7295,14 +7274,6 @@ has-to-string-tag-x@^1.2.0:
   integrity sha1-oEWrOD17SyASoAFIqwql8pAETU0=
   dependencies:
     has-symbol-support-x "^1.4.1"
-
-has-to-string-tag-x@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.nlark.com/has-to-string-tag-x/download/has-to-string-tag-x-2.1.2.tgz#23d8074d174149f06352f5a34b619fde286c252f"
-  integrity sha1-I9gHTRdBSfBjUvWjS2Gf3ihsJS8=
-  dependencies:
-    has-symbol-support-x "^2.1.2"
-    is-symbol "^1.0.2"
 
 has-tostringtag@^1.0.0:
   version "1.0.0"
@@ -7346,13 +7317,6 @@ has-values@^1.0.0:
   dependencies:
     is-number "^3.0.0"
     kind-of "^4.0.0"
-
-has-working-bind-x@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.nlark.com/has-working-bind-x/download/has-working-bind-x-1.0.1.tgz#ab8294e347d2b0eb9db22365a1cdd5d3bd0d958f"
-  integrity sha1-q4KU40fSsOudsiNloc3V070NlY8=
-  dependencies:
-    noop-x "^1.2.1"
 
 has-yarn@^2.1.0:
   version "2.1.0"
@@ -8203,7 +8167,7 @@ is-obj@^2.0.0:
   resolved "https://registry.npm.taobao.org/is-obj/download/is-obj-2.0.0.tgz#473fb05d973705e3fd9620545018ca8e22ef4982"
   integrity sha1-Rz+wXZc3BeP9liBUUBjKjiLvSYI=
 
-is-object@^1.0.1, is-object@^1.0.2:
+is-object@^1.0.1:
   version "1.0.2"
   resolved "https://registry.npm.taobao.org/is-object/download/is-object-1.0.2.tgz#a56552e1c665c9e950b4a025461da87e72f86fcf"
   integrity sha1-pWVS4cZlyelQtKAlRh2ofnL4b88=
@@ -8264,11 +8228,6 @@ is-potential-custom-element-name@^1.0.1:
   resolved "https://registry.npm.taobao.org/is-potential-custom-element-name/download/is-potential-custom-element-name-1.0.1.tgz#171ed6f19e3ac554394edf78caa05784a45bebb5"
   integrity sha1-Fx7W8Z46xVQ5Tt94yqBXhKRb67U=
 
-is-primitive-x@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.nlark.com/is-primitive-x/download/is-primitive-x-1.0.1.tgz#0e9b8e4f1bd1ef39d8ad2cc78dbab291b4e7380a"
-  integrity sha1-DpuOTxvR7znYrSzHjbqykbTnOAo=
-
 is-regex@^1.0.4, is-regex@^1.1.4:
   version "1.1.4"
   resolved "https://registry.nlark.com/is-regex/download/is-regex-1.1.4.tgz?cache=0&sync_timestamp=1628221905423&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fis-regex%2Fdownload%2Fis-regex-1.1.4.tgz#eef5663cd59fa4c0ae339505323df6854bb15958"
@@ -8319,7 +8278,7 @@ is-stream@^2.0.0:
   resolved "https://registry.nlark.com/is-stream/download/is-stream-2.0.1.tgz#fac1e3d53b97ad5a9d0ae9cef2389f5810a5c077"
   integrity sha1-+sHj1TuXrVqdCunO8jifWBClwHc=
 
-is-string@^1.0.4, is-string@^1.0.5, is-string@^1.0.7:
+is-string@^1.0.5, is-string@^1.0.7:
   version "1.0.7"
   resolved "https://registry.nlark.com/is-string/download/is-string-1.0.7.tgz#0dd12bf2006f255bb58f695110eff7491eebc0fd"
   integrity sha1-DdEr8gBvJVu1j2lREO/3SR7rwP0=
@@ -8354,14 +8313,6 @@ is-unicode-supported@^0.1.0:
   version "0.1.0"
   resolved "https://registry.nlark.com/is-unicode-supported/download/is-unicode-supported-0.1.0.tgz?cache=0&sync_timestamp=1625294161966&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fis-unicode-supported%2Fdownload%2Fis-unicode-supported-0.1.0.tgz#3f26c76a809593b52bfa2ecb5710ed2779b522a7"
   integrity sha1-PybHaoCVk7Ur+i7LVxDtJ3m1Iqc=
-
-is-urlsearchparams@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.npmmirror.com/is-urlsearchparams/download/is-urlsearchparams-1.0.2.tgz#6735b7618af299346e6d664446407218bec2a667"
-  integrity sha1-ZzW3YYrymTRubWZERkByGL7Cpmc=
-  dependencies:
-    has-to-string-tag-x "^2.1.2"
-    is-object "^1.0.2"
 
 is-utf8@^0.2.0, is-utf8@^0.2.1:
   version "0.2.1"
@@ -8498,15 +8449,6 @@ isurl@^1.0.0-alpha5:
   dependencies:
     has-to-string-tag-x "^1.2.0"
     is-object "^1.0.1"
-
-isurl@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.npm.taobao.org/isurl/download/isurl-4.0.2.tgz#3f3edeb9d15c894966415a0baa97a887e13bd435"
-  integrity sha1-Pz7eudFciUlmQVoLqpeoh+E71DU=
-  dependencies:
-    has-to-string-tag-x "^2.1.2"
-    is-object "^1.0.2"
-    is-urlsearchparams "^1.0.2"
 
 jake@^10.6.1:
   version "10.8.2"
@@ -10212,11 +10154,6 @@ noms@0.0.0:
   dependencies:
     inherits "^2.0.1"
     readable-stream "~1.0.31"
-
-noop-x@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.npmmirror.com/noop-x/download/noop-x-1.2.1.tgz#bcaba2321798f41839614674b3acf7c809536f50"
-  integrity sha1-vKuiMheY9Bg5YUZ0s6z3yAlTb1A=
 
 nopt@^4.0.1:
   version "4.0.3"
@@ -12647,22 +12584,6 @@ signal-exit@^3.0.0, signal-exit@^3.0.2, signal-exit@^3.0.3:
   resolved "https://registry.npmmirror.com/signal-exit/download/signal-exit-3.0.5.tgz?cache=0&sync_timestamp=1632948384106&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fsignal-exit%2Fdownload%2Fsignal-exit-3.0.5.tgz#9e3e8cc0c75a99472b44321033a7702e7738252f"
   integrity sha1-nj6MwMdamUcrRDIQM6dwLnc4JS8=
 
-simple-bind-x@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.nlark.com/simple-bind-x/download/simple-bind-x-1.0.3.tgz#05fcab023a5d46213e8358a2ac49cc566ec94495"
-  integrity sha1-BfyrAjpdRiE+g1iirEnMVm7JRJU=
-  dependencies:
-    has-working-bind-x "^1.0.1"
-    util-pusher-x "^1.0.3"
-
-simple-call-x@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.nlark.com/simple-call-x/download/simple-call-x-1.0.3.tgz#01193b0476993f9ed2eaaff522f70d943399ebb5"
-  integrity sha1-ARk7BHaZP57S6q/1IvcNlDOZ67U=
-  dependencies:
-    simple-bind-x "^1.0.3"
-    util-pusher-x "^1.0.3"
-
 sirv@^1.0.7:
   version "1.0.18"
   resolved "https://registry.npmmirror.com/sirv/download/sirv-1.0.18.tgz?cache=0&sync_timestamp=1634319972820&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fsirv%2Fdownload%2Fsirv-1.0.18.tgz#105fab52fb656ce8a2bebbf36b11052005952899"
@@ -14328,16 +14249,6 @@ util-promisify@^2.1.0:
   integrity sha1-PCI2R2xNMsX/PEcAKt18E7moKlM=
   dependencies:
     object.getownpropertydescriptors "^2.0.3"
-
-util-pusher-x@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.nlark.com/util-pusher-x/download/util-pusher-x-1.0.3.tgz#c5b27cb4fe35002ecc96c203bff6dbc01a645285"
-  integrity sha1-xbJ8tP41AC7MlsIDv/bbwBpkUoU=
-  dependencies:
-    has-boxed-string-x "^2.1.1"
-    has-working-bind-x "^1.0.1"
-    is-primitive-x "^1.0.1"
-    is-string "^1.0.4"
 
 util@^0.10.3:
   version "0.10.4"

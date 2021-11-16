@@ -24,6 +24,7 @@ declare function createProxyAgent(url: string, proxyUrl: string): {
     http?: HttpAgent;
     https?: HttpsAgent;
 } | undefined;
+declare function testHttpUrl(url: string): boolean;
 declare const _default: {
     chalk: chalk.Chalk & chalk.ChalkFunction & {
         supportsColor: false | chalk.ColorSupport;
@@ -81,11 +82,8 @@ declare const _default: {
     loadPackageVesrion: typeof loadPackageVesrion;
     clearConsole: typeof clearConsole;
     got: import("got").Got;
-    isurl: {
-        (url: string): boolean;
-        lenient: (url: string) => boolean;
-    };
     getProxy: typeof getProxy;
     createProxyAgent: typeof createProxyAgent;
+    testHttpUrl: typeof testHttpUrl;
 };
 export = _default;

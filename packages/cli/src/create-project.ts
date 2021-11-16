@@ -1,6 +1,6 @@
 import path from 'path';
 import validateProjectName from 'validate-npm-package-name';
-import {log, chalk, fs, semver, ora, readDirSync, got, getProxy, createProxyAgent, isurl} from '@elux/cli-utils';
+import {log, chalk, fs, semver, ora, readDirSync, got, getProxy, createProxyAgent, testHttpUrl} from '@elux/cli-utils';
 import inquirer from 'inquirer';
 import {CommandOptions, PackageJson, TemplateResources, ITemplate, TEMPLATE_CREATOR, PACKAGE_INFO_GITEE} from './create/base';
 import {loadRepository} from './create/loadRepository';
@@ -117,7 +117,7 @@ function askProxy(systemProxy: string): Promise<string> {
         if (!input) {
           return true;
         }
-        return isurl(input) || '请输入正确的代理Url';
+        return testHttpUrl(input) || chalk.red('格式错误，如:http://127.0.0.1:1080');
       },
     });
   } else {
@@ -149,7 +149,7 @@ function askProxy(systemProxy: string): Promise<string> {
           if (!input) {
             return true;
           }
-          return isurl(input) || '请输入正确的代理Url';
+          return testHttpUrl(input) || chalk.red('格式错误，如:http://127.0.0.1:1080');
         },
         when(answers: {proxy: string}) {
           return answers.proxy === 'inputProxy';
@@ -312,7 +312,6 @@ async function main(options: CommandOptions): Promise<void> {
     proxyMessage = chalk.green(`found the system proxy -> ${proxyUrl} (connect success!)`);
   }
   log(proxyMessage);
-  log('');
   const proxy = await askProxy(proxyUrl.replace('error://', ''));
   const response: PackageJson = await got(PACKAGE_INFO_GITEE, {
     timeout: 15000,

@@ -14,7 +14,6 @@ import {Agent as HttpAgent} from 'http';
 import {Agent as HttpsAgent} from 'https';
 import got from 'got';
 import tunnel from 'tunnel';
-import isurl from 'isurl';
 import {validateProxySetting, getProxySettings} from 'get-proxy-settings';
 import {execSync} from 'child_process';
 
@@ -203,7 +202,9 @@ function createProxyAgent(url: string, proxyUrl: string): {http?: HttpAgent; htt
     }),
   };
 }
-
+function testHttpUrl(url: string): boolean {
+  return new RegExp('https?://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]').test(url);
+}
 export = {
   chalk,
   semver,
@@ -224,7 +225,7 @@ export = {
   loadPackageVesrion,
   clearConsole,
   got,
-  isurl,
   getProxy,
   createProxyAgent,
+  testHttpUrl,
 };

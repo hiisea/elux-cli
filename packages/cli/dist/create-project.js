@@ -123,7 +123,7 @@ function askProxy(systemProxy) {
                 if (!input) {
                     return true;
                 }
-                return cli_utils_1.isurl(input) || '请输入正确的代理Url';
+                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('格式错误，如:http://127.0.0.1:1080');
             },
         });
     }
@@ -154,7 +154,7 @@ function askProxy(systemProxy) {
                 if (!input) {
                     return true;
                 }
-                return cli_utils_1.isurl(input) || '请输入正确的代理Url';
+                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('格式错误，如:http://127.0.0.1:1080');
             },
             when(answers) {
                 return answers.proxy === 'inputProxy';
@@ -240,7 +240,6 @@ async function main(options) {
         proxyMessage = cli_utils_1.chalk.green(`found the system proxy -> ${proxyUrl} (connect success!)`);
     }
     cli_utils_1.log(proxyMessage);
-    cli_utils_1.log('');
     const proxy = await askProxy(proxyUrl.replace('error://', ''));
     const response = await cli_utils_1.got(base_1.PACKAGE_INFO_GITEE, {
         timeout: 15000,
