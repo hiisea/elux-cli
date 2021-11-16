@@ -58,9 +58,8 @@ async function getProjectName(args) {
     }
     else {
         const { projectName, projectDir } = parseProjectName(projectNameInput);
-        const title = args.title + `\ncreate project: ${cli_utils_1.chalk.green.underline(projectDir)}`;
-        cli_utils_1.log('');
-        cli_utils_1.log(title);
+        const title = args.title + `\ncreate project: ${cli_utils_1.chalk.green(projectDir)}`;
+        cli_utils_1.clearConsole(title);
         getTemplates({ title, projectName, projectDir, templateResources, options });
     }
 }
@@ -162,7 +161,7 @@ function askProxy(systemProxy) {
         });
     }
     return inquirer_1.default.prompt(prompts).then(({ proxy, inputProxy }) => {
-        return typeof proxy === 'string' && proxy !== 'inputProxy' ? proxy : inputProxy;
+        return typeof proxy === 'string' && proxy !== 'inputProxy' ? proxy : inputProxy || systemProxy;
     });
 }
 async function getTemplates(args) {
@@ -183,7 +182,7 @@ async function getTemplates(args) {
     if (typeof templateDir === 'object') {
         spinner.color = 'red';
         spinner.fail(`${cli_utils_1.chalk.red('Pull failed from')} ${cli_utils_1.chalk.blue.underline(repository)}`);
-        cli_utils_1.log(`${cli_utils_1.chalk.gray(templateDir.toString())}`);
+        cli_utils_1.log(`${cli_utils_1.chalk.gray(templateDir.toString())}, Maybe you should change an proxy agent.`);
         cli_utils_1.log(`${cli_utils_1.chalk.green('Please reselect...')}\n`);
         setTimeout(() => getTemplates(args), 0);
     }
@@ -226,27 +225,30 @@ function parseTemplates(floder) {
     return templates;
 }
 async function main(options) {
-    const spinner = cli_utils_1.ora('checking...').start();
+    let spinner = cli_utils_1.ora('checking...').start();
     const proxyUrl = await cli_utils_1.getProxy();
     spinner.stop();
-    let proxyMessage = '';
+    let proxyMessage = cli_utils_1.chalk.green('found the system proxy -> ' + proxyUrl.replace('error://', ''));
     if (!proxyUrl) {
-        proxyMessage = cli_utils_1.chalk.yellow('found the system proxy -> Not found');
+        proxyMessage += cli_utils_1.chalk.yellow('Not found');
     }
     else if (proxyUrl.startsWith('error://')) {
-        proxyMessage = cli_utils_1.chalk.red(`found the system proxy -> ${proxyUrl.replace('error://', '')} (connect failed!)`);
+        proxyMessage += cli_utils_1.chalk.red(' (connect failed!)');
     }
     else {
-        proxyMessage = cli_utils_1.chalk.green(`found the system proxy -> ${proxyUrl} (connect success!)`);
+        proxyMessage += cli_utils_1.chalk.green(' (connect success!)');
     }
     cli_utils_1.log(proxyMessage);
     const proxy = await askProxy(proxyUrl.replace('error://', ''));
+    cli_utils_1.log(cli_utils_1.chalk.cyan('* Using Proxy -> ' + (proxy || 'none')));
+    options.proxy = proxy;
+    spinner = cli_utils_1.ora('check the latest data...').start();
     const response = await cli_utils_1.got(base_1.PACKAGE_INFO_GITEE, {
-        timeout: 15000,
-        retry: 1,
+        timeout: 20000,
+        retry: 0,
         responseType: 'json',
         headers: {
-            'user-agent': 'node/14.0.0',
+            'user-agent': base_1.USER_AGENT,
         },
         agent: cli_utils_1.createProxyAgent(base_1.PACKAGE_INFO_GITEE, proxy),
     }).then((response) => {
@@ -254,6 +256,7 @@ async function main(options) {
         return response.body;
     }, () => {
         spinner.warn(cli_utils_1.chalk.yellow('Failed to get the latest data. Use local cache.'));
+        cli_utils_1.log('');
         return options.packageJson;
     });
     const curVerison = options.packageJson.version;
@@ -262,7 +265,7 @@ async function main(options) {
     if (cli_utils_1.semver.lt(curVerison, latestVesrion)) {
         title += `, ${cli_utils_1.chalk.magenta('New version available ' + latestVesrion)}`;
     }
-    title += cli_utils_1.chalk.green('\nproxy -> ' + proxy);
+    title += cli_utils_1.chalk.yellow('\nproxy -> ' + (proxy || 'none'));
     getProjectName({ title, templateResources, options });
 }
 module.exports = main;

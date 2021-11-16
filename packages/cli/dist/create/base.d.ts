@@ -51,3 +51,4 @@ export interface ITemplate {
 export declare const TEMPLATE_CREATOR: string;
 export declare const PACKAGE_INFO_GITEE: string;
 export declare const PACKAGE_INFO_GITHUB: string;
+export declare const USER_AGENT: string;

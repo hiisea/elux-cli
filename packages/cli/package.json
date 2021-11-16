@@ -25,33 +25,13 @@
   },
   "templateResources": [
     {
-      "title": "Github from Zip",
+      "title": "默认简单模板 (Github)",
       "url": "direct:https://github.com/hiisea/elux-project-templates-simple/archive/refs/heads/main.zip",
       "count": 6
     },
     {
-      "title": "Github from Git Http",
-      "url": "github:hiisea/elux-project-templates-simple",
-      "count": 6
-    },
-    {
-      "title": "Github from Git Clone",
-      "url": "clone://github:hiisea/elux-project-templates-simple",
-      "count": 6
-    },
-    {
-      "title": "Gitee from Zip",
+      "title": "默认简单模板 (Gitee)",
       "url": "direct:https://gitee.com/hiisea/elux-project-templates-simple/repository/archive/master.zip",
-      "count": 6
-    },
-    {
-      "title": "Gitee from Git Http",
-      "url": "gitee.com:hiisea/elux-project-templates-simple.git",
-      "count": 6
-    },
-    {
-      "title": "Gitee from Git Clone",
-      "url": "clone://gitee.com:hiisea/elux-project-templates-simple.git",
       "count": 6
     }
   ],

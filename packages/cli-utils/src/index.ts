@@ -170,9 +170,10 @@ async function getProxy(): Promise<string> {
   if (!settings) {
     return '';
   }
-  const url = (settings.https || settings.http)!.toString();
+  const proxy = settings.https || settings.http!;
+  const url = proxy.toString();
   try {
-    await validateProxySetting(settings.http!);
+    await validateProxySetting(proxy);
   } catch (e) {
     return 'error://' + url;
   }

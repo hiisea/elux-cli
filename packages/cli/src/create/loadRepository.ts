@@ -2,7 +2,7 @@ import path from 'path';
 import os from 'os';
 import download from 'download-git-repo';
 import {fs} from '@elux/cli-utils';
-
+import {USER_AGENT} from './base';
 export interface ITemplates {
   name: string;
   platforms?: string | string[];
@@ -19,13 +19,18 @@ export function loadRepository(repository: string, clone: boolean, proxy: string
   //   .replace(/[:#]/g, '');
 
   const tmpdir = path.join(os.tmpdir(), 'elux-cli-tpl');
-
+  const options: any = {clone, headers: {'user-agent': USER_AGENT}};
+  if (proxy) {
+    options.proxy = proxy;
+  } else {
+    options.agent = false;
+  }
   return new Promise((resolve, reject) => {
     try {
       if (fs.existsSync(tmpdir)) {
         fs.removeSync(tmpdir);
       }
-      download(repository, tmpdir, {clone, headers: {'user-agent': 'PostmanRuntime/7.28.1'}}, (e: Error) => {
+      download(repository, tmpdir, options, (e: Error) => {
         if (e) {
           reject(e);
         } else {

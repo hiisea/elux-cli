@@ -147,9 +147,10 @@ async function getProxy() {
     if (!settings) {
         return '';
     }
-    const url = (settings.https || settings.http).toString();
+    const proxy = settings.https || settings.http;
+    const url = proxy.toString();
     try {
-        await get_proxy_settings_1.validateProxySetting(settings.http);
+        await get_proxy_settings_1.validateProxySetting(proxy);
     }
     catch (e) {
         return 'error://' + url;

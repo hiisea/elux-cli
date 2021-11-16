@@ -8,14 +8,22 @@ const path_1 = __importDefault(require("path"));
 const os_1 = __importDefault(require("os"));
 const download_git_repo_1 = __importDefault(require("download-git-repo"));
 const cli_utils_1 = require("@elux/cli-utils");
+const base_1 = require("./base");
 function loadRepository(repository, clone, proxy) {
     const tmpdir = path_1.default.join(os_1.default.tmpdir(), 'elux-cli-tpl');
+    const options = { clone, headers: { 'user-agent': base_1.USER_AGENT } };
+    if (proxy) {
+        options.proxy = proxy;
+    }
+    else {
+        options.agent = false;
+    }
     return new Promise((resolve, reject) => {
         try {
             if (cli_utils_1.fs.existsSync(tmpdir)) {
                 cli_utils_1.fs.removeSync(tmpdir);
             }
-            download_git_repo_1.default(repository, tmpdir, { clone, headers: { 'user-agent': 'PostmanRuntime/7.28.1' } }, (e) => {
+            download_git_repo_1.default(repository, tmpdir, options, (e) => {
                 if (e) {
                     reject(e);
                 }
