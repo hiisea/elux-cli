@@ -113,22 +113,17 @@ function askTemplateSource(templateResources) {
     });
 }
 function askProxy(systemProxy) {
-    const prompts = [
-        {
-            type: 'confirm',
-            name: 'customProxy',
-            default: false,
-            message: '是否需要设置代理',
-        },
-    ];
+    const prompts = [];
     if (!systemProxy) {
         prompts.push({
             type: 'input',
             name: 'inputProxy',
-            message: '请输入代理地址',
-            default: 'http://127.0.0.1:1080',
-            when(answers) {
-                return answers.customProxy;
+            message: '是否需要设置代理',
+            validate(input) {
+                if (!input) {
+                    return true;
+                }
+                return cli_utils_1.isurl(input) || '请输入正确的代理Url';
             },
         });
     }
@@ -136,7 +131,7 @@ function askProxy(systemProxy) {
         prompts.push({
             type: 'list',
             name: 'proxy',
-            message: '代理设置',
+            message: '是否需要设置代理',
             choices: [
                 {
                     name: '使用系统代理',
@@ -147,34 +142,27 @@ function askProxy(systemProxy) {
                     value: '',
                 },
                 {
-                    name: '输入代理...',
+                    name: '输入代理地址',
                     value: 'inputProxy',
                 },
             ],
-            when(answers) {
-                return answers.customProxy;
-            },
-        });
-        prompts.push({
+        }, {
             type: 'input',
             name: 'inputProxy',
             message: '请输入代理地址',
-            default: systemProxy,
+            validate(input) {
+                if (!input) {
+                    return true;
+                }
+                return cli_utils_1.isurl(input) || '请输入正确的代理Url';
+            },
             when(answers) {
                 return answers.proxy === 'inputProxy';
             },
         });
     }
-    return inquirer_1.default.prompt(prompts).then(({ customProxy, proxy, inputProxy }) => {
-        if (!customProxy) {
-            return systemProxy;
-        }
-        else if (typeof proxy === 'string' && proxy !== 'inputProxy') {
-            return proxy;
-        }
-        else {
-            return inputProxy || systemProxy;
-        }
+    return inquirer_1.default.prompt(prompts).then(({ proxy, inputProxy }) => {
+        return typeof proxy === 'string' && proxy !== 'inputProxy' ? proxy : inputProxy;
     });
 }
 async function getTemplates(args) {
@@ -243,15 +231,16 @@ async function main(options) {
     spinner.stop();
     let proxyMessage = '';
     if (!proxyUrl) {
-        proxyMessage = cli_utils_1.chalk.green('system proxy: not found');
+        proxyMessage = cli_utils_1.chalk.yellow('found the system proxy -> Not found');
     }
     else if (proxyUrl.startsWith('error://')) {
-        proxyMessage = cli_utils_1.chalk.green('system proxy: ' + proxyUrl.replace('error://', '')) + cli_utils_1.chalk.red(' (connect failed!)');
+        proxyMessage = cli_utils_1.chalk.red(`found the system proxy -> ${proxyUrl.replace('error://', '')} (connect failed!)`);
     }
     else {
-        proxyMessage = cli_utils_1.chalk.green('system proxy: ' + proxyUrl);
+        proxyMessage = cli_utils_1.chalk.green(`found the system proxy -> ${proxyUrl} (connect success!)`);
     }
     cli_utils_1.log(proxyMessage);
+    cli_utils_1.log('');
     const proxy = await askProxy(proxyUrl.replace('error://', ''));
     const response = await cli_utils_1.got(base_1.PACKAGE_INFO_GITEE, {
         timeout: 15000,

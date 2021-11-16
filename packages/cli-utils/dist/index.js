@@ -15,6 +15,7 @@ const os_1 = require("os");
 const url_1 = require("url");
 const got_1 = __importDefault(require("got"));
 const tunnel_1 = __importDefault(require("tunnel"));
+const isurl_1 = __importDefault(require("isurl"));
 const get_proxy_settings_1 = require("get-proxy-settings");
 const child_process_1 = require("child_process");
 function getLocalIP() {
@@ -197,6 +198,7 @@ module.exports = {
     loadPackageVesrion,
     clearConsole,
     got: got_1.default,
+    isurl: isurl_1.default,
     getProxy,
     createProxyAgent,
 };

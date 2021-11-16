@@ -81,6 +81,10 @@ declare const _default: {
     loadPackageVesrion: typeof loadPackageVesrion;
     clearConsole: typeof clearConsole;
     got: import("got").Got;
+    isurl: {
+        (url: string): boolean;
+        lenient: (url: string) => boolean;
+    };
     getProxy: typeof getProxy;
     createProxyAgent: typeof createProxyAgent;
 };

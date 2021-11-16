@@ -31,6 +31,7 @@
     "semver": "^7.3.5",
     "strip-ansi": "^6.0.0",
     "get-proxy-settings": "^0.1.13",
+    "isurl": "^4.0.2",
     "tunnel": "^0.0.6",
     "got": "^11.8.2"
   },
