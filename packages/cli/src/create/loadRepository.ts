@@ -9,7 +9,7 @@ export interface ITemplates {
   desc?: string;
 }
 
-export function loadRepository(repository: string, clone?: boolean): Promise<string | Error> {
+export function loadRepository(repository: string, clone: boolean, proxy: string): Promise<string | Error> {
   // const presetName = repository
   //   .replace(/((?:.git)?#.*)/, '')
   //   .split('/')
@@ -25,7 +25,7 @@ export function loadRepository(repository: string, clone?: boolean): Promise<str
       if (fs.existsSync(tmpdir)) {
         fs.removeSync(tmpdir);
       }
-      download(repository, tmpdir, {clone}, (e: Error) => {
+      download(repository, tmpdir, {clone, headers: {'user-agent': 'PostmanRuntime/7.28.1'}}, (e: Error) => {
         if (e) {
           reject(e);
         } else {

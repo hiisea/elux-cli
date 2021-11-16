@@ -12,7 +12,10 @@ const ora_1 = __importDefault(require("ora"));
 const readline_1 = __importDefault(require("readline"));
 const deep_extend_1 = __importDefault(require("deep-extend"));
 const os_1 = require("os");
+const url_1 = require("url");
 const got_1 = __importDefault(require("got"));
+const tunnel_1 = __importDefault(require("tunnel"));
+const get_proxy_settings_1 = require("get-proxy-settings");
 const child_process_1 = require("child_process");
 function getLocalIP() {
     let result = 'localhost';
@@ -139,6 +142,41 @@ function clearConsole(title) {
         }
     }
 }
+async function getProxy() {
+    const settings = await get_proxy_settings_1.getProxySettings();
+    if (!settings) {
+        return '';
+    }
+    const url = (settings.https || settings.http).toString();
+    try {
+        await get_proxy_settings_1.validateProxySetting(settings.http);
+    }
+    catch (e) {
+        return 'error://' + url;
+    }
+    return url;
+}
+function createProxyAgent(url, proxyUrl) {
+    if (!proxyUrl) {
+        return;
+    }
+    const uri = new url_1.URL(url);
+    const proxy = new url_1.URL(proxyUrl);
+    const proxyAuth = proxy.username || proxy.password ? `${proxy.username}:${proxy.password}` : '';
+    const proxyProtocol = proxy.protocol === 'https:' ? 'Https' : 'Http';
+    const port = proxy.port || (proxyProtocol === 'Https' ? 443 : 80);
+    const uriProtocol = uri.protocol === 'https' ? 'https' : 'http';
+    const method = `${uriProtocol}Over${proxyProtocol}`;
+    return {
+        [uriProtocol]: tunnel_1.default[method]({
+            proxy: {
+                port,
+                host: proxy.hostname,
+                proxyAuth,
+            },
+        }),
+    };
+}
 module.exports = {
     chalk: chalk_1.default,
     semver: semver_1.default,
@@ -159,4 +197,6 @@ module.exports = {
     loadPackageVesrion,
     clearConsole,
     got: got_1.default,
+    getProxy,
+    createProxyAgent,
 };

@@ -3,3 +3,4 @@ declare module 'deep-extend' {
   export default deepExtend;
 }
 declare module 'semver';
+declare module 'tunnel';

@@ -4,6 +4,8 @@ import minimist from 'minimist';
 import fs from 'fs-extra';
 import execa from 'execa';
 import ora from 'ora';
+import { Agent as HttpAgent } from 'http';
+import { Agent as HttpsAgent } from 'https';
 declare function slash(path: string): string;
 declare function log(message: string): void;
 declare function err(message: string): void;
@@ -17,6 +19,11 @@ declare function readDirSync(floder: string): {
     isFile: boolean;
 }[];
 declare function clearConsole(title: string): void;
+declare function getProxy(): Promise<string>;
+declare function createProxyAgent(url: string, proxyUrl: string): {
+    http?: HttpAgent;
+    https?: HttpsAgent;
+} | undefined;
 declare const _default: {
     chalk: chalk.Chalk & chalk.ChalkFunction & {
         supportsColor: false | chalk.ColorSupport;
@@ -74,5 +81,7 @@ declare const _default: {
     loadPackageVesrion: typeof loadPackageVesrion;
     clearConsole: typeof clearConsole;
     got: import("got").Got;
+    getProxy: typeof getProxy;
+    createProxyAgent: typeof createProxyAgent;
 };
 export = _default;

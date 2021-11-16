@@ -6830,6 +6830,13 @@ get-port@^5.1.1:
   resolved "https://registry.npmmirror.com/get-port/download/get-port-5.1.1.tgz?cache=0&sync_timestamp=1633281059786&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fget-port%2Fdownload%2Fget-port-5.1.1.tgz#0469ed07563479de6efb986baf053dcd7d4e3193"
   integrity sha1-BGntB1Y0ed5u+5hrrwU9zX1OMZM=
 
+get-proxy-settings@^0.1.13:
+  version "0.1.13"
+  resolved "https://registry.npm.taobao.org/get-proxy-settings/download/get-proxy-settings-0.1.13.tgz#ca4b79bc63a178c907f754a6c3e0f6a54ed1becb"
+  integrity sha1-ykt5vGOheMkH91Smw+D2pU7Rvss=
+  dependencies:
+    npm-conf "~1.1.3"
+
 get-proxy@^2.0.0:
   version "2.1.0"
   resolved "https://registry.npm.taobao.org/get-proxy/download/get-proxy-2.1.0.tgz#349f2b4d91d44c4d4d4e9cba2ad90143fac5ef93"
@@ -10238,7 +10245,7 @@ npm-bundled@^1.1.1:
   dependencies:
     npm-normalize-package-bin "^1.0.1"
 
-npm-conf@^1.1.0:
+npm-conf@^1.1.0, npm-conf@~1.1.3:
   version "1.1.3"
   resolved "https://registry.nlark.com/npm-conf/download/npm-conf-1.1.3.tgz#256cc47bd0e218c259c4e9550bf413bc2192aff9"
   integrity sha1-JWzEe9DiGMJZxOlVC/QTvCGSr/k=
@@ -13836,6 +13843,11 @@ tunnel-agent@^0.6.0:
   integrity sha1-J6XeoGs2sEoKmWZ3SykIaPD8QP0=
   dependencies:
     safe-buffer "^5.0.1"
+
+tunnel@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.npm.taobao.org/tunnel/download/tunnel-0.0.6.tgz#72f1314b34a5b192db012324df2cc587ca47f92c"
+  integrity sha1-cvExSzSlsZLbASMk3yzFh8pH+Sw=
 
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"

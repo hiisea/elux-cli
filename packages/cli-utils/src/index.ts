@@ -9,7 +9,12 @@ import ora from 'ora';
 import readline from 'readline';
 import deepExtend from 'deep-extend';
 import {networkInterfaces} from 'os';
+import {URL} from 'url';
+import {Agent as HttpAgent} from 'http';
+import {Agent as HttpsAgent} from 'https';
 import got from 'got';
+import tunnel from 'tunnel';
+import {validateProxySetting, getProxySettings} from 'get-proxy-settings';
 import {execSync} from 'child_process';
 
 function getLocalIP() {
@@ -160,6 +165,43 @@ function clearConsole(title: string): void {
   }
 }
 
+async function getProxy(): Promise<string> {
+  const settings = await getProxySettings();
+  if (!settings) {
+    return '';
+  }
+  const url = (settings.https || settings.http)!.toString();
+  try {
+    await validateProxySetting(settings.http!);
+  } catch (e) {
+    return 'error://' + url;
+  }
+
+  return url;
+}
+function createProxyAgent(url: string, proxyUrl: string): {http?: HttpAgent; https?: HttpsAgent} | undefined {
+  if (!proxyUrl) {
+    return;
+  }
+  const uri = new URL(url);
+  const proxy = new URL(proxyUrl);
+  const proxyAuth = proxy.username || proxy.password ? `${proxy.username}:${proxy.password}` : '';
+  const proxyProtocol = proxy.protocol === 'https:' ? 'Https' : 'Http';
+  const port = proxy.port || (proxyProtocol === 'Https' ? 443 : 80);
+
+  const uriProtocol = uri.protocol === 'https' ? 'https' : 'http';
+
+  const method = `${uriProtocol}Over${proxyProtocol}`;
+  return {
+    [uriProtocol]: tunnel[method]({
+      proxy: {
+        port,
+        host: proxy.hostname,
+        proxyAuth,
+      },
+    }),
+  };
+}
 export = {
   chalk,
   semver,
@@ -180,4 +222,6 @@ export = {
   loadPackageVesrion,
   clearConsole,
   got,
+  getProxy,
+  createProxyAgent,
 };

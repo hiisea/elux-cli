@@ -86,7 +86,7 @@ function askTemplateSource(templateResources) {
         {
             type: 'input',
             name: 'templateSourceInputHttp',
-            message: 'Please enter the URL to download',
+            message: '输入Http下载地址',
             when(answers) {
                 return answers.templateSource === 'inputHttp';
             },
@@ -94,7 +94,7 @@ function askTemplateSource(templateResources) {
         {
             type: 'input',
             name: 'templateSourceInputClone',
-            message: 'Please enter the URL to clone',
+            message: '输入GitClone地址',
             when(answers) {
                 return answers.templateSource === 'inputClone';
             },
@@ -112,11 +112,76 @@ function askTemplateSource(templateResources) {
         }
     });
 }
+function askProxy(systemProxy) {
+    const prompts = [
+        {
+            type: 'confirm',
+            name: 'customProxy',
+            default: false,
+            message: '是否需要设置代理',
+        },
+    ];
+    if (!systemProxy) {
+        prompts.push({
+            type: 'input',
+            name: 'inputProxy',
+            message: '请输入代理地址',
+            default: 'http://127.0.0.1:1080',
+            when(answers) {
+                return answers.customProxy;
+            },
+        });
+    }
+    else {
+        prompts.push({
+            type: 'list',
+            name: 'proxy',
+            message: '代理设置',
+            choices: [
+                {
+                    name: '使用系统代理',
+                    value: systemProxy,
+                },
+                {
+                    name: '不使用代理',
+                    value: '',
+                },
+                {
+                    name: '输入代理...',
+                    value: 'inputProxy',
+                },
+            ],
+            when(answers) {
+                return answers.customProxy;
+            },
+        });
+        prompts.push({
+            type: 'input',
+            name: 'inputProxy',
+            message: '请输入代理地址',
+            default: systemProxy,
+            when(answers) {
+                return answers.proxy === 'inputProxy';
+            },
+        });
+    }
+    return inquirer_1.default.prompt(prompts).then(({ customProxy, proxy, inputProxy }) => {
+        if (!customProxy) {
+            return systemProxy;
+        }
+        else if (typeof proxy === 'string' && proxy !== 'inputProxy') {
+            return proxy;
+        }
+        else {
+            return inputProxy || systemProxy;
+        }
+    });
+}
 async function getTemplates(args) {
     cli_utils_1.log('');
     let repository = await askTemplateSource(args.templateResources);
     if (!repository) {
-        cli_utils_1.log(`${cli_utils_1.chalk.green('  Please reselect...')}\n`);
+        cli_utils_1.log(`${cli_utils_1.chalk.green('Please reselect...')}\n`);
         setTimeout(() => getTemplates(args), 0);
         return;
     }
@@ -126,7 +191,7 @@ async function getTemplates(args) {
         repository = repository.replace('clone://', '');
     }
     const spinner = cli_utils_1.ora(`Pulling template from ${cli_utils_1.chalk.blue.underline(repository)}`).start();
-    const templateDir = await loadRepository_1.loadRepository(repository, isClone).catch((e) => e);
+    const templateDir = await loadRepository_1.loadRepository(repository, isClone, args.options.proxy).catch((e) => e);
     if (typeof templateDir === 'object') {
         spinner.color = 'red';
         spinner.fail(`${cli_utils_1.chalk.red('Pull failed from')} ${cli_utils_1.chalk.blue.underline(repository)}`);
@@ -173,16 +238,30 @@ function parseTemplates(floder) {
     return templates;
 }
 async function main(options) {
-    const spinner = cli_utils_1.ora('Check the latest data...').start();
-    const requestOptions = {
+    const spinner = cli_utils_1.ora('checking...').start();
+    const proxyUrl = await cli_utils_1.getProxy();
+    spinner.stop();
+    let proxyMessage = '';
+    if (!proxyUrl) {
+        proxyMessage = cli_utils_1.chalk.green('system proxy: not found');
+    }
+    else if (proxyUrl.startsWith('error://')) {
+        proxyMessage = cli_utils_1.chalk.green('system proxy: ' + proxyUrl.replace('error://', '')) + cli_utils_1.chalk.red(' (connect failed!)');
+    }
+    else {
+        proxyMessage = cli_utils_1.chalk.green('system proxy: ' + proxyUrl);
+    }
+    cli_utils_1.log(proxyMessage);
+    const proxy = await askProxy(proxyUrl.replace('error://', ''));
+    const response = await cli_utils_1.got(base_1.PACKAGE_INFO_GITEE, {
         timeout: 15000,
         retry: 1,
         responseType: 'json',
         headers: {
-            'user-agent': 'PostmanRuntime/7.28.1',
+            'user-agent': 'node/14.0.0',
         },
-    };
-    const response = await Promise.race([cli_utils_1.got(base_1.PACKAGE_INFO_GITEE, requestOptions)]).then((response) => {
+        agent: cli_utils_1.createProxyAgent(base_1.PACKAGE_INFO_GITEE, proxy),
+    }).then((response) => {
         spinner.stop();
         return response.body;
     }, () => {
@@ -195,6 +274,7 @@ async function main(options) {
     if (cli_utils_1.semver.lt(curVerison, latestVesrion)) {
         title += `, ${cli_utils_1.chalk.magenta('New version available ' + latestVesrion)}`;
     }
+    title += cli_utils_1.chalk.green('\nproxy -> ' + proxy);
     getProjectName({ title, templateResources, options });
 }
 module.exports = main;
