@@ -8,7 +8,6 @@ export interface PackageJson {
     templateResources: TemplateResources[];
 }
 export interface CommandOptions {
-    proxy: string;
     packageJson: PackageJson;
 }
 export interface FeatChoices {

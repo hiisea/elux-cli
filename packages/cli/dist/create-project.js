@@ -70,6 +70,8 @@ function askTemplateSource(templateResources) {
             type: 'list',
             name: 'templateSource',
             message: '请选择或输入远程模板源',
+            pageSize: 8,
+            loop: false,
             choices: [
                 ...templateResources.map((item) => ({ name: `${item.title} [${cli_utils_1.chalk.red(item.count + 'P')}]`, value: item.url })),
                 {
@@ -111,7 +113,7 @@ function askTemplateSource(templateResources) {
         }
     });
 }
-function askProxy(systemProxy) {
+async function askProxy(systemProxy) {
     const prompts = [];
     if (!systemProxy) {
         prompts.push({
@@ -133,7 +135,7 @@ function askProxy(systemProxy) {
             message: '是否需要设置代理',
             choices: [
                 {
-                    name: '使用系统代理',
+                    name: '使用全局代理',
                     value: systemProxy,
                 },
                 {
@@ -177,8 +179,24 @@ async function getTemplates(args) {
         isClone = true;
         repository = repository.replace('clone://', '');
     }
-    const spinner = cli_utils_1.ora(`Pulling template from ${cli_utils_1.chalk.blue.underline(repository)}`).start();
-    const templateDir = await loadRepository_1.loadRepository(repository, isClone, args.options.proxy).catch((e) => e);
+    let spinner = cli_utils_1.ora('checking proxy...').start();
+    const proxyUrl = await cli_utils_1.getProxy();
+    spinner.stop();
+    let proxyMessage = cli_utils_1.chalk.magenta('\n* 发现全局代理设置 -> ' + proxyUrl.replace('error://', ''));
+    if (!proxyUrl) {
+        proxyMessage += cli_utils_1.chalk.yellow('未发现');
+    }
+    else if (proxyUrl.startsWith('error://')) {
+        proxyMessage += cli_utils_1.chalk.yellow(' (connect failed!)');
+    }
+    else {
+        proxyMessage += cli_utils_1.chalk.green(' (connect success!)');
+    }
+    cli_utils_1.log(proxyMessage);
+    const proxy = await askProxy(proxyUrl.replace('error://', ''));
+    cli_utils_1.log(cli_utils_1.chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
+    spinner = cli_utils_1.ora(`* Pulling template from ${cli_utils_1.chalk.blue.underline(repository)}`).start();
+    const templateDir = await loadRepository_1.loadRepository(repository, isClone, proxy).catch((e) => e);
     if (typeof templateDir === 'object') {
         spinner.color = 'red';
         spinner.fail(`${cli_utils_1.chalk.red('Pull failed from')} ${cli_utils_1.chalk.blue.underline(repository)}`);
@@ -225,32 +243,14 @@ function parseTemplates(floder) {
     return templates;
 }
 async function main(options) {
-    let spinner = cli_utils_1.ora('checking...').start();
-    const proxyUrl = await cli_utils_1.getProxy();
-    spinner.stop();
-    let proxyMessage = cli_utils_1.chalk.green('found the system proxy -> ' + proxyUrl.replace('error://', ''));
-    if (!proxyUrl) {
-        proxyMessage += cli_utils_1.chalk.yellow('Not found');
-    }
-    else if (proxyUrl.startsWith('error://')) {
-        proxyMessage += cli_utils_1.chalk.red(' (connect failed!)');
-    }
-    else {
-        proxyMessage += cli_utils_1.chalk.green(' (connect success!)');
-    }
-    cli_utils_1.log(proxyMessage);
-    const proxy = await askProxy(proxyUrl.replace('error://', ''));
-    cli_utils_1.log(cli_utils_1.chalk.cyan('* Using Proxy -> ' + (proxy || 'none')));
-    options.proxy = proxy;
-    spinner = cli_utils_1.ora('check the latest data...').start();
+    const spinner = cli_utils_1.ora('check the latest data...').start();
     const response = await cli_utils_1.got(base_1.PACKAGE_INFO_GITEE, {
-        timeout: 20000,
+        timeout: 15000,
         retry: 0,
         responseType: 'json',
         headers: {
             'user-agent': base_1.USER_AGENT,
         },
-        agent: cli_utils_1.createProxyAgent(base_1.PACKAGE_INFO_GITEE, proxy),
     }).then((response) => {
         spinner.stop();
         return response.body;
@@ -265,7 +265,6 @@ async function main(options) {
     if (cli_utils_1.semver.lt(curVerison, latestVesrion)) {
         title += `, ${cli_utils_1.chalk.magenta('New version available ' + latestVesrion)}`;
     }
-    title += cli_utils_1.chalk.yellow('\nproxy -> ' + (proxy || 'none'));
     getProjectName({ title, templateResources, options });
 }
 module.exports = main;

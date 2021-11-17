@@ -1,6 +1,6 @@
 import path from 'path';
 import validateProjectName from 'validate-npm-package-name';
-import {log, chalk, fs, semver, ora, readDirSync, got, getProxy, createProxyAgent, testHttpUrl, clearConsole} from '@elux/cli-utils';
+import {log, chalk, fs, semver, ora, readDirSync, got, getProxy, testHttpUrl, clearConsole} from '@elux/cli-utils';
 import inquirer from 'inquirer';
 import {CommandOptions, PackageJson, TemplateResources, ITemplate, TEMPLATE_CREATOR, PACKAGE_INFO_GITEE, USER_AGENT} from './create/base';
 import {loadRepository} from './create/loadRepository';
@@ -66,6 +66,8 @@ function askTemplateSource(templateResources: TemplateResources[]): Promise<stri
         type: 'list',
         name: 'templateSource',
         message: '请选择或输入远程模板源',
+        pageSize: 8,
+        loop: false,
         choices: [
           ...templateResources.map((item) => ({name: `${item.title} [${chalk.red(item.count + 'P')}]`, value: item.url})),
           {
@@ -105,7 +107,7 @@ function askTemplateSource(templateResources: TemplateResources[]): Promise<stri
       }
     });
 }
-function askProxy(systemProxy: string): Promise<string> {
+async function askProxy(systemProxy: string): Promise<string> {
   const prompts: any[] = [];
   if (!systemProxy) {
     prompts.push({
@@ -127,7 +129,7 @@ function askProxy(systemProxy: string): Promise<string> {
         message: '是否需要设置代理',
         choices: [
           {
-            name: '使用系统代理',
+            name: '使用全局代理',
             value: systemProxy,
           },
           {
@@ -180,8 +182,23 @@ async function getTemplates(args: {
     isClone = true;
     repository = repository.replace('clone://', '');
   }
-  const spinner = ora(`Pulling template from ${chalk.blue.underline(repository)}`).start();
-  const templateDir: string | Object = await loadRepository(repository, isClone, args.options.proxy).catch((e) => e);
+  let spinner = ora('checking proxy...').start();
+  const proxyUrl = await getProxy();
+  spinner.stop();
+  let proxyMessage = chalk.magenta('\n* 发现全局代理设置 -> ' + proxyUrl.replace('error://', ''));
+  if (!proxyUrl) {
+    proxyMessage += chalk.yellow('未发现');
+  } else if (proxyUrl.startsWith('error://')) {
+    proxyMessage += chalk.yellow(' (connect failed!)');
+  } else {
+    proxyMessage += chalk.green(' (connect success!)');
+  }
+  log(proxyMessage);
+  const proxy = await askProxy(proxyUrl.replace('error://', ''));
+  //chalk.yellow('\nproxy -> ' + (proxy || 'none'));
+  log(chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
+  spinner = ora(`* Pulling template from ${chalk.blue.underline(repository)}`).start();
+  const templateDir: string | Object = await loadRepository(repository, isClone, proxy).catch((e) => e);
   //const templateDir: any = 'C:\\my\\cli\\src';
   if (typeof templateDir === 'object') {
     spinner.color = 'red';
@@ -236,31 +253,16 @@ function parseTemplates(floder: string): ITemplate[] {
     .filter(Boolean);
   return templates as ITemplate[];
 }
+
 async function main(options: CommandOptions): Promise<void> {
-  let spinner = ora('checking...').start();
-  const proxyUrl = await getProxy();
-  spinner.stop();
-  let proxyMessage = chalk.green('found the system proxy -> ' + proxyUrl.replace('error://', ''));
-  if (!proxyUrl) {
-    proxyMessage += chalk.yellow('Not found');
-  } else if (proxyUrl.startsWith('error://')) {
-    proxyMessage += chalk.red(' (connect failed!)');
-  } else {
-    proxyMessage += chalk.green(' (connect success!)');
-  }
-  log(proxyMessage);
-  const proxy = await askProxy(proxyUrl.replace('error://', ''));
-  log(chalk.cyan('* Using Proxy -> ' + (proxy || 'none')));
-  options.proxy = proxy;
-  spinner = ora('check the latest data...').start();
+  const spinner = ora('check the latest data...').start();
   const response: PackageJson = await got(PACKAGE_INFO_GITEE, {
-    timeout: 20000,
+    timeout: 15000,
     retry: 0,
     responseType: 'json' as const,
     headers: {
       'user-agent': USER_AGENT,
     },
-    agent: createProxyAgent(PACKAGE_INFO_GITEE, proxy),
   }).then(
     (response) => {
       spinner.stop();
@@ -278,7 +280,6 @@ async function main(options: CommandOptions): Promise<void> {
   if (semver.lt(curVerison, latestVesrion)) {
     title += `, ${chalk.magenta('New version available ' + latestVesrion)}`;
   }
-  title += chalk.yellow('\nproxy -> ' + (proxy || 'none'));
   getProjectName({title, templateResources, options});
 }
 

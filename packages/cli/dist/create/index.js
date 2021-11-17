@@ -140,6 +140,8 @@ class Creator {
             type: 'list',
             name: 'template',
             message: '请选择模板',
+            pageSize: 8,
+            loop: false,
             choices: templates.map((item) => ({
                 name: item.title,
                 value: item,
