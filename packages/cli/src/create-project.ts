@@ -197,7 +197,7 @@ async function getTemplates(args: {
   const proxy = await askProxy(proxyUrl.replace('error://', ''));
   //chalk.yellow('\nproxy -> ' + (proxy || 'none'));
   log(chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
-  spinner = ora(`* Pulling template from ${chalk.blue.underline(repository)}`).start();
+  spinner = ora(`Pulling template from ${chalk.blue.underline(repository)}`).start();
   const templateDir: string | Object = await loadRepository(repository, isClone, proxy).catch((e) => e);
   //const templateDir: any = 'C:\\my\\cli\\src';
   if (typeof templateDir === 'object') {

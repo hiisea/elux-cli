@@ -37,8 +37,8 @@ async function build({
   });
   logInstallInfo = function () {
     log('');
-    log('- 进入目录 ' + chalk.cyan(`cd ${cdPath}`));
-    log('- 安装依赖 ' + chalk.cyan('yarn install') + chalk.yellow(' (推荐使用yarn，支持workspaces一次性安装所有依赖)'));
+    log('- 进入项目 ' + chalk.cyan(`cd ${cdPath}`));
+    log('- 以下目录需要安装依赖 ' + chalk.cyan('yarn install') + chalk.yellow(' (推荐使用yarn，支持workspaces一次性安装所有依赖)'));
     template.install.forEach((dir) => {
       log(chalk.green(`  ${dir}`));
     });
@@ -138,9 +138,8 @@ async function build({
               installCmd === 'npm' && semver.gte(npmVersion, '7.0.0') ? [installCmd, ['install', '--legacy-peer-deps']] : [installCmd, ['install']];
             log('');
             setTimeout(() => install(installExec, projectDir, subDirs), 0);
-          } else {
-            log('');
           }
+          return;
         });
     } else {
       throw error;

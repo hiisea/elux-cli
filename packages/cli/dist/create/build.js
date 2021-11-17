@@ -47,8 +47,8 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
     });
     logInstallInfo = function () {
         cli_utils_1.log('');
-        cli_utils_1.log('- 进入目录 ' + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
-        cli_utils_1.log('- 安装依赖 ' + cli_utils_1.chalk.cyan('yarn install') + cli_utils_1.chalk.yellow(' (推荐使用yarn，支持workspaces一次性安装所有依赖)'));
+        cli_utils_1.log('- 进入项目 ' + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
+        cli_utils_1.log('- 以下目录需要安装依赖 ' + cli_utils_1.chalk.cyan('yarn install') + cli_utils_1.chalk.yellow(' (推荐使用yarn，支持workspaces一次性安装所有依赖)'));
         template.install.forEach((dir) => {
             cli_utils_1.log(cli_utils_1.chalk.green(`  ${dir}`));
         });
@@ -144,9 +144,7 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
                     cli_utils_1.log('');
                     setTimeout(() => install(installExec, projectDir, subDirs), 0);
                 }
-                else {
-                    cli_utils_1.log('');
-                }
+                return;
             });
         }
         else {

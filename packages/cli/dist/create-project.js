@@ -195,7 +195,7 @@ async function getTemplates(args) {
     cli_utils_1.log(proxyMessage);
     const proxy = await askProxy(proxyUrl.replace('error://', ''));
     cli_utils_1.log(cli_utils_1.chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
-    spinner = cli_utils_1.ora(`* Pulling template from ${cli_utils_1.chalk.blue.underline(repository)}`).start();
+    spinner = cli_utils_1.ora(`Pulling template from ${cli_utils_1.chalk.blue.underline(repository)}`).start();
     const templateDir = await loadRepository_1.loadRepository(repository, isClone, proxy).catch((e) => e);
     if (typeof templateDir === 'object') {
         spinner.color = 'red';
