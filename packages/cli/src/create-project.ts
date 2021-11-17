@@ -182,22 +182,11 @@ async function getTemplates(args: {
     isClone = true;
     repository = repository.replace('clone://', '');
   }
-  let spinner = ora('checking proxy...').start();
-  const proxyUrl = await getProxy();
-  spinner.stop();
-  let proxyMessage = chalk.magenta('\n* 发现全局代理设置 -> ' + proxyUrl.replace('error://', ''));
-  if (!proxyUrl) {
-    proxyMessage += chalk.yellow('未发现');
-  } else if (proxyUrl.startsWith('error://')) {
-    proxyMessage += chalk.yellow(' (connect failed!)');
-  } else {
-    proxyMessage += chalk.green(' (connect success!)');
-  }
-  log(proxyMessage);
-  const proxy = await askProxy(proxyUrl.replace('error://', ''));
-  //chalk.yellow('\nproxy -> ' + (proxy || 'none'));
+  const globalProxy = getProxy() || '';
+  log(chalk.magenta('\n* ' + globalProxy ? `发现全局代理设置 -> ${globalProxy}` : '未发现全局代理设置'));
+  const proxy = await askProxy(globalProxy);
   log(chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
-  spinner = ora(`Pulling template from ${chalk.blue.underline(repository)}`).start();
+  const spinner = ora(`Pulling template from ${chalk.blue.underline(repository)}`).start();
   const templateDir: string | Object = await loadRepository(repository, isClone, proxy).catch((e) => e);
   //const templateDir: any = 'C:\\my\\cli\\src';
   if (typeof templateDir === 'object') {

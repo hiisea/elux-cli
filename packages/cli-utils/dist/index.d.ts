@@ -19,7 +19,6 @@ declare function readDirSync(floder: string): {
     isFile: boolean;
 }[];
 declare function clearConsole(title: string): void;
-declare function getProxy(): Promise<string>;
 declare function createProxyAgent(url: string, proxyUrl: string): {
     http?: HttpAgent;
     https?: HttpsAgent;
@@ -82,7 +81,7 @@ declare const _default: {
     loadPackageVesrion: typeof loadPackageVesrion;
     clearConsole: typeof clearConsole;
     got: import("got").Got;
-    getProxy: typeof getProxy;
+    getProxy: () => string | null;
     createProxyAgent: typeof createProxyAgent;
     testHttpUrl: typeof testHttpUrl;
 };

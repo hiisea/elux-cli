@@ -14,7 +14,7 @@ import {Agent as HttpAgent} from 'http';
 import {Agent as HttpsAgent} from 'https';
 import got from 'got';
 import tunnel from 'tunnel';
-import {validateProxySetting, getProxySettings} from 'get-proxy-settings';
+import getProxy from 'get-proxy';
 import {execSync} from 'child_process';
 
 function getLocalIP() {
@@ -165,21 +165,6 @@ function clearConsole(title: string): void {
   }
 }
 
-async function getProxy(): Promise<string> {
-  const settings = await getProxySettings();
-  if (!settings) {
-    return '';
-  }
-  const proxy = settings.https || settings.http!;
-  const url = proxy.toString();
-  try {
-    await validateProxySetting(proxy);
-  } catch (e) {
-    return 'error://' + url;
-  }
-
-  return url;
-}
 function createProxyAgent(url: string, proxyUrl: string): {http?: HttpAgent; https?: HttpsAgent} | undefined {
   if (!proxyUrl) {
     return;

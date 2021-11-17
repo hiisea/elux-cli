@@ -15,7 +15,7 @@ const os_1 = require("os");
 const url_1 = require("url");
 const got_1 = __importDefault(require("got"));
 const tunnel_1 = __importDefault(require("tunnel"));
-const get_proxy_settings_1 = require("get-proxy-settings");
+const get_proxy_1 = __importDefault(require("get-proxy"));
 const child_process_1 = require("child_process");
 function getLocalIP() {
     let result = 'localhost';
@@ -142,21 +142,6 @@ function clearConsole(title) {
         }
     }
 }
-async function getProxy() {
-    const settings = await get_proxy_settings_1.getProxySettings();
-    if (!settings) {
-        return '';
-    }
-    const proxy = settings.https || settings.http;
-    const url = proxy.toString();
-    try {
-        await get_proxy_settings_1.validateProxySetting(proxy);
-    }
-    catch (e) {
-        return 'error://' + url;
-    }
-    return url;
-}
 function createProxyAgent(url, proxyUrl) {
     if (!proxyUrl) {
         return;
@@ -201,7 +186,7 @@ module.exports = {
     loadPackageVesrion,
     clearConsole,
     got: got_1.default,
-    getProxy,
+    getProxy: get_proxy_1.default,
     createProxyAgent,
     testHttpUrl,
 };

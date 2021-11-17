@@ -144,7 +144,6 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
                     cli_utils_1.log('');
                     setTimeout(() => install(installExec, projectDir, subDirs), 0);
                 }
-                return;
             });
         }
         else {

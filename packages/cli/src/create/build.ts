@@ -139,7 +139,6 @@ async function build({
             log('');
             setTimeout(() => install(installExec, projectDir, subDirs), 0);
           }
-          return;
         });
     } else {
       throw error;

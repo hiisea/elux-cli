@@ -179,23 +179,11 @@ async function getTemplates(args) {
         isClone = true;
         repository = repository.replace('clone://', '');
     }
-    let spinner = cli_utils_1.ora('checking proxy...').start();
-    const proxyUrl = await cli_utils_1.getProxy();
-    spinner.stop();
-    let proxyMessage = cli_utils_1.chalk.magenta('\n* 发现全局代理设置 -> ' + proxyUrl.replace('error://', ''));
-    if (!proxyUrl) {
-        proxyMessage += cli_utils_1.chalk.yellow('未发现');
-    }
-    else if (proxyUrl.startsWith('error://')) {
-        proxyMessage += cli_utils_1.chalk.yellow(' (connect failed!)');
-    }
-    else {
-        proxyMessage += cli_utils_1.chalk.green(' (connect success!)');
-    }
-    cli_utils_1.log(proxyMessage);
-    const proxy = await askProxy(proxyUrl.replace('error://', ''));
+    const globalProxy = cli_utils_1.getProxy() || '';
+    cli_utils_1.log(cli_utils_1.chalk.magenta('\n* ' + globalProxy ? `发现全局代理设置 -> ${globalProxy}` : '未发现全局代理设置'));
+    const proxy = await askProxy(globalProxy);
     cli_utils_1.log(cli_utils_1.chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
-    spinner = cli_utils_1.ora(`Pulling template from ${cli_utils_1.chalk.blue.underline(repository)}`).start();
+    const spinner = cli_utils_1.ora(`Pulling template from ${cli_utils_1.chalk.blue.underline(repository)}`).start();
     const templateDir = await loadRepository_1.loadRepository(repository, isClone, proxy).catch((e) => e);
     if (typeof templateDir === 'object') {
         spinner.color = 'red';
