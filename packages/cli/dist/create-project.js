@@ -180,7 +180,7 @@ async function getTemplates(args) {
         repository = repository.replace('clone://', '');
     }
     const globalProxy = cli_utils_1.getProxy() || '';
-    cli_utils_1.log(cli_utils_1.chalk.magenta('\n* ' + globalProxy ? `发现全局代理设置 -> ${globalProxy}` : '未发现全局代理设置'));
+    cli_utils_1.log(cli_utils_1.chalk.magenta('\n* ' + (globalProxy ? `发现全局代理设置 -> ${globalProxy}` : '未发现全局代理设置')));
     const proxy = await askProxy(globalProxy);
     cli_utils_1.log(cli_utils_1.chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
     const spinner = cli_utils_1.ora(`Pulling template from ${cli_utils_1.chalk.blue.underline(repository)}`).start();

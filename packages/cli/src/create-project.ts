@@ -183,7 +183,7 @@ async function getTemplates(args: {
     repository = repository.replace('clone://', '');
   }
   const globalProxy = getProxy() || '';
-  log(chalk.magenta('\n* ' + globalProxy ? `发现全局代理设置 -> ${globalProxy}` : '未发现全局代理设置'));
+  log(chalk.magenta('\n* ' + (globalProxy ? `发现全局代理设置 -> ${globalProxy}` : '未发现全局代理设置')));
   const proxy = await askProxy(globalProxy);
   log(chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
   const spinner = ora(`Pulling template from ${chalk.blue.underline(repository)}`).start();

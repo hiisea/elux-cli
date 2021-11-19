@@ -10,7 +10,7 @@
     "allowJs": true,
     "checkJs": false,
     "strict": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "isolatedModules": true,
     "preserveConstEnums": true,
     "sourceMap": false,

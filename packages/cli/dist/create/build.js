@@ -64,11 +64,13 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
     };
     const store = memFs.create();
     const mfs = editor.create(store);
+    const tempDir = path_1.default.join(template.path, '../__temp__');
     template.include.forEach((dir) => {
         const src = path_1.default.join(template.path, dir);
-        cli_utils_1.fs.copySync(src, template.path);
+        cli_utils_1.fs.copySync(src, tempDir);
     });
-    mfs.copyTpl(template.path, projectDir, template.data({ ...featChoices, projectName }), { escape: (str) => str }, {
+    cli_utils_1.fs.copySync(template.path, tempDir);
+    mfs.copyTpl(tempDir, projectDir, template.data({ ...featChoices, projectName }), { escape: (str) => str }, {
         globOptions: {
             dot: true,
         },
@@ -101,6 +103,7 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
             return filepath;
         },
     });
+    cli_utils_1.fs.removeSync(tempDir);
     mfs.commit([filter], (error) => {
         if (!error) {
             cli_utils_1.clearConsole(cli_utils_1.chalk.magenta('🎉 项目创建成功!!! 接下来...\n'));

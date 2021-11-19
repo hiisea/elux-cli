@@ -10,7 +10,7 @@ module.exports = function (api, options = {}) {
     }
     const { module = 'esm', targets, presets = [], moduleResolver, rootImport, plugins = [], classPropertiesLoose = true, ui } = options;
     if (ui === 'react') {
-        presets.unshift('@babel/preset-react');
+        presets.unshift(['@babel/preset-react', { runtime: 'automatic' }]);
     }
     else if (ui === 'vue2') {
         presets.unshift('@vue/babel-preset-jsx');
