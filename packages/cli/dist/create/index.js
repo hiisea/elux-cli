@@ -103,7 +103,7 @@ class Creator {
     askCss(templates) {
         const data = {
             [base_1.CSS.less]: [],
-            [base_1.CSS.scss]: [],
+            [base_1.CSS.sass]: [],
         };
         templates.forEach((item) => {
             item.css.forEach((css) => {
@@ -117,10 +117,10 @@ class Creator {
                 value: base_1.CSS.less,
             });
         }
-        if (data[base_1.CSS.scss].length > 0) {
+        if (data[base_1.CSS.sass].length > 0) {
             choices.push({
-                name: `Scss [${cli_utils_1.chalk.red(data[base_1.CSS.scss].length + 'P')}]`,
-                value: base_1.CSS.scss,
+                name: `Sass [${cli_utils_1.chalk.red(data[base_1.CSS.sass].length + 'P')}]`,
+                value: base_1.CSS.sass,
             });
         }
         return inquirer_1.default

@@ -33,7 +33,7 @@ interface ConfigOptions {
     envPath: string;
     cssProcessors: {
         less?: WebpackLoader | boolean;
-        scss?: WebpackLoader | boolean;
+        sass?: WebpackLoader | boolean;
     };
     cssModulesOptions: Record<string, any>;
     limitSize: number;

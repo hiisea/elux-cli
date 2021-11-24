@@ -21,7 +21,7 @@ function dev(projPath, projEnvName, port) {
         envInfo.serverGlobalVar = serverGlobalVar;
     }
     cli_utils_1.log(`projectType: ${cli_utils_1.chalk.magenta(projectType)} runMode: ${cli_utils_1.chalk.magenta(nodeEnv)} sourceMap: ${cli_utils_1.chalk.magenta(sourceMap)}`);
-    cli_utils_1.log(`EnvName: ${cli_utils_1.chalk.magenta(projEnv)} EnvPath: ${cli_utils_1.chalk.magenta(envPath)} EnvInfo: \n${cli_utils_1.chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
+    cli_utils_1.log(`EnvName: ${cli_utils_1.chalk.magenta(projEnv)} EnvPath: ${cli_utils_1.chalk.magenta(envPath)} EnvData: \n${cli_utils_1.chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
     let webpackCompiler;
     if (useSSR) {
         const compiler = webpack_1.default([clientWebpackConfig, serverWebpackConfig]);
@@ -89,12 +89,12 @@ function build(projPath, projEnvName, port) {
         serverGlobalVar,
     };
     cli_utils_1.log(`projectType: ${cli_utils_1.chalk.magenta(projectType)} runMode: ${cli_utils_1.chalk.magenta(nodeEnv)} sourceMap: ${cli_utils_1.chalk.magenta(sourceMap)}`);
-    cli_utils_1.log(`EnvName: ${cli_utils_1.chalk.magenta(projEnv)} EnvPath: ${cli_utils_1.chalk.magenta(envPath)} EnvInfo: \n${cli_utils_1.chalk.blue(JSON.stringify(envInfo, null, 4))} \n`);
+    cli_utils_1.log(`EnvName: ${cli_utils_1.chalk.magenta(projEnv)} EnvPath: ${cli_utils_1.chalk.magenta(envPath)} EnvData: \n${cli_utils_1.chalk.blue(JSON.stringify(envInfo, null, 4))} \n`);
     cli_utils_1.fs.ensureDirSync(distPath);
     cli_utils_1.fs.emptyDirSync(distPath);
     cli_utils_1.fs.copySync(publicPath, distPath, { dereference: true });
     if (cli_utils_1.fs.existsSync(envPath)) {
-        cli_utils_1.fs.copySync(envPath, distPath, { dereference: true, filter: () => true });
+        cli_utils_1.fs.copySync(envPath, distPath, { dereference: true, filter: (fpath) => !fpath.endsWith('elux.config.js') });
     }
     cli_utils_1.fs.outputFileSync(path_1.default.join(distPath, 'config.js'), `module.exports = ${JSON.stringify({ projectType, port: serverPort, proxy: apiProxy, clientGlobalVar, serverGlobalVar }, null, 4)}`);
     const webpackCompiler = useSSR ? webpack_1.default([clientWebpackConfig, serverWebpackConfig]) : webpack_1.default(clientWebpackConfig);

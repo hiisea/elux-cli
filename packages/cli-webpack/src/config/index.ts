@@ -32,7 +32,7 @@ export function dev(projPath: string, projEnvName: string, port?: number): void 
     envInfo.serverGlobalVar = serverGlobalVar;
   }
   log(`projectType: ${chalk.magenta(projectType)} runMode: ${chalk.magenta(nodeEnv)} sourceMap: ${chalk.magenta(sourceMap)}`);
-  log(`EnvName: ${chalk.magenta(projEnv)} EnvPath: ${chalk.magenta(envPath)} EnvInfo: \n${chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
+  log(`EnvName: ${chalk.magenta(projEnv)} EnvPath: ${chalk.magenta(envPath)} EnvData: \n${chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
 
   let webpackCompiler: MultiCompiler | Compiler;
   if (useSSR) {
@@ -133,14 +133,13 @@ export function build(projPath: string, projEnvName: string, port?: number): voi
     serverGlobalVar,
   };
   log(`projectType: ${chalk.magenta(projectType)} runMode: ${chalk.magenta(nodeEnv)} sourceMap: ${chalk.magenta(sourceMap)}`);
-  log(`EnvName: ${chalk.magenta(projEnv)} EnvPath: ${chalk.magenta(envPath)} EnvInfo: \n${chalk.blue(JSON.stringify(envInfo, null, 4))} \n`);
+  log(`EnvName: ${chalk.magenta(projEnv)} EnvPath: ${chalk.magenta(envPath)} EnvData: \n${chalk.blue(JSON.stringify(envInfo, null, 4))} \n`);
 
   fs.ensureDirSync(distPath);
   fs.emptyDirSync(distPath);
   fs.copySync(publicPath, distPath, {dereference: true});
   if (fs.existsSync(envPath)) {
-    // todo 跳过elux.config.js
-    fs.copySync(envPath, distPath, {dereference: true, filter: () => true});
+    fs.copySync(envPath, distPath, {dereference: true, filter: (fpath) => !fpath.endsWith('elux.config.js')});
   }
   fs.outputFileSync(
     path.join(distPath, 'config.js'),

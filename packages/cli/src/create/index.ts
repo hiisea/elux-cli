@@ -101,7 +101,7 @@ class Creator {
   askCss(templates: ITemplate[]): Promise<{feat: string; templates: ITemplate[]}> {
     const data: {[key in CSS]: ITemplate[]} = {
       [CSS.less]: [],
-      [CSS.scss]: [],
+      [CSS.sass]: [],
     };
     templates.forEach((item) => {
       item.css.forEach((css) => {
@@ -115,10 +115,10 @@ class Creator {
         value: CSS.less,
       });
     }
-    if (data[CSS.scss].length > 0) {
+    if (data[CSS.sass].length > 0) {
       choices.push({
-        name: `Scss [${chalk.red(data[CSS.scss].length + 'P')}]`,
-        value: CSS.scss,
+        name: `Sass [${chalk.red(data[CSS.sass].length + 'P')}]`,
+        value: CSS.sass,
       });
     }
     return inquirer

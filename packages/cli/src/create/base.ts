@@ -27,7 +27,7 @@ export enum Framework {
 }
 export enum CSS {
   less = 'less',
-  scss = 'scss',
+  sass = 'sass',
 }
 export interface ITemplate {
   name: string;

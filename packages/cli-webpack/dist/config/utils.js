@@ -57,9 +57,9 @@ function oneOfCssLoader(isProdModel, srcPath, isVue, isServer, cssModulesOptions
             loader: 'less-loader',
         };
     }
-    else if (extensionLoader === 'scss') {
+    else if (extensionLoader === 'sass') {
         cssProcessors = {
-            loader: 'scss-loader',
+            loader: 'sass-loader',
         };
     }
     else if (extensionLoader) {
@@ -217,7 +217,7 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
         cssExtensions.unshift('vue');
     }
     cssProcessors.less && cssExtensions.push('less');
-    cssProcessors.scss && cssExtensions.push('scss');
+    cssProcessors.sass && cssExtensions.push('sass', 'scss');
     const commonAlias = Object.keys(paths).reduce((obj, name) => {
         const target = path_1.default.resolve(path_1.default.dirname(tsconfigPath), baseUrl, paths[name][0].replace(/\/\*$/, ''));
         if (name.endsWith('/*')) {
@@ -329,9 +329,9 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                             test: /\.less$/,
                             oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, false, cssModulesOptions, cssProcessors.less === true ? 'less' : cssProcessors.less),
                         },
-                        cssProcessors.scss && {
-                            test: /\.scss$/,
-                            oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, false, cssModulesOptions, cssProcessors.scss === true ? 'scss' : cssProcessors.scss),
+                        cssProcessors.sass && {
+                            test: /\.s[ac]ss$/,
+                            oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, false, cssModulesOptions, cssProcessors.sass === true ? 'sass' : cssProcessors.sass),
                         },
                     ].filter(Boolean),
                 },
@@ -456,9 +456,9 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                                 test: /\.less$/,
                                 oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, true, cssModulesOptions, cssProcessors.less === true ? 'less' : cssProcessors.less),
                             },
-                            cssProcessors.scss && {
-                                test: /\.scss$/,
-                                oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, true, cssModulesOptions, cssProcessors.scss === true ? 'scss' : cssProcessors.scss),
+                            cssProcessors.sass && {
+                                test: /\.s[ac]ss$/,
+                                oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, true, cssModulesOptions, cssProcessors.sass === true ? 'sass' : cssProcessors.sass),
                             },
                         ].filter(Boolean),
                     },

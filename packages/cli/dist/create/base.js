@@ -16,7 +16,7 @@ var Framework;
 var CSS;
 (function (CSS) {
     CSS["less"] = "less";
-    CSS["scss"] = "scss";
+    CSS["sass"] = "sass";
 })(CSS = exports.CSS || (exports.CSS = {}));
 exports.TEMPLATE_CREATOR = 'elux.template.js';
 exports.PACKAGE_INFO_GITEE = 'https://gitee.com/hiisea/elux-cli/raw/master/packages/cli/package.json';

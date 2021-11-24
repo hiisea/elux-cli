@@ -27,7 +27,7 @@ interface EluxConfig {
     };
     cssProcessors: {
         less: WebpackLoader | boolean;
-        scss: WebpackLoader | boolean;
+        sass: WebpackLoader | boolean;
     };
     cssModulesOptions: Record<string, any>;
     moduleFederation: Record<string, any>;

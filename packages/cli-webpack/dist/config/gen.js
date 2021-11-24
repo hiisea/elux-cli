@@ -98,7 +98,7 @@ const EluxConfigSchema = {
                         },
                     ],
                 },
-                scss: {
+                sass: {
                     anyOf: [
                         {
                             type: 'boolean',
@@ -159,7 +159,7 @@ function moduleExports(rootPath, projEnv, nodeEnv, _serverPort) {
             mockPath: './mock',
             envPath: './env',
         },
-        cssProcessors: { less: false, scss: false },
+        cssProcessors: { less: false, sass: false },
         cssModulesOptions: {},
         moduleFederation: {},
         devServerConfigTransform: (config) => config,

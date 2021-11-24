@@ -80,16 +80,16 @@ function oneOfCssLoader(
   isVue: boolean,
   isServer: boolean,
   cssModulesOptions: Record<string, any>,
-  extensionLoader: WebpackLoader | 'less' | 'scss' | ''
+  extensionLoader: WebpackLoader | 'less' | 'sass' | ''
 ): WebpackLoader[] {
   let cssProcessors: WebpackLoader | null = null;
   if (extensionLoader === 'less') {
     cssProcessors = {
       loader: 'less-loader',
     };
-  } else if (extensionLoader === 'scss') {
+  } else if (extensionLoader === 'sass') {
     cssProcessors = {
-      loader: 'scss-loader',
+      loader: 'sass-loader',
     };
   } else if (extensionLoader) {
     cssProcessors = extensionLoader;
@@ -235,7 +235,7 @@ interface ConfigOptions {
   publicPath: string;
   clientPublicPath: string;
   envPath: string;
-  cssProcessors: {less?: WebpackLoader | boolean; scss?: WebpackLoader | boolean};
+  cssProcessors: {less?: WebpackLoader | boolean; sass?: WebpackLoader | boolean};
   cssModulesOptions: Record<string, any>;
   limitSize: number;
   globalVar: {client?: any; server?: any};
@@ -296,7 +296,7 @@ function moduleExports({
     cssExtensions.unshift('vue');
   }
   cssProcessors.less && cssExtensions.push('less');
-  cssProcessors.scss && cssExtensions.push('scss');
+  cssProcessors.sass && cssExtensions.push('sass', 'scss');
   const commonAlias = Object.keys(paths).reduce((obj, name) => {
     const target = path.resolve(path.dirname(tsconfigPath), baseUrl, paths[name][0].replace(/\/\*$/, ''));
     if (name.endsWith('/*')) {
@@ -408,9 +408,9 @@ function moduleExports({
               test: /\.less$/,
               oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, false, cssModulesOptions, cssProcessors.less === true ? 'less' : cssProcessors.less),
             },
-            cssProcessors.scss && {
-              test: /\.scss$/,
-              oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, false, cssModulesOptions, cssProcessors.scss === true ? 'scss' : cssProcessors.scss),
+            cssProcessors.sass && {
+              test: /\.s[ac]ss$/,
+              oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, false, cssModulesOptions, cssProcessors.sass === true ? 'sass' : cssProcessors.sass),
             },
           ].filter(Boolean),
         },
@@ -543,15 +543,15 @@ function moduleExports({
                     cssProcessors.less === true ? 'less' : cssProcessors.less
                   ),
                 },
-                cssProcessors.scss && {
-                  test: /\.scss$/,
+                cssProcessors.sass && {
+                  test: /\.s[ac]ss$/,
                   oneOf: oneOfCssLoader(
                     isProdModel,
                     srcPath,
                     isVue,
                     true,
                     cssModulesOptions,
-                    cssProcessors.scss === true ? 'scss' : cssProcessors.scss
+                    cssProcessors.sass === true ? 'sass' : cssProcessors.sass
                   ),
                 },
               ].filter(Boolean),

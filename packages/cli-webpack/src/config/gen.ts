@@ -29,7 +29,7 @@ interface EluxConfig {
     mockPath: string;
     envPath: string;
   };
-  cssProcessors: {less: WebpackLoader | boolean; scss: WebpackLoader | boolean};
+  cssProcessors: {less: WebpackLoader | boolean; sass: WebpackLoader | boolean};
   cssModulesOptions: Record<string, any>;
   moduleFederation: Record<string, any>;
   devServerConfigTransform: (config: DevServerConfig) => DevServerConfig;
@@ -131,7 +131,7 @@ const EluxConfigSchema: any = {
             },
           ],
         },
-        scss: {
+        sass: {
           anyOf: [
             {
               type: 'boolean',
@@ -216,7 +216,7 @@ function moduleExports(rootPath: string, projEnv: string, nodeEnv: 'production' 
       mockPath: './mock',
       envPath: './env',
     },
-    cssProcessors: {less: false, scss: false},
+    cssProcessors: {less: false, sass: false},
     cssModulesOptions: {},
     moduleFederation: {},
     devServerConfigTransform: (config) => config,
