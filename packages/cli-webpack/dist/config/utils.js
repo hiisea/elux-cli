@@ -364,6 +364,7 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
             enableStylelintPlugin && new StylelintPlugin({ files: `src/**/*.{${cssExtensions.join(',')}}` }),
             new webpack_1.default.DefinePlugin({
                 'process.env.PROJ_ENV': JSON.stringify(globalVar.client || {}),
+                ...(isVue ? { __VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false } : {}),
             }),
             new HtmlWebpackPlugin({
                 clientPublicPath: clientPublicPath,
@@ -469,6 +470,7 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                 SsrPlugin.server,
                 new webpack_1.default.DefinePlugin({
                     'process.env.PROJ_ENV': JSON.stringify(globalVar.server || {}),
+                    ...(isVue ? { __VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false } : {}),
                 }),
                 new webpack_1.default.ProgressPlugin(),
             ].filter(Boolean),

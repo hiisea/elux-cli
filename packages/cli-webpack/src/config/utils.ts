@@ -443,6 +443,7 @@ function moduleExports({
       enableStylelintPlugin && new StylelintPlugin({files: `src/**/*.{${cssExtensions.join(',')}}`}),
       new webpack.DefinePlugin({
         'process.env.PROJ_ENV': JSON.stringify(globalVar.client || {}),
+        ...(isVue ? {__VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false} : {}),
       }),
       new HtmlWebpackPlugin({
         clientPublicPath: clientPublicPath,
@@ -563,6 +564,7 @@ function moduleExports({
           SsrPlugin.server,
           new webpack.DefinePlugin({
             'process.env.PROJ_ENV': JSON.stringify(globalVar.server || {}),
+            ...(isVue ? {__VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false} : {}),
           }),
           new webpack.ProgressPlugin(),
         ].filter(Boolean),

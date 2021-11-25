@@ -37,15 +37,15 @@ export interface ITemplate {
     framework: Framework[];
     platform: Platform[];
     include: string[];
-    data: (args: FeatChoices & {
+    install: string[];
+    data?: (args: FeatChoices & {
         projectName: string;
     }) => {
         [key: string]: string;
     };
-    rename: {
-        [key: string]: (params: any, fpath: string) => string;
-    };
-    install: string[];
+    rename?: (params: any, fpath: string) => string;
+    beforeRender?: (params: any, fpath: string, content: string) => string;
+    aftereRender?: (params: any, fpath: string, content: string) => string;
 }
 export declare const TEMPLATE_CREATOR: string;
 export declare const PACKAGE_INFO_GITEE: string;

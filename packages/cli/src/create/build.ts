@@ -2,7 +2,7 @@ import * as memFs from 'mem-fs';
 import * as editor from 'mem-fs-editor';
 import path from 'path';
 import inquirer from 'inquirer';
-import {createTransform} from 'mem-fs-editor/lib/util';
+import {createTransform, isBinary} from 'mem-fs-editor/lib/util';
 import {fs, log, platform, clearConsole, chalk, slash, semver, execa, ora} from '@elux/cli-utils';
 import {FeatChoices, ITemplate, TEMPLATE_CREATOR} from './base';
 
@@ -24,9 +24,7 @@ async function build({
 }): Promise<void> {
   log(chalk.red('\n🚀 Generating files...\n'));
   const cdPath = path.relative(process.cwd(), projectDir);
-  const excludeFiles: {[key: string]: boolean} = {
-    [path.resolve(projectDir, TEMPLATE_CREATOR)]: true,
-  };
+  const excludeFiles: {[key: string]: boolean} = {};
   const filter = createTransform(function (this: {push: (file: any) => void}, file: {path: string}, enc: string, cb: (e?: Error) => void) {
     if (excludeFiles[file.path]) {
       cb();
@@ -52,18 +50,45 @@ async function build({
     log(chalk.green('- 运行程序 ') + chalk.cyan('yarn start') + chalk.yellow(' (或留意查看readme.txt)'));
     log('');
   };
+  const templateData = template.data ? template.data({...featChoices, projectName}) : {...featChoices, projectName};
+  const tempDir = path.join(template.path, '../__temp__');
   const store = memFs.create();
   const mfs = editor.create(store);
-  const tempDir = path.join(template.path, '../__temp__');
+  const processTpl = mfs['_processTpl'] as (args: any) => string | Object;
+  mfs['_processTpl'] = function (
+    this: any,
+    args: {contents: Object; filename: string; context: Record<string, any>; tplSettings: Record<string, any>}
+  ): string | Object {
+    const {filename, contents} = args;
+    if (isBinary(filename, contents)) {
+      return contents;
+    }
+    let code = contents.toString();
+    const rpath = './' + slash(path.relative(tempDir, filename.replace(/.ejs$/, '')));
+    if (template.beforeRender) {
+      code = template.beforeRender(templateData, rpath, code);
+    }
+    try {
+      code = processTpl.call(this, {...args, contents: code}) as string;
+    } catch (error) {
+      chalk.red(rpath);
+      throw error;
+    }
+    if (template.aftereRender) {
+      code = template.aftereRender(templateData, rpath, code);
+    }
+    return code;
+  };
   template.include.forEach((dir) => {
     const src = path.join(template.path, dir);
     fs.copySync(src, tempDir);
   });
   fs.copySync(template.path, tempDir);
+  fs.removeSync(path.join(tempDir, TEMPLATE_CREATOR));
   mfs.copyTpl(
     tempDir,
     projectDir,
-    template.data({...featChoices, projectName}),
+    templateData,
     {escape: (str) => str},
     {
       globOptions: {
@@ -71,20 +96,9 @@ async function build({
       },
       processDestinationPath: (filepath: string) => {
         filepath = filepath.replace(/.ejs$/, '');
-        let rpath = './' + slash(path.relative(projectDir, filepath));
-        if (template.rename['*']) {
-          const changedPath = template.rename['*'](featChoices, rpath);
-          if (changedPath) {
-            filepath = path.resolve(projectDir, changedPath);
-          } else {
-            excludeFiles[filepath] = true;
-            return filepath;
-          }
-        }
-        rpath = './' + slash(path.relative(projectDir, filepath));
-        const handler = template.rename[rpath];
-        if (handler) {
-          const changedPath = handler(featChoices, rpath);
+        const rpath = './' + slash(path.relative(projectDir, filepath));
+        if (template.rename) {
+          const changedPath = template.rename(templateData, rpath);
           if (changedPath) {
             filepath = path.resolve(projectDir, changedPath);
           } else {

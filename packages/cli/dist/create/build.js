@@ -33,9 +33,7 @@ let logSuccessInfo = () => undefined;
 async function build({ projectName, projectDir, templateDir, template, featChoices, }) {
     cli_utils_1.log(cli_utils_1.chalk.red('\n🚀 Generating files...\n'));
     const cdPath = path_1.default.relative(process.cwd(), projectDir);
-    const excludeFiles = {
-        [path_1.default.resolve(projectDir, base_1.TEMPLATE_CREATOR)]: true,
-    };
+    const excludeFiles = {};
     const filter = util_1.createTransform(function (file, enc, cb) {
         if (excludeFiles[file.path]) {
             cb();
@@ -62,35 +60,48 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
         cli_utils_1.log(cli_utils_1.chalk.green('- 运行程序 ') + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或留意查看readme.txt)'));
         cli_utils_1.log('');
     };
+    const templateData = template.data ? template.data({ ...featChoices, projectName }) : { ...featChoices, projectName };
+    const tempDir = path_1.default.join(template.path, '../__temp__');
     const store = memFs.create();
     const mfs = editor.create(store);
-    const tempDir = path_1.default.join(template.path, '../__temp__');
+    const processTpl = mfs['_processTpl'];
+    mfs['_processTpl'] = function (args) {
+        const { filename, contents } = args;
+        if (util_1.isBinary(filename, contents)) {
+            return contents;
+        }
+        let code = contents.toString();
+        const rpath = './' + cli_utils_1.slash(path_1.default.relative(tempDir, filename.replace(/.ejs$/, '')));
+        if (template.beforeRender) {
+            code = template.beforeRender(templateData, rpath, code);
+        }
+        try {
+            code = processTpl.call(this, { ...args, contents: code });
+        }
+        catch (error) {
+            cli_utils_1.chalk.red(rpath);
+            throw error;
+        }
+        if (template.aftereRender) {
+            code = template.aftereRender(templateData, rpath, code);
+        }
+        return code;
+    };
     template.include.forEach((dir) => {
         const src = path_1.default.join(template.path, dir);
         cli_utils_1.fs.copySync(src, tempDir);
     });
     cli_utils_1.fs.copySync(template.path, tempDir);
-    mfs.copyTpl(tempDir, projectDir, template.data({ ...featChoices, projectName }), { escape: (str) => str }, {
+    cli_utils_1.fs.removeSync(path_1.default.join(tempDir, base_1.TEMPLATE_CREATOR));
+    mfs.copyTpl(tempDir, projectDir, templateData, { escape: (str) => str }, {
         globOptions: {
             dot: true,
         },
         processDestinationPath: (filepath) => {
             filepath = filepath.replace(/.ejs$/, '');
-            let rpath = './' + cli_utils_1.slash(path_1.default.relative(projectDir, filepath));
-            if (template.rename['*']) {
-                const changedPath = template.rename['*'](featChoices, rpath);
-                if (changedPath) {
-                    filepath = path_1.default.resolve(projectDir, changedPath);
-                }
-                else {
-                    excludeFiles[filepath] = true;
-                    return filepath;
-                }
-            }
-            rpath = './' + cli_utils_1.slash(path_1.default.relative(projectDir, filepath));
-            const handler = template.rename[rpath];
-            if (handler) {
-                const changedPath = handler(featChoices, rpath);
+            const rpath = './' + cli_utils_1.slash(path_1.default.relative(projectDir, filepath));
+            if (template.rename) {
+                const changedPath = template.rename(templateData, rpath);
                 if (changedPath) {
                     filepath = path_1.default.resolve(projectDir, changedPath);
                 }

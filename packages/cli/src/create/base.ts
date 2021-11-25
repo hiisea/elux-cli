@@ -37,9 +37,11 @@ export interface ITemplate {
   framework: Framework[];
   platform: Platform[];
   include: string[];
-  data: (args: FeatChoices & {projectName: string}) => {[key: string]: string};
-  rename: {[key: string]: (params: any, fpath: string) => string};
   install: string[];
+  data?: (args: FeatChoices & {projectName: string}) => {[key: string]: string};
+  rename?: (params: any, fpath: string) => string;
+  beforeRender?: (params: any, fpath: string, content: string) => string;
+  aftereRender?: (params: any, fpath: string, content: string) => string;
 }
 export const TEMPLATE_CREATOR: string = 'elux.template.js';
 export const PACKAGE_INFO_GITEE: string = 'https://gitee.com/hiisea/elux-cli/raw/master/packages/cli/package.json';

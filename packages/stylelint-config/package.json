@@ -1,9 +1,10 @@
 {
   "name": "@elux/stylelint-config",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "main": "index.js",
   "files": [
-    "less.js"
+    "less.js",
+    "scss.js"
   ],
   "description": "Common development tools",
   "repository": "https://github.com/hiisea/elux/tree/master/packages/stylelint-config",

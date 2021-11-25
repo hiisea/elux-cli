@@ -213,7 +213,7 @@ function parseTemplates(floder) {
         if (!cli_utils_1.fs.existsSync(creatorFile)) {
             return null;
         }
-        const { framework = [], platform = [], title = '', css = [], data = (options) => options, include = [], rename = {}, install = ['./', './mock'], } = require(creatorFile);
+        const { framework = [], platform = [], title = '', css = [], include = [], install = ['./', './mock'], data, rename, beforeRender, aftereRender, } = require(creatorFile);
         return {
             name,
             title,
@@ -221,10 +221,12 @@ function parseTemplates(floder) {
             framework,
             css,
             path: dir,
-            data,
             include,
-            rename,
             install,
+            data,
+            rename,
+            beforeRender,
+            aftereRender,
         };
     })
         .filter(Boolean);

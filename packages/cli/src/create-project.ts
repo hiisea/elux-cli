@@ -221,10 +221,12 @@ function parseTemplates(floder: string): ITemplate[] {
         platform = [],
         title = '',
         css = [],
-        data = (options) => options,
         include = [],
-        rename = {},
         install = ['./', './mock'],
+        data,
+        rename,
+        beforeRender,
+        aftereRender,
       } = require(creatorFile) as ITemplate;
       return {
         name,
@@ -233,10 +235,12 @@ function parseTemplates(floder: string): ITemplate[] {
         framework,
         css,
         path: dir,
-        data,
         include,
-        rename,
         install,
+        data,
+        rename,
+        beforeRender,
+        aftereRender,
       };
     })
     .filter(Boolean);
