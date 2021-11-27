@@ -199,7 +199,10 @@ async function getTemplates(args: {
     spinner.color = 'green';
     spinner.succeed(`${chalk.green('Pull successful!')}\n\n`);
     const templates = parseTemplates(templateDir);
-    const title = args.title + `\ntotally [${chalk.red(templates.length + 'P')}] templates are pulled from ${chalk.blue.underline(repository)}\n`;
+    const pics = templates.reduce((pre, cur) => {
+      return pre + cur.platform.length * cur.framework.length * cur.css.length;
+    }, 0);
+    const title = args.title + `\ntotally [${chalk.red(pics + 'P')}] templates are pulled from ${chalk.blue.underline(repository)}\n`;
     const {projectName, projectDir, options} = args;
     const creator = new Creator(projectName, projectDir, templateDir, options, templates, title);
     creator.create();
@@ -217,16 +220,16 @@ function parseTemplates(floder: string): ITemplate[] {
         return null;
       }
       const {
+        title = '',
         framework = [],
         platform = [],
-        title = '',
         css = [],
         include = [],
         install = ['./', './mock'],
         data,
         rename,
         beforeRender,
-        aftereRender,
+        afterRender,
       } = require(creatorFile) as ITemplate;
       return {
         name,
@@ -240,7 +243,7 @@ function parseTemplates(floder: string): ITemplate[] {
         data,
         rename,
         beforeRender,
-        aftereRender,
+        afterRender,
       };
     })
     .filter(Boolean);
@@ -271,7 +274,7 @@ async function main(options: CommandOptions): Promise<void> {
   const {version: latestVesrion, templateResources} = response;
   let title = '@elux/cli ' + curVerison;
   if (semver.lt(curVerison, latestVesrion)) {
-    title += `, ${chalk.magenta('New version available ' + latestVesrion)}`;
+    title += `, ${chalk.magenta.underline('New version available ' + latestVesrion)}`;
   }
   getProjectName({title, templateResources, options});
 }

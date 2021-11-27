@@ -29,27 +29,32 @@ class Creator {
             });
         });
         const choices = [];
+        const getPics = (templates) => {
+            return templates.reduce((pre, cur) => {
+                return pre + cur.framework.length * cur.css.length;
+            }, 0);
+        };
         if (data[base_1.Platform.csr].length > 0) {
             choices.push({
-                name: `CSR: 基于浏览器渲染的单页应用 [${cli_utils_1.chalk.red(data[base_1.Platform.csr].length + 'P')}]`,
+                name: `CSR: 基于浏览器渲染的单页应用 [${cli_utils_1.chalk.red(getPics(data[base_1.Platform.csr]) + 'P')}]`,
                 value: base_1.Platform.csr,
             });
         }
         if (data[base_1.Platform.ssr].length > 0) {
             choices.push({
-                name: `SSR: 基于服务器渲染+浏览器渲染的同构应用 [${cli_utils_1.chalk.red(data[base_1.Platform.ssr].length + 'P')}]`,
+                name: `SSR: 基于服务器渲染+浏览器渲染的同构应用 [${cli_utils_1.chalk.red(getPics(data[base_1.Platform.ssr]) + 'P')}]`,
                 value: base_1.Platform.ssr,
             });
         }
         if (data[base_1.Platform.taro].length > 0) {
             choices.push({
-                name: `Taro: 基于Taro的跨平台应用，常用于各类小程序 [${cli_utils_1.chalk.red(data[base_1.Platform.taro].length + 'P')}]`,
+                name: `Taro: 基于Taro的跨平台应用，常用于各类小程序 [${cli_utils_1.chalk.red(getPics(data[base_1.Platform.taro]) + 'P')}]`,
                 value: base_1.Platform.taro,
             });
         }
         if (data[base_1.Platform.micro].length > 0) {
             choices.push({
-                name: `Micro: 基于Webpack5 Module Federation的微前端应用 [${cli_utils_1.chalk.red(data[base_1.Platform.micro].length + 'P')}]`,
+                name: `Micro: 基于Webpack5 Module Federation的微前端应用 [${cli_utils_1.chalk.red(getPics(data[base_1.Platform.micro]) + 'P')}]`,
                 value: base_1.Platform.micro,
             });
         }
@@ -77,15 +82,20 @@ class Creator {
             });
         });
         const choices = [];
+        const getPics = (templates) => {
+            return templates.reduce((pre, cur) => {
+                return pre + cur.css.length;
+            }, 0);
+        };
         if (data[base_1.Framework.reactRedux].length > 0) {
             choices.push({
-                name: `React + Redux [${cli_utils_1.chalk.red(data[base_1.Framework.reactRedux].length + 'P')}]`,
+                name: `React + Redux [${cli_utils_1.chalk.red(getPics(data[base_1.Framework.reactRedux]) + 'P')}]`,
                 value: base_1.Framework.reactRedux,
             });
         }
         if (data[base_1.Framework.vueVuex].length > 0) {
             choices.push({
-                name: `Vue3 + Vuex [${cli_utils_1.chalk.red(data[base_1.Framework.vueVuex].length + 'P')}]`,
+                name: `Vue3 + Vuex [${cli_utils_1.chalk.red(getPics(data[base_1.Framework.vueVuex]) + 'P')}]`,
                 value: base_1.Framework.vueVuex,
             });
         }

@@ -46,18 +46,18 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
     logInstallInfo = function () {
         cli_utils_1.log('');
         cli_utils_1.log('- 进入项目 ' + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
-        cli_utils_1.log('- 以下目录需要安装依赖 ' + cli_utils_1.chalk.cyan('yarn install') + cli_utils_1.chalk.yellow(' (推荐使用yarn，支持workspaces一次性安装所有依赖)'));
+        cli_utils_1.log('- 以下目录需要安装依赖 ' + cli_utils_1.chalk.cyan('yarn install') + cli_utils_1.chalk.yellow(' (推荐yarn，支持workspaces一次性安装)'));
         template.install.forEach((dir) => {
             cli_utils_1.log(cli_utils_1.chalk.green(`  ${dir}`));
         });
-        cli_utils_1.log('- 运行程序 ' + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或留意查看readme.txt)'));
+        cli_utils_1.log('- 运行程序 ' + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或查看readme.txt)'));
         cli_utils_1.log('');
     };
     logSuccessInfo = function () {
         cli_utils_1.log('');
         cli_utils_1.log(cli_utils_1.chalk.black.bold('✨ 准备好啦！开始工作吧！\n'));
         cli_utils_1.log(cli_utils_1.chalk.green('- 进入目录 ') + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
-        cli_utils_1.log(cli_utils_1.chalk.green('- 运行程序 ') + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或留意查看readme.txt)'));
+        cli_utils_1.log(cli_utils_1.chalk.green('- 运行程序 ') + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或查看readme.txt)'));
         cli_utils_1.log('');
     };
     const templateData = template.data ? template.data({ ...featChoices, projectName }) : { ...featChoices, projectName };
@@ -82,8 +82,8 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
             cli_utils_1.chalk.red(rpath);
             throw error;
         }
-        if (template.aftereRender) {
-            code = template.aftereRender(templateData, rpath, code);
+        if (template.afterRender) {
+            code = template.afterRender(templateData, rpath, code);
         }
         return code;
     };

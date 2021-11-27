@@ -27,27 +27,32 @@ class Creator {
       });
     });
     const choices: any[] = [];
+    const getPics = (templates: ITemplate[]) => {
+      return templates.reduce((pre, cur) => {
+        return pre + cur.framework.length * cur.css.length;
+      }, 0);
+    };
     if (data[Platform.csr].length > 0) {
       choices.push({
-        name: `CSR: 基于浏览器渲染的单页应用 [${chalk.red(data[Platform.csr].length + 'P')}]`,
+        name: `CSR: 基于浏览器渲染的单页应用 [${chalk.red(getPics(data[Platform.csr]) + 'P')}]`,
         value: Platform.csr,
       });
     }
     if (data[Platform.ssr].length > 0) {
       choices.push({
-        name: `SSR: 基于服务器渲染+浏览器渲染的同构应用 [${chalk.red(data[Platform.ssr].length + 'P')}]`,
+        name: `SSR: 基于服务器渲染+浏览器渲染的同构应用 [${chalk.red(getPics(data[Platform.ssr]) + 'P')}]`,
         value: Platform.ssr,
       });
     }
     if (data[Platform.taro].length > 0) {
       choices.push({
-        name: `Taro: 基于Taro的跨平台应用，常用于各类小程序 [${chalk.red(data[Platform.taro].length + 'P')}]`,
+        name: `Taro: 基于Taro的跨平台应用，常用于各类小程序 [${chalk.red(getPics(data[Platform.taro]) + 'P')}]`,
         value: Platform.taro,
       });
     }
     if (data[Platform.micro].length > 0) {
       choices.push({
-        name: `Micro: 基于Webpack5 Module Federation的微前端应用 [${chalk.red(data[Platform.micro].length + 'P')}]`,
+        name: `Micro: 基于Webpack5 Module Federation的微前端应用 [${chalk.red(getPics(data[Platform.micro]) + 'P')}]`,
         value: Platform.micro,
       });
     }
@@ -75,15 +80,20 @@ class Creator {
       });
     });
     const choices: any[] = [];
+    const getPics = (templates: ITemplate[]) => {
+      return templates.reduce((pre, cur) => {
+        return pre + cur.css.length;
+      }, 0);
+    };
     if (data[Framework.reactRedux].length > 0) {
       choices.push({
-        name: `React + Redux [${chalk.red(data[Framework.reactRedux].length + 'P')}]`,
+        name: `React + Redux [${chalk.red(getPics(data[Framework.reactRedux]) + 'P')}]`,
         value: Framework.reactRedux,
       });
     }
     if (data[Framework.vueVuex].length > 0) {
       choices.push({
-        name: `Vue3 + Vuex [${chalk.red(data[Framework.vueVuex].length + 'P')}]`,
+        name: `Vue3 + Vuex [${chalk.red(getPics(data[Framework.vueVuex]) + 'P')}]`,
         value: Framework.vueVuex,
       });
     }

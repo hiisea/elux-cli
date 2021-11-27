@@ -36,18 +36,18 @@ async function build({
   logInstallInfo = function () {
     log('');
     log('- 进入项目 ' + chalk.cyan(`cd ${cdPath}`));
-    log('- 以下目录需要安装依赖 ' + chalk.cyan('yarn install') + chalk.yellow(' (推荐使用yarn，支持workspaces一次性安装所有依赖)'));
+    log('- 以下目录需要安装依赖 ' + chalk.cyan('yarn install') + chalk.yellow(' (推荐yarn，支持workspaces一次性安装)'));
     template.install.forEach((dir) => {
       log(chalk.green(`  ${dir}`));
     });
-    log('- 运行程序 ' + chalk.cyan('yarn start') + chalk.yellow(' (或留意查看readme.txt)'));
+    log('- 运行程序 ' + chalk.cyan('yarn start') + chalk.yellow(' (或查看readme.txt)'));
     log('');
   };
   logSuccessInfo = function () {
     log('');
     log(chalk.black.bold('✨ 准备好啦！开始工作吧！\n'));
     log(chalk.green('- 进入目录 ') + chalk.cyan(`cd ${cdPath}`));
-    log(chalk.green('- 运行程序 ') + chalk.cyan('yarn start') + chalk.yellow(' (或留意查看readme.txt)'));
+    log(chalk.green('- 运行程序 ') + chalk.cyan('yarn start') + chalk.yellow(' (或查看readme.txt)'));
     log('');
   };
   const templateData = template.data ? template.data({...featChoices, projectName}) : {...featChoices, projectName};
@@ -74,8 +74,8 @@ async function build({
       chalk.red(rpath);
       throw error;
     }
-    if (template.aftereRender) {
-      code = template.aftereRender(templateData, rpath, code);
+    if (template.afterRender) {
+      code = template.afterRender(templateData, rpath, code);
     }
     return code;
   };

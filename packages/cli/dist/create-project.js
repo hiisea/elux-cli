@@ -196,7 +196,10 @@ async function getTemplates(args) {
         spinner.color = 'green';
         spinner.succeed(`${cli_utils_1.chalk.green('Pull successful!')}\n\n`);
         const templates = parseTemplates(templateDir);
-        const title = args.title + `\ntotally [${cli_utils_1.chalk.red(templates.length + 'P')}] templates are pulled from ${cli_utils_1.chalk.blue.underline(repository)}\n`;
+        const pics = templates.reduce((pre, cur) => {
+            return pre + cur.platform.length * cur.framework.length * cur.css.length;
+        }, 0);
+        const title = args.title + `\ntotally [${cli_utils_1.chalk.red(pics + 'P')}] templates are pulled from ${cli_utils_1.chalk.blue.underline(repository)}\n`;
         const { projectName, projectDir, options } = args;
         const creator = new create_1.default(projectName, projectDir, templateDir, options, templates, title);
         creator.create();
@@ -213,7 +216,7 @@ function parseTemplates(floder) {
         if (!cli_utils_1.fs.existsSync(creatorFile)) {
             return null;
         }
-        const { framework = [], platform = [], title = '', css = [], include = [], install = ['./', './mock'], data, rename, beforeRender, aftereRender, } = require(creatorFile);
+        const { title = '', framework = [], platform = [], css = [], include = [], install = ['./', './mock'], data, rename, beforeRender, afterRender, } = require(creatorFile);
         return {
             name,
             title,
@@ -226,7 +229,7 @@ function parseTemplates(floder) {
             data,
             rename,
             beforeRender,
-            aftereRender,
+            afterRender,
         };
     })
         .filter(Boolean);
@@ -253,7 +256,7 @@ async function main(options) {
     const { version: latestVesrion, templateResources } = response;
     let title = '@elux/cli ' + curVerison;
     if (cli_utils_1.semver.lt(curVerison, latestVesrion)) {
-        title += `, ${cli_utils_1.chalk.magenta('New version available ' + latestVesrion)}`;
+        title += `, ${cli_utils_1.chalk.magenta.underline('New version available ' + latestVesrion)}`;
     }
     getProjectName({ title, templateResources, options });
 }

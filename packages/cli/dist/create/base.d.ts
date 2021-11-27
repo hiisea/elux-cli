@@ -45,7 +45,7 @@ export interface ITemplate {
     };
     rename?: (params: any, fpath: string) => string;
     beforeRender?: (params: any, fpath: string, content: string) => string;
-    aftereRender?: (params: any, fpath: string, content: string) => string;
+    afterRender?: (params: any, fpath: string, content: string) => string;
 }
 export declare const TEMPLATE_CREATOR: string;
 export declare const PACKAGE_INFO_GITEE: string;
