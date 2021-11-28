@@ -14,4 +14,28 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ['*.html', '**/*.html'],
+      customSyntax: 'postcss-html',
+    },
+    {
+      files: ['*.vue', '**/*.vue'],
+      customSyntax: 'postcss-html',
+      rules: {
+        'selector-pseudo-class-no-unknown': [
+          true,
+          {
+            ignorePseudoClasses: ['deep', 'global', 'local'],
+          },
+        ],
+        'selector-pseudo-element-no-unknown': [
+          true,
+          {
+            ignorePseudoElements: ['v-deep', 'v-global', 'v-slotted'],
+          },
+        ],
+      },
+    },
+  ],
 };
