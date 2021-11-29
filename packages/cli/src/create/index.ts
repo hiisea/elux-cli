@@ -1,7 +1,6 @@
 import inquirer from 'inquirer';
-import path from 'path';
-import {fs, readDirSync, clearConsole, chalk} from '@elux/cli-utils';
-import {CommandOptions, FeatChoices, TEMPLATE_CREATOR, Platform, ITemplate, Framework, CSS} from './base';
+import {clearConsole, chalk} from '@elux/cli-utils';
+import {CommandOptions, FeatChoices, Platform, ITemplate, Framework, CSS} from './base';
 import build from './build';
 
 class Creator {
@@ -159,30 +158,6 @@ class Creator {
         return template;
       });
   }
-  parseTemplates(floder: string): void {
-    const subDirs = readDirSync(floder)
-      .filter((file) => file.isDirectory)
-      .map((file) => file.name);
-    const templates = subDirs
-      .map((name) => {
-        const dir = path.join(floder, name);
-        const creatorFile = path.join(dir, TEMPLATE_CREATOR);
-        if (!fs.existsSync(creatorFile)) {
-          return null;
-        }
-        const {framework = '', platform = '', title = ''} = require(creatorFile);
-        return {
-          name,
-          title,
-          platform,
-          framework,
-          path: dir,
-        };
-      })
-      .filter(Boolean);
-    this.templates = templates as any;
-  }
-
   askEnsure(): Promise<boolean> {
     return inquirer
       .prompt({

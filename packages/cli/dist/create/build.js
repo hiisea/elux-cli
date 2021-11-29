@@ -60,7 +60,22 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
         cli_utils_1.log('');
     };
     const templateData = template.data ? template.data({ ...featChoices, projectName }) : { ...featChoices, projectName };
-    const tempDir = path_1.default.join(template.path, '../__temp__');
+    const tempDir = path_1.default.join(templateDir, './$');
+    (template.operation || []).forEach((item) => {
+        const from = path_1.default.join(templateDir, item.from);
+        const to = path_1.default.join(templateDir, item.to);
+        if (item.action === 'copy') {
+            cli_utils_1.fs.copySync(from, to);
+        }
+        else if (item.action === 'move') {
+            if (item.to) {
+                cli_utils_1.fs.moveSync(from, to, { overwrite: true });
+            }
+            else {
+                cli_utils_1.fs.removeSync(from);
+            }
+        }
+    });
     const store = memFs.create();
     const mfs = editor.create(store);
     const processTpl = mfs['_processTpl'];
@@ -86,21 +101,6 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
         }
         return code;
     };
-    template.copy.forEach((item) => {
-        const from = path_1.default.join(template.path, item.from);
-        const to = path_1.default.join(tempDir, item.to);
-        cli_utils_1.fs.copySync(from, to);
-    });
-    template.move.forEach((item) => {
-        const from = path_1.default.join(tempDir, item.from);
-        if (item.to) {
-            const to = path_1.default.join(tempDir, item.to);
-            cli_utils_1.fs.moveSync(from, to, { overwrite: true });
-        }
-        else {
-            cli_utils_1.fs.removeSync(from);
-        }
-    });
     mfs.copyTpl(tempDir, projectDir, templateData, { escape: (str) => str }, {
         globOptions: {
             dot: true,
@@ -138,7 +138,7 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
             }
             if (npmVersion) {
                 choices.push({
-                    name: 'npm install' + (cli_utils_1.semver.lt(npmVersion, '6.9.0') ? cli_utils_1.chalk.red('(Current version < 6.9.0,May cause exceptions!)') : ''),
+                    name: 'npm install' + (cli_utils_1.semver.lt(npmVersion, '6.9.0') ? cli_utils_1.chalk.red('(Current version < 6.9.0, May cause exceptions!)') : ''),
                     value: 'npm',
                 });
             }

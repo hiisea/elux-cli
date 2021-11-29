@@ -51,7 +51,20 @@ async function build({
     log('');
   };
   const templateData = template.data ? template.data({...featChoices, projectName}) : {...featChoices, projectName};
-  const tempDir = path.join(template.path, '../__temp__');
+  const tempDir = path.join(templateDir, './$');
+  (template.operation || []).forEach((item) => {
+    const from = path.join(templateDir, item.from);
+    const to = path.join(templateDir, item.to);
+    if (item.action === 'copy') {
+      fs.copySync(from, to);
+    } else if (item.action === 'move') {
+      if (item.to) {
+        fs.moveSync(from, to, {overwrite: true});
+      } else {
+        fs.removeSync(from);
+      }
+    }
+  });
   const store = memFs.create();
   const mfs = editor.create(store);
   const processTpl = mfs['_processTpl'] as (args: any) => string | Object;
@@ -79,20 +92,6 @@ async function build({
     }
     return code;
   };
-  template.copy.forEach((item) => {
-    const from = path.join(template.path, item.from);
-    const to = path.join(tempDir, item.to);
-    fs.copySync(from, to);
-  });
-  template.move.forEach((item) => {
-    const from = path.join(tempDir, item.from);
-    if (item.to) {
-      const to = path.join(tempDir, item.to);
-      fs.moveSync(from, to, {overwrite: true});
-    } else {
-      fs.removeSync(from);
-    }
-  });
   mfs.copyTpl(
     tempDir,
     projectDir,

@@ -214,33 +214,14 @@ async function getTemplates(args) {
     }
 }
 function parseTemplates(floder) {
-    const subDirs = cli_utils_1.readDirSync(floder)
-        .filter((file) => file.isDirectory)
-        .map((file) => file.name);
-    const templates = subDirs
-        .map((name) => {
-        const dir = path_1.default.join(floder, name);
-        const creatorFile = path_1.default.join(dir, base_1.TEMPLATE_CREATOR);
-        if (!cli_utils_1.fs.existsSync(creatorFile)) {
-            return null;
+    const templates = [];
+    cli_utils_1.readDirSync(floder).forEach((file) => {
+        if (file.isFile && file.name.endsWith('.conf.js')) {
+            const tplPath = path_1.default.join(floder, file.name);
+            const tpl = require(tplPath);
+            templates.push(tpl);
         }
-        const { framework = [], platform = [], css = [], install = ['./', './mock'], copy = [], move = [], getTitle, data, rename, beforeRender, afterRender, } = require(creatorFile);
-        return {
-            platform,
-            framework,
-            css,
-            path: dir,
-            install,
-            copy,
-            move,
-            getTitle,
-            data,
-            rename,
-            beforeRender,
-            afterRender,
-        };
-    })
-        .filter(Boolean);
+    });
     return templates;
 }
 async function main(options) {

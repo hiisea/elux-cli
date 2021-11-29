@@ -31,20 +31,16 @@ export declare enum CSS {
     sass = "sass"
 }
 export interface ITemplate {
-    path: string;
-    css: CSS[];
-    framework: Framework[];
     platform: Platform[];
-    copy: {
-        from: string;
-        to: string;
-    }[];
-    move: {
-        from: string;
-        to: string;
-    }[];
+    framework: Framework[];
+    css: CSS[];
     install: string[];
     getTitle: (args: FeatChoices) => string;
+    operation?: {
+        action: 'copy' | 'move';
+        from: string;
+        to: string;
+    }[];
     data?: (args: FeatChoices & {
         projectName: string;
     }) => {
@@ -54,7 +50,6 @@ export interface ITemplate {
     beforeRender?: (params: any, fpath: string, content: string) => string;
     afterRender?: (params: any, fpath: string, content: string) => string;
 }
-export declare const TEMPLATE_CREATOR: string;
 export declare const PACKAGE_INFO_GITEE: string;
 export declare const PACKAGE_INFO_GITHUB: string;
 export declare const USER_AGENT: string;

@@ -20,7 +20,6 @@ declare class Creator {
         templates: ITemplate[];
     }>;
     askTemplate(templates: ITemplate[], featChoices: FeatChoices): Promise<ITemplate>;
-    parseTemplates(floder: string): void;
     askEnsure(): Promise<boolean>;
     create(): Promise<void>;
 }

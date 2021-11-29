@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const inquirer_1 = __importDefault(require("inquirer"));
-const path_1 = __importDefault(require("path"));
 const cli_utils_1 = require("@elux/cli-utils");
 const base_1 = require("./base");
 const build_1 = __importDefault(require("./build"));
@@ -160,29 +159,6 @@ class Creator {
             .then(({ template }) => {
             return template;
         });
-    }
-    parseTemplates(floder) {
-        const subDirs = cli_utils_1.readDirSync(floder)
-            .filter((file) => file.isDirectory)
-            .map((file) => file.name);
-        const templates = subDirs
-            .map((name) => {
-            const dir = path_1.default.join(floder, name);
-            const creatorFile = path_1.default.join(dir, base_1.TEMPLATE_CREATOR);
-            if (!cli_utils_1.fs.existsSync(creatorFile)) {
-                return null;
-            }
-            const { framework = '', platform = '', title = '' } = require(creatorFile);
-            return {
-                name,
-                title,
-                platform,
-                framework,
-                path: dir,
-            };
-        })
-            .filter(Boolean);
-        this.templates = templates;
     }
     askEnsure() {
         return inquirer_1.default

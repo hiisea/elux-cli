@@ -2,7 +2,7 @@ import path from 'path';
 import validateProjectName from 'validate-npm-package-name';
 import {log, chalk, fs, semver, ora, readDirSync, got, getProxy, testHttpUrl, clearConsole} from '@elux/cli-utils';
 import inquirer from 'inquirer';
-import {CommandOptions, PackageJson, TemplateResources, ITemplate, TEMPLATE_CREATOR, PACKAGE_INFO_GITEE, USER_AGENT} from './create/base';
+import {CommandOptions, PackageJson, TemplateResources, ITemplate, PACKAGE_INFO_GITEE, USER_AGENT} from './create/base';
 import {loadRepository} from './create/loadRepository';
 import Creator from './create';
 
@@ -217,46 +217,15 @@ async function getTemplates(args: {
   }
 }
 function parseTemplates(floder: string): ITemplate[] {
-  const subDirs = readDirSync(floder)
-    .filter((file) => file.isDirectory)
-    .map((file) => file.name);
-  const templates: any[] = subDirs
-    .map((name) => {
-      const dir = path.join(floder, name);
-      const creatorFile = path.join(dir, TEMPLATE_CREATOR);
-      if (!fs.existsSync(creatorFile)) {
-        return null;
-      }
-      const {
-        framework = [],
-        platform = [],
-        css = [],
-        install = ['./', './mock'],
-        copy = [],
-        move = [],
-        getTitle,
-        data,
-        rename,
-        beforeRender,
-        afterRender,
-      } = require(creatorFile) as ITemplate;
-      return {
-        platform,
-        framework,
-        css,
-        path: dir,
-        install,
-        copy,
-        move,
-        getTitle,
-        data,
-        rename,
-        beforeRender,
-        afterRender,
-      };
-    })
-    .filter(Boolean);
-  return templates as ITemplate[];
+  const templates: ITemplate[] = [];
+  readDirSync(floder).forEach((file) => {
+    if (file.isFile && file.name.endsWith('.conf.js')) {
+      const tplPath = path.join(floder, file.name);
+      const tpl = require(tplPath) as ITemplate;
+      templates.push(tpl);
+    }
+  });
+  return templates;
 }
 
 async function main(options: CommandOptions): Promise<void> {
