@@ -27,7 +27,6 @@ const path_1 = __importDefault(require("path"));
 const inquirer_1 = __importDefault(require("inquirer"));
 const util_1 = require("mem-fs-editor/lib/util");
 const cli_utils_1 = require("@elux/cli-utils");
-const base_1 = require("./base");
 let logInstallInfo = () => undefined;
 let logSuccessInfo = () => undefined;
 async function build({ projectName, projectDir, templateDir, template, featChoices, }) {
@@ -87,12 +86,21 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
         }
         return code;
     };
-    template.include.forEach((dir) => {
-        const src = path_1.default.join(template.path, dir);
-        cli_utils_1.fs.copySync(src, tempDir);
+    template.copy.forEach((item) => {
+        const from = path_1.default.join(template.path, item.from);
+        const to = path_1.default.join(tempDir, item.to);
+        cli_utils_1.fs.copySync(from, to);
     });
-    cli_utils_1.fs.copySync(template.path, tempDir);
-    cli_utils_1.fs.removeSync(path_1.default.join(tempDir, base_1.TEMPLATE_CREATOR));
+    template.move.forEach((item) => {
+        const from = path_1.default.join(tempDir, item.from);
+        if (item.to) {
+            const to = path_1.default.join(tempDir, item.to);
+            cli_utils_1.fs.moveSync(from, to, { overwrite: true });
+        }
+        else {
+            cli_utils_1.fs.removeSync(from);
+        }
+    });
     mfs.copyTpl(tempDir, projectDir, templateData, { escape: (str) => str }, {
         globOptions: {
             dot: true,

@@ -40,20 +40,20 @@ class Creator {
     }
     if (data[Platform.ssr].length > 0) {
       choices.push({
-        name: `SSR: 基于服务器渲染+浏览器渲染的同构应用 [${chalk.red(getPics(data[Platform.ssr]) + 'P')}]`,
+        name: `SSR: 基于服务器渲染 + 浏览器渲染的同构应用 [${chalk.red(getPics(data[Platform.ssr]) + 'P')}]`,
         value: Platform.ssr,
+      });
+    }
+    if (data[Platform.micro].length > 0) {
+      choices.push({
+        name: `Micro: 基于Webpack5的微前端 + 微模块方案 [${chalk.red(getPics(data[Platform.micro]) + 'P')}]`,
+        value: Platform.micro,
       });
     }
     if (data[Platform.taro].length > 0) {
       choices.push({
         name: `Taro: 基于Taro的跨平台应用，常用于各类小程序 [${chalk.red(getPics(data[Platform.taro]) + 'P')}]`,
         value: Platform.taro,
-      });
-    }
-    if (data[Platform.micro].length > 0) {
-      choices.push({
-        name: `Micro: 基于Webpack5 Module Federation的微前端应用 [${chalk.red(getPics(data[Platform.micro]) + 'P')}]`,
-        value: Platform.micro,
       });
     }
     return inquirer

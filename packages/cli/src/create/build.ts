@@ -4,7 +4,7 @@ import path from 'path';
 import inquirer from 'inquirer';
 import {createTransform, isBinary} from 'mem-fs-editor/lib/util';
 import {fs, log, platform, clearConsole, chalk, slash, semver, execa, ora} from '@elux/cli-utils';
-import {FeatChoices, ITemplate, TEMPLATE_CREATOR} from './base';
+import {FeatChoices, ITemplate} from './base';
 
 let logInstallInfo: () => void = () => undefined;
 let logSuccessInfo: () => void = () => undefined;
@@ -79,12 +79,20 @@ async function build({
     }
     return code;
   };
-  template.include.forEach((dir) => {
-    const src = path.join(template.path, dir);
-    fs.copySync(src, tempDir);
+  template.copy.forEach((item) => {
+    const from = path.join(template.path, item.from);
+    const to = path.join(tempDir, item.to);
+    fs.copySync(from, to);
   });
-  fs.copySync(template.path, tempDir);
-  fs.removeSync(path.join(tempDir, TEMPLATE_CREATOR));
+  template.move.forEach((item) => {
+    const from = path.join(tempDir, item.from);
+    if (item.to) {
+      const to = path.join(tempDir, item.to);
+      fs.moveSync(from, to, {overwrite: true});
+    } else {
+      fs.removeSync(from);
+    }
+  });
   mfs.copyTpl(
     tempDir,
     projectDir,
@@ -127,7 +135,7 @@ async function build({
       }
       if (npmVersion) {
         choices.push({
-          name: 'npm install' + (semver.lt(npmVersion, '6.9.0') ? chalk.red('(Current version < 6.9.0,May cause exceptions!)') : ''),
+          name: 'npm install' + (semver.lt(npmVersion, '6.9.0') ? chalk.red('(Current version < 6.9.0, May cause exceptions!)') : ''),
           value: 'npm',
         });
       }

@@ -35,7 +35,14 @@ export interface ITemplate {
     css: CSS[];
     framework: Framework[];
     platform: Platform[];
-    include: string[];
+    copy: {
+        from: string;
+        to: string;
+    }[];
+    move: {
+        from: string;
+        to: string;
+    }[];
     install: string[];
     getTitle: (args: FeatChoices) => string;
     data?: (args: FeatChoices & {
