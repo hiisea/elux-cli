@@ -73,14 +73,16 @@ function askTemplateSource(templateResources) {
             pageSize: 8,
             loop: false,
             choices: [
-                ...templateResources.map((item) => ({ name: `${item.title} [${cli_utils_1.chalk.red(item.count + 'P')}]`, value: item.url })),
+                ...templateResources.map((item) => ({ name: `${item.title} [${cli_utils_1.chalk.red(item.count + 'P')}]`, value: item })),
                 {
                     name: '输入Http下载地址...',
                     value: 'inputHttp',
+                    short: '地址格式参见 https://www.npmjs.com/package/download-git-repo',
                 },
                 {
                     name: '输入GitClone地址...',
                     value: 'inputClone',
+                    short: '地址格式参见 https://www.npmjs.com/package/download-git-repo',
                 },
             ],
         },
@@ -103,13 +105,15 @@ function askTemplateSource(templateResources) {
     ])
         .then(({ templateSource, templateSourceInputHttp, templateSourceInputClone }) => {
         if (templateSourceInputClone) {
-            return 'clone://' + templateSourceInputClone;
+            return { url: 'clone://' + templateSourceInputClone, summary: '' };
         }
         else if (templateSourceInputHttp) {
-            return templateSourceInputHttp;
+            return { url: templateSourceInputHttp, summary: '' };
         }
         else {
-            return templateSource === 'inputHttp' || templateSource === 'inputClone' ? '' : templateSource;
+            return templateSource === 'inputHttp' || templateSource === 'inputClone'
+                ? { url: '', summary: '' }
+                : { url: templateSource.url, summary: templateSource.summary };
         }
     });
 }
@@ -145,6 +149,7 @@ async function askProxy(systemProxy) {
                 {
                     name: '输入代理地址',
                     value: 'inputProxy',
+                    short: '格式如 http://127.0.0.1:1080',
                 },
             ],
         }, {
@@ -155,7 +160,7 @@ async function askProxy(systemProxy) {
                 if (!input) {
                     return true;
                 }
-                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('格式错误，如:http://127.0.0.1:1080');
+                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('地址格式错误');
             },
             when(answers) {
                 return answers.proxy === 'inputProxy';
@@ -168,12 +173,15 @@ async function askProxy(systemProxy) {
 }
 async function getTemplates(args) {
     cli_utils_1.log('');
-    let repository = await askTemplateSource(args.templateResources);
+    const templateSource = await askTemplateSource(args.templateResources);
+    let repository = templateSource.url;
+    const summary = templateSource.summary;
     if (!repository) {
         cli_utils_1.log(`${cli_utils_1.chalk.green('Please reselect...')}\n`);
         setTimeout(() => getTemplates(args), 0);
         return;
     }
+    cli_utils_1.log('\n' + cli_utils_1.chalk.green.underline(summary));
     let isClone = false;
     if (repository.startsWith('clone://')) {
         isClone = true;
@@ -216,16 +224,15 @@ function parseTemplates(floder) {
         if (!cli_utils_1.fs.existsSync(creatorFile)) {
             return null;
         }
-        const { title = '', framework = [], platform = [], css = [], include = [], install = ['./', './mock'], data, rename, beforeRender, afterRender, } = require(creatorFile);
+        const { framework = [], platform = [], css = [], include = [], install = ['./', './mock'], getTitle, data, rename, beforeRender, afterRender, } = require(creatorFile);
         return {
-            name,
-            title,
             platform,
             framework,
             css,
             path: dir,
             include,
             install,
+            getTitle,
             data,
             rename,
             beforeRender,

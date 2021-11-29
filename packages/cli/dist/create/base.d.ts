@@ -2,6 +2,7 @@ export interface TemplateResources {
     title: string;
     url: string;
     count: number;
+    summary: string;
 }
 export interface PackageJson {
     version: string;
@@ -30,14 +31,13 @@ export declare enum CSS {
     sass = "sass"
 }
 export interface ITemplate {
-    name: string;
     path: string;
-    title: string;
     css: CSS[];
     framework: Framework[];
     platform: Platform[];
     include: string[];
     install: string[];
+    getTitle: (args: FeatChoices) => string;
     data?: (args: FeatChoices & {
         projectName: string;
     }) => {

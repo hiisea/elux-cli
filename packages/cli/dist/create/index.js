@@ -144,7 +144,7 @@ class Creator {
             return { feat, templates: data[feat] };
         });
     }
-    askTemplate(templates) {
+    askTemplate(templates, featChoices) {
         return inquirer_1.default
             .prompt({
             type: 'list',
@@ -153,7 +153,7 @@ class Creator {
             pageSize: 8,
             loop: false,
             choices: templates.map((item) => ({
-                name: item.title,
+                name: item.getTitle(featChoices),
                 value: item,
             })),
         })
@@ -215,7 +215,7 @@ class Creator {
         featChoices.framework = feat;
         ({ feat, templates } = await this.askCss(templates));
         featChoices.css = feat;
-        const template = await this.askTemplate(templates);
+        const template = await this.askTemplate(templates, featChoices);
         const ensure = await this.askEnsure();
         if (ensure) {
             build_1.default({ projectName: this.projectName, projectDir: this.projectDir, templateDir: this.templateDir, featChoices, template });

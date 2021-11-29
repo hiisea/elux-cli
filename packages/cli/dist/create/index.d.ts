@@ -1,4 +1,4 @@
-import { CommandOptions, ITemplate } from './base';
+import { CommandOptions, FeatChoices, ITemplate } from './base';
 declare class Creator {
     private projectName;
     private projectDir;
@@ -19,7 +19,7 @@ declare class Creator {
         feat: string;
         templates: ITemplate[];
     }>;
-    askTemplate(templates: ITemplate[]): Promise<ITemplate>;
+    askTemplate(templates: ITemplate[], featChoices: FeatChoices): Promise<ITemplate>;
     parseTemplates(floder: string): void;
     askEnsure(): Promise<boolean>;
     create(): Promise<void>;

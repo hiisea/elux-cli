@@ -59,7 +59,7 @@ async function getProjectName(args: {title: string; templateResources: TemplateR
     getTemplates({title, projectName, projectDir, templateResources, options});
   }
 }
-function askTemplateSource(templateResources: TemplateResources[]): Promise<string> {
+function askTemplateSource(templateResources: TemplateResources[]): Promise<{url: string; summary: string}> {
   return inquirer
     .prompt([
       {
@@ -69,14 +69,16 @@ function askTemplateSource(templateResources: TemplateResources[]): Promise<stri
         pageSize: 8,
         loop: false,
         choices: [
-          ...templateResources.map((item) => ({name: `${item.title} [${chalk.red(item.count + 'P')}]`, value: item.url})),
+          ...templateResources.map((item) => ({name: `${item.title} [${chalk.red(item.count + 'P')}]`, value: item})),
           {
             name: '输入Http下载地址...',
             value: 'inputHttp',
+            short: '地址格式参见 https://www.npmjs.com/package/download-git-repo',
           },
           {
             name: '输入GitClone地址...',
             value: 'inputClone',
+            short: '地址格式参见 https://www.npmjs.com/package/download-git-repo',
           },
         ],
       },
@@ -99,11 +101,13 @@ function askTemplateSource(templateResources: TemplateResources[]): Promise<stri
     ])
     .then(({templateSource, templateSourceInputHttp, templateSourceInputClone}: any) => {
       if (templateSourceInputClone) {
-        return 'clone://' + templateSourceInputClone;
+        return {url: 'clone://' + templateSourceInputClone, summary: ''};
       } else if (templateSourceInputHttp) {
-        return templateSourceInputHttp;
+        return {url: templateSourceInputHttp, summary: ''};
       } else {
-        return templateSource === 'inputHttp' || templateSource === 'inputClone' ? '' : templateSource;
+        return templateSource === 'inputHttp' || templateSource === 'inputClone'
+          ? {url: '', summary: ''}
+          : {url: templateSource.url, summary: templateSource.summary};
       }
     });
 }
@@ -139,6 +143,7 @@ async function askProxy(systemProxy: string): Promise<string> {
           {
             name: '输入代理地址',
             value: 'inputProxy',
+            short: '格式如 http://127.0.0.1:1080',
           },
         ],
       },
@@ -150,7 +155,7 @@ async function askProxy(systemProxy: string): Promise<string> {
           if (!input) {
             return true;
           }
-          return testHttpUrl(input) || chalk.red('格式错误，如:http://127.0.0.1:1080');
+          return testHttpUrl(input) || chalk.red('地址格式错误');
         },
         when(answers: {proxy: string}) {
           return answers.proxy === 'inputProxy';
@@ -171,12 +176,15 @@ async function getTemplates(args: {
   options: CommandOptions;
 }): Promise<void> {
   log('');
-  let repository = await askTemplateSource(args.templateResources);
+  const templateSource = await askTemplateSource(args.templateResources);
+  let repository = templateSource.url;
+  const summary = templateSource.summary;
   if (!repository) {
     log(`${chalk.green('Please reselect...')}\n`);
     setTimeout(() => getTemplates(args), 0);
     return;
   }
+  log('\n' + chalk.green.underline(summary));
   let isClone = false;
   if (repository.startsWith('clone://')) {
     isClone = true;
@@ -220,26 +228,25 @@ function parseTemplates(floder: string): ITemplate[] {
         return null;
       }
       const {
-        title = '',
         framework = [],
         platform = [],
         css = [],
         include = [],
         install = ['./', './mock'],
+        getTitle,
         data,
         rename,
         beforeRender,
         afterRender,
       } = require(creatorFile) as ITemplate;
       return {
-        name,
-        title,
         platform,
         framework,
         css,
         path: dir,
         include,
         install,
+        getTitle,
         data,
         rename,
         beforeRender,
