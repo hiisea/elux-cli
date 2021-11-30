@@ -10,9 +10,14 @@ const terser_webpack_plugin_1 = __importDefault(require("terser-webpack-plugin")
 const webpack_1 = __importDefault(require("webpack"));
 const cli_utils_1 = require("@elux/cli-utils");
 const gen_1 = __importDefault(require("./gen"));
-function dev(projPath, projEnvName, port) {
+async function dev(projPath, projEnvName, port) {
     const config = gen_1.default(projPath, projEnvName, 'development', port);
     const { devServerConfig, clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, projectType, serverPort, nodeEnv, envPath, projEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar }, useSSR, onCompiled, }, } = config;
+    const protAvailable = await cli_utils_1.checkPort(serverPort);
+    if (!protAvailable) {
+        cli_utils_1.err(cli_utils_1.chalk.red(`\n\n*** [error] The port: ${port} is occupied. DevServer startup failed! ***\n\n`));
+        process.exit(1);
+    }
     const envInfo = {
         clientPublicPath,
         clientGlobalVar,

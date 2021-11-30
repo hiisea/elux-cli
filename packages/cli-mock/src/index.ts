@@ -65,7 +65,7 @@ export = function (projectPath: string, env: string, options: {port?: number; di
         shell: process.platform === 'win32',
       });
     } else {
-      log(chalk.red(`\n\n*** [error] The port: ${port} is occupied. Mock server startup failed! ***\n\n`));
+      log(chalk.red(`\n\n*** [error] The port: ${port} is occupied. MockServer startup failed! ***\n\n`));
     }
   });
 };

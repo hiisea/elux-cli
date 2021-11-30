@@ -2,10 +2,10 @@ import path from 'path';
 import WebpackDevServer from 'webpack-dev-server';
 import TerserPlugin from 'terser-webpack-plugin';
 import webpack, {Compiler, MultiCompiler} from 'webpack';
-import {fs, chalk, localIP, log, err} from '@elux/cli-utils';
+import {fs, chalk, localIP, log, err, checkPort} from '@elux/cli-utils';
 import genConfig from './gen';
 
-export function dev(projPath: string, projEnvName: string, port?: number): void {
+export async function dev(projPath: string, projEnvName: string, port?: number): Promise<void> {
   const config = genConfig(projPath, projEnvName, 'development', port);
   const {
     devServerConfig,
@@ -24,6 +24,11 @@ export function dev(projPath: string, projEnvName: string, port?: number): void 
       onCompiled,
     },
   } = config;
+  const protAvailable = await checkPort(serverPort);
+  if (!protAvailable) {
+    err(chalk.red(`\n\n*** [error] The port: ${port} is occupied. DevServer startup failed! ***\n\n`));
+    process.exit(1);
+  }
   const envInfo: any = {
     clientPublicPath,
     clientGlobalVar,
