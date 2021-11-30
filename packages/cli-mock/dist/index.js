@@ -29,20 +29,27 @@ function genMockConfig(rootPath, projEnv, port, mockPath) {
 }
 module.exports = function (projectPath, env, options) {
     const { port, dir } = genMockConfig(projectPath, env, options.port, options.dir);
-    const src = path_1.default.join(dir, './src');
-    const tsconfig = path_1.default.join(dir, './tsconfig.json');
-    const start = path_1.default.join(__dirname, './mock.js');
-    let cmd = '';
-    if (options.watch) {
-        cmd = `nodemon -e ts,js,json -w ${src} --exec ts-node --project ${tsconfig} -r tsconfig-paths/register ${start}`;
-    }
-    else {
-        cmd = `ts-node --project ${tsconfig} -r tsconfig-paths/register ${start}`;
-    }
-    process.env.SRC = src;
-    process.env.PORT = port + '';
-    child_process_1.spawn(cmd, {
-        stdio: 'inherit',
-        shell: process.platform === 'win32',
+    cli_utils_1.checkPort(port).then((available) => {
+        if (available) {
+            const src = path_1.default.join(dir, './src');
+            const tsconfig = path_1.default.join(dir, './tsconfig.json');
+            const start = path_1.default.join(__dirname, './mock.js');
+            let cmd = '';
+            if (options.watch) {
+                cmd = `nodemon -e ts,js,json -w ${src} --exec ts-node --project ${tsconfig} -r tsconfig-paths/register ${start}`;
+            }
+            else {
+                cmd = `ts-node --project ${tsconfig} -r tsconfig-paths/register ${start}`;
+            }
+            process.env.SRC = src;
+            process.env.PORT = port + '';
+            child_process_1.spawn(cmd, {
+                stdio: 'inherit',
+                shell: process.platform === 'win32',
+            });
+        }
+        else {
+            cli_utils_1.log(cli_utils_1.chalk.red(`\n\n*** [error] The port: ${port} is occupied. Mock server startup failed! ***\n\n`));
+        }
     });
 };

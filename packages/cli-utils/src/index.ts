@@ -12,6 +12,7 @@ import {networkInterfaces} from 'os';
 import {URL} from 'url';
 import {Agent as HttpAgent} from 'http';
 import {Agent as HttpsAgent} from 'https';
+import net from 'net';
 import got from 'got';
 import tunnel from 'tunnel';
 import getProxy from 'get-proxy';
@@ -191,6 +192,23 @@ function createProxyAgent(url: string, proxyUrl: string): {http?: HttpAgent; htt
 function testHttpUrl(url: string): boolean {
   return new RegExp('https?://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]').test(url);
 }
+function checkPort(port: number): Promise<Boolean> {
+  const server = net.createServer().listen(port);
+  return new Promise((resolve, reject) => {
+    server.on('listening', () => {
+      server.close();
+      resolve(true);
+    });
+    server.on('error', (err) => {
+      if (err['code'] === 'EADDRINUSE') {
+        resolve(false);
+      } else {
+        reject(err);
+      }
+    });
+  });
+}
+
 export = {
   chalk,
   semver,
@@ -214,4 +232,5 @@ export = {
   getProxy,
   createProxyAgent,
   testHttpUrl,
+  checkPort,
 };

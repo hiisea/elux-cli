@@ -24,6 +24,7 @@ declare function createProxyAgent(url: string, proxyUrl: string): {
     https?: HttpsAgent;
 } | undefined;
 declare function testHttpUrl(url: string): boolean;
+declare function checkPort(port: number): Promise<Boolean>;
 declare const _default: {
     chalk: chalk.Chalk & chalk.ChalkFunction & {
         supportsColor: false | chalk.ColorSupport;
@@ -84,5 +85,6 @@ declare const _default: {
     getProxy: () => string | null;
     createProxyAgent: typeof createProxyAgent;
     testHttpUrl: typeof testHttpUrl;
+    checkPort: typeof checkPort;
 };
 export = _default;

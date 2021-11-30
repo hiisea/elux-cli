@@ -13,6 +13,7 @@ const readline_1 = __importDefault(require("readline"));
 const deep_extend_1 = __importDefault(require("deep-extend"));
 const os_1 = require("os");
 const url_1 = require("url");
+const net_1 = __importDefault(require("net"));
 const got_1 = __importDefault(require("got"));
 const tunnel_1 = __importDefault(require("tunnel"));
 const get_proxy_1 = __importDefault(require("get-proxy"));
@@ -166,6 +167,23 @@ function createProxyAgent(url, proxyUrl) {
 function testHttpUrl(url) {
     return new RegExp('https?://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]').test(url);
 }
+function checkPort(port) {
+    const server = net_1.default.createServer().listen(port);
+    return new Promise((resolve, reject) => {
+        server.on('listening', () => {
+            server.close();
+            resolve(true);
+        });
+        server.on('error', (err) => {
+            if (err['code'] === 'EADDRINUSE') {
+                resolve(false);
+            }
+            else {
+                reject(err);
+            }
+        });
+    });
+}
 module.exports = {
     chalk: chalk_1.default,
     semver: semver_1.default,
@@ -189,4 +207,5 @@ module.exports = {
     getProxy: get_proxy_1.default,
     createProxyAgent,
     testHttpUrl,
+    checkPort,
 };

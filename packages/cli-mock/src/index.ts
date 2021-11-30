@@ -1,6 +1,6 @@
 import path from 'path';
 import {spawn} from 'child_process';
-import {fs, deepExtend} from '@elux/cli-utils';
+import {checkPort, fs, deepExtend, chalk, log} from '@elux/cli-utils';
 
 interface MockServerPreset {
   port: number;
@@ -47,19 +47,25 @@ function genMockConfig(
 
 export = function (projectPath: string, env: string, options: {port?: number; dir?: string; watch?: boolean}): void {
   const {port, dir} = genMockConfig(projectPath, env, options.port, options.dir);
-  const src = path.join(dir, './src');
-  const tsconfig = path.join(dir, './tsconfig.json');
-  const start = path.join(__dirname, './mock.js');
-  let cmd = '';
-  if (options.watch) {
-    cmd = `nodemon -e ts,js,json -w ${src} --exec ts-node --project ${tsconfig} -r tsconfig-paths/register ${start}`;
-  } else {
-    cmd = `ts-node --project ${tsconfig} -r tsconfig-paths/register ${start}`;
-  }
-  process.env.SRC = src;
-  process.env.PORT = port + '';
-  spawn(cmd, {
-    stdio: 'inherit',
-    shell: process.platform === 'win32',
+  checkPort(port).then((available) => {
+    if (available) {
+      const src = path.join(dir, './src');
+      const tsconfig = path.join(dir, './tsconfig.json');
+      const start = path.join(__dirname, './mock.js');
+      let cmd = '';
+      if (options.watch) {
+        cmd = `nodemon -e ts,js,json -w ${src} --exec ts-node --project ${tsconfig} -r tsconfig-paths/register ${start}`;
+      } else {
+        cmd = `ts-node --project ${tsconfig} -r tsconfig-paths/register ${start}`;
+      }
+      process.env.SRC = src;
+      process.env.PORT = port + '';
+      spawn(cmd, {
+        stdio: 'inherit',
+        shell: process.platform === 'win32',
+      });
+    } else {
+      log(chalk.red(`\n\n*** [error] The port: ${port} is occupied. Mock server startup failed! ***\n\n`));
+    }
   });
 };
