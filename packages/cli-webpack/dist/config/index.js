@@ -15,7 +15,7 @@ async function dev(projPath, projEnvName, port) {
     const { devServerConfig, clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, projectType, serverPort, nodeEnv, envPath, projEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar }, useSSR, onCompiled, }, } = config;
     const protAvailable = await cli_utils_1.checkPort(serverPort);
     if (!protAvailable) {
-        cli_utils_1.err(cli_utils_1.chalk.red(`\n\n*** [error] The port: ${port} is occupied. DevServer startup failed! ***\n\n`));
+        cli_utils_1.err(cli_utils_1.chalk.red(`\n\n[error] The port: ${serverPort} is occupied. DevServer startup failed!\n\n`));
         process.exit(1);
     }
     const envInfo = {

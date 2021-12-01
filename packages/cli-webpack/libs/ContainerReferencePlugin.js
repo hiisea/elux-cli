@@ -106,7 +106,7 @@ class ContainerReferencePlugin {
 					data => {
 						if (!data.request.includes("!")) {
 							for (const [key, config] of remotes) {
-                const alias = data.request.split('/',3).join('/'); //todo
+                const alias = data.request.split('/',2).join('/'); //todo
                 const request = ModuleMap[alias] ? data.request.replace(alias, ModuleMap[alias]) : data.request;
                 if (
 									request.startsWith(`${key}`) &&

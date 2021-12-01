@@ -26,7 +26,7 @@ export async function dev(projPath: string, projEnvName: string, port?: number):
   } = config;
   const protAvailable = await checkPort(serverPort);
   if (!protAvailable) {
-    err(chalk.red(`\n\n*** [error] The port: ${port} is occupied. DevServer startup failed! ***\n\n`));
+    err(chalk.red(`\n\n[error] The port: ${serverPort} is occupied. DevServer startup failed!\n\n`));
     process.exit(1);
   }
   const envInfo: any = {
