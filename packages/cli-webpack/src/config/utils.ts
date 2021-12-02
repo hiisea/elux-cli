@@ -12,7 +12,7 @@ const EslintWebpackPlugin = require('eslint-webpack-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-
+//const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const {VueLoaderPlugin} = require('vue-loader');
 
 // const ModuleFederationPlugin = webpack.container.ModuleFederationPlugin;
@@ -171,16 +171,7 @@ function oneOfTsLoader(isProdModel: boolean, isVue: boolean, isServer: boolean):
       loader: 'babel-loader',
     },
   ];
-  if (isVue) {
-    loaders.push({
-      loader: 'ts-loader',
-      options: {
-        transpileOnly: true,
-        appendTsSuffixTo: ['\\.vue$'],
-        happyPackMode: false,
-      },
-    });
-  } else if (!isVue && !isServer && !isProdModel) {
+  if (!isVue && !isServer && !isProdModel) {
     loaders[0].options = {
       plugins: [require.resolve('react-refresh/babel')],
     };
@@ -209,16 +200,7 @@ function tsxLoaders(isProdModel: boolean, isVue: boolean, isServer: boolean): We
       loader: 'babel-loader',
     },
   ];
-  if (isVue) {
-    loaders.push({
-      loader: 'ts-loader',
-      options: {
-        transpileOnly: true,
-        appendTsxSuffixTo: ['\\.vue$'],
-        happyPackMode: false,
-      },
-    });
-  } else if (!isVue && !isServer && !isProdModel) {
+  if (!isVue && !isServer && !isProdModel) {
     loaders[0].options = {
       plugins: [require.resolve('react-refresh/babel')],
     };

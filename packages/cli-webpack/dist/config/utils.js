@@ -138,17 +138,7 @@ function oneOfTsLoader(isProdModel, isVue, isServer) {
             loader: 'babel-loader',
         },
     ];
-    if (isVue) {
-        loaders.push({
-            loader: 'ts-loader',
-            options: {
-                transpileOnly: true,
-                appendTsSuffixTo: ['\\.vue$'],
-                happyPackMode: false,
-            },
-        });
-    }
-    else if (!isVue && !isServer && !isProdModel) {
+    if (!isVue && !isServer && !isProdModel) {
         loaders[0].options = {
             plugins: [require.resolve('react-refresh/babel')],
         };
@@ -176,17 +166,7 @@ function tsxLoaders(isProdModel, isVue, isServer) {
             loader: 'babel-loader',
         },
     ];
-    if (isVue) {
-        loaders.push({
-            loader: 'ts-loader',
-            options: {
-                transpileOnly: true,
-                appendTsxSuffixTo: ['\\.vue$'],
-                happyPackMode: false,
-            },
-        });
-    }
-    else if (!isVue && !isServer && !isProdModel) {
+    if (!isVue && !isServer && !isProdModel) {
         loaders[0].options = {
             plugins: [require.resolve('react-refresh/babel')],
         };

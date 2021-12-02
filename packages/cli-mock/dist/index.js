@@ -11,7 +11,6 @@ function genMockConfig(rootPath, projEnv, port, mockPath) {
         : {};
     const envPath = baseEluxConfig.dir?.envPath || './env';
     const projEnvPath = path_1.default.resolve(rootPath, envPath, `./${projEnv}`);
-    cli_utils_1.fs.ensureDirSync(projEnvPath);
     const envEluxConfig = cli_utils_1.fs.existsSync(path_1.default.join(projEnvPath, `elux.config.js`))
         ? require(path_1.default.join(projEnvPath, `elux.config.js`))
         : {};
