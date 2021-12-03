@@ -1,2 +1,2 @@
-declare const _default: (_tsconfig?: string | Object | undefined, _entryFilePath?: string | undefined, _echo?: boolean | undefined) => void;
+declare const _default: (_entryFilePath?: string | undefined, _echo?: boolean | undefined) => Promise<void>;
 export = _default;

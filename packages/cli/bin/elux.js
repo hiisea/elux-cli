@@ -54,11 +54,11 @@ program
   });
 
 program
-  .command('demote [entry] [tsconfig]')
+  .command('demote [entry]')
   .description('Patch the actions without proxy, Make it compatible with lower version browsers')
   .option('--echo', 'echo only, do not write')
-  .action((tsconfig, entry, options) => {
-    const args = [tsconfig, entry, !!options.echo];
+  .action((entry, options) => {
+    const args = [entry, !!options.echo];
     require('../dist/patch-actions')(...args);
   });
 

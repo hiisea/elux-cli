@@ -1,25 +1,29 @@
 import path from 'path';
 import fs from 'fs';
-import TJS from 'typescript-json-schema';
-import {chalk, log} from '@elux/cli-utils';
+import {getProgramFromFiles, generateSchema} from 'typescript-json-schema';
+import {chalk, log, execa} from '@elux/cli-utils';
 
-export = function moduleExports(_tsconfig?: string | Object, _entryFilePath?: string, _echo?: boolean): void {
+export = async function moduleExports(_entryFilePath?: string, _echo?: boolean): Promise<void> {
+  const {stdout} = await execa('tsc', ['--project', './src', '--showConfig']);
   const rootPath = process.cwd();
   const srcPath = path.join(rootPath, 'src');
-  let tsconfig;
-  if (!_tsconfig) {
-    if (fs.existsSync(path.join(srcPath, './tsconfig.json'))) {
-      tsconfig = require(path.join(srcPath, './tsconfig.json'));
-      process.chdir('./src');
-    } else {
-      tsconfig = require(path.join(rootPath, './tsconfig.json'));
-    }
-  } else if (typeof _tsconfig === 'string') {
-    tsconfig = require(_tsconfig);
+  let tsconfigDir: string;
+  if (fs.existsSync(path.join(srcPath, './tsconfig.json'))) {
+    tsconfigDir = srcPath;
+    process.chdir(tsconfigDir);
   } else {
-    tsconfig = _tsconfig;
+    tsconfigDir = rootPath;
   }
-
+  const tsconfig = JSON.parse(stdout);
+  const {baseUrl = ''} = tsconfig.compilerOptions || {};
+  const compilerOptions = {
+    ...tsconfig.compilerOptions,
+    baseUrl: path.resolve(tsconfigDir, baseUrl),
+    emitDeclarationOnly: false,
+    noEmit: true,
+    composite: false,
+    sourceMap: false,
+  };
   const entryFilePath =
     _entryFilePath || (fs.existsSync(path.join(srcPath, 'Global.ts')) ? path.join(srcPath, 'Global.ts') : path.join(srcPath, 'Global.tsx'));
   const source = fs.readFileSync(entryFilePath).toString();
@@ -29,9 +33,9 @@ export = function moduleExports(_tsconfig?: string | Object, _entryFilePath?: st
     const typeName = args1.trim();
     const json = args2.join(',').trim();
     const files = [entryFilePath];
-    log(`patchActions using type ${chalk.magenta(`${typeName.substr(1, typeName.length - 2)}`)} for ${chalk.underline(entryFilePath)}`);
-    const program = TJS.getProgramFromFiles(files, {...tsconfig.compilerOptions, composite: false, sourceMap: false});
-    const defineType = TJS.generateSchema(program, typeName.substr(1, typeName.length - 2), {ignoreErrors: false});
+    log(`patchActions using type ${chalk.magenta(`${typeName.substr(1, typeName.length - 2)}`)} for ${entryFilePath}`);
+    const program = getProgramFromFiles(files, compilerOptions);
+    const defineType = generateSchema(program, typeName.substr(1, typeName.length - 2), {ignoreErrors: false});
     const properties: any = defineType!.properties!;
     const actions = Object.keys(properties).reduce((obj, key) => {
       obj[key] = properties[key].enum;
@@ -43,9 +47,9 @@ export = function moduleExports(_tsconfig?: string | Object, _entryFilePath?: st
     } else if (json !== json2) {
       const newSource = source.replace(arr[0], `patchActions(${typeName}, ${json2})`);
       fs.writeFileSync(entryFilePath, newSource);
-      log(`${chalk.underline(entryFilePath)} has been patched!`);
+      log(chalk.green(`\n✔ ${entryFilePath} has been patched!\n`));
     } else {
-      log('There was no change!');
+      log(chalk.green('\nThere was no changes!\n'));
     }
   }
 };

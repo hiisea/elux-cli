@@ -4,27 +4,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-const typescript_json_schema_1 = __importDefault(require("typescript-json-schema"));
+const typescript_json_schema_1 = require("typescript-json-schema");
 const cli_utils_1 = require("@elux/cli-utils");
-module.exports = function moduleExports(_tsconfig, _entryFilePath, _echo) {
+module.exports = async function moduleExports(_entryFilePath, _echo) {
+    const { stdout } = await cli_utils_1.execa('tsc', ['--project', './src', '--showConfig']);
     const rootPath = process.cwd();
     const srcPath = path_1.default.join(rootPath, 'src');
-    let tsconfig;
-    if (!_tsconfig) {
-        if (fs_1.default.existsSync(path_1.default.join(srcPath, './tsconfig.json'))) {
-            tsconfig = require(path_1.default.join(srcPath, './tsconfig.json'));
-            process.chdir('./src');
-        }
-        else {
-            tsconfig = require(path_1.default.join(rootPath, './tsconfig.json'));
-        }
-    }
-    else if (typeof _tsconfig === 'string') {
-        tsconfig = require(_tsconfig);
+    let tsconfigDir;
+    if (fs_1.default.existsSync(path_1.default.join(srcPath, './tsconfig.json'))) {
+        tsconfigDir = srcPath;
+        process.chdir(tsconfigDir);
     }
     else {
-        tsconfig = _tsconfig;
+        tsconfigDir = rootPath;
     }
+    const tsconfig = JSON.parse(stdout);
+    const { baseUrl = '' } = tsconfig.compilerOptions || {};
+    const compilerOptions = {
+        ...tsconfig.compilerOptions,
+        baseUrl: path_1.default.resolve(tsconfigDir, baseUrl),
+        emitDeclarationOnly: false,
+        noEmit: true,
+        composite: false,
+        sourceMap: false,
+    };
     const entryFilePath = _entryFilePath || (fs_1.default.existsSync(path_1.default.join(srcPath, 'Global.ts')) ? path_1.default.join(srcPath, 'Global.ts') : path_1.default.join(srcPath, 'Global.tsx'));
     const source = fs_1.default.readFileSync(entryFilePath).toString();
     const arr = source.match(/patchActions\s*\(([^)]+)\)/m);
@@ -33,9 +36,9 @@ module.exports = function moduleExports(_tsconfig, _entryFilePath, _echo) {
         const typeName = args1.trim();
         const json = args2.join(',').trim();
         const files = [entryFilePath];
-        cli_utils_1.log(`patchActions using type ${cli_utils_1.chalk.magenta(`${typeName.substr(1, typeName.length - 2)}`)} for ${cli_utils_1.chalk.underline(entryFilePath)}`);
-        const program = typescript_json_schema_1.default.getProgramFromFiles(files, { ...tsconfig.compilerOptions, composite: false, sourceMap: false });
-        const defineType = typescript_json_schema_1.default.generateSchema(program, typeName.substr(1, typeName.length - 2), { ignoreErrors: false });
+        cli_utils_1.log(`patchActions using type ${cli_utils_1.chalk.magenta(`${typeName.substr(1, typeName.length - 2)}`)} for ${entryFilePath}`);
+        const program = typescript_json_schema_1.getProgramFromFiles(files, compilerOptions);
+        const defineType = typescript_json_schema_1.generateSchema(program, typeName.substr(1, typeName.length - 2), { ignoreErrors: false });
         const properties = defineType.properties;
         const actions = Object.keys(properties).reduce((obj, key) => {
             obj[key] = properties[key].enum;
@@ -48,10 +51,10 @@ module.exports = function moduleExports(_tsconfig, _entryFilePath, _echo) {
         else if (json !== json2) {
             const newSource = source.replace(arr[0], `patchActions(${typeName}, ${json2})`);
             fs_1.default.writeFileSync(entryFilePath, newSource);
-            cli_utils_1.log(`${cli_utils_1.chalk.underline(entryFilePath)} has been patched!`);
+            cli_utils_1.log(cli_utils_1.chalk.green(`\n✔ ${entryFilePath} has been patched!\n`));
         }
         else {
-            cli_utils_1.log('There was no change!');
+            cli_utils_1.log(cli_utils_1.chalk.green('\nThere was no changes!\n'));
         }
     }
 };

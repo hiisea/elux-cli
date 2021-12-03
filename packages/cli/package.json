@@ -53,7 +53,7 @@
     "leven": "^3.1.0",
     "mem-fs": "^2.2.1",
     "mem-fs-editor": "^9.3.0",
-    "typescript-json-schema": "^0.51.0",
+    "typescript-json-schema": "^0.52.0",
     "validate-npm-package-name": "^3.0.0"
   },
   "gitHead": "c2d8bb9ed8d10102413bdf655c7326e94f4a4464"

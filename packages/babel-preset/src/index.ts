@@ -57,6 +57,10 @@ module.exports = function (api: any, options: Options = {}) {
     ].filter(Boolean),
     overrides: [
       {
+        test: /\.vue$/,
+        plugins: [['@babel/plugin-transform-typescript', {allowDeclareFields: true, isTSX: true}], ...pluginsList],
+      },
+      {
         test: /\.ts$/,
         plugins: [['@babel/plugin-transform-typescript', {allowDeclareFields: true, isTSX: false}], ...pluginsList],
       },
