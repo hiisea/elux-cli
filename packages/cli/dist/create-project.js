@@ -123,7 +123,7 @@ async function askProxy(systemProxy) {
         prompts.push({
             type: 'input',
             name: 'inputProxy',
-            message: '是否需要设置代理',
+            message: '是否使用代理【输入代理地址或回车跳过】',
             validate(input) {
                 if (!input) {
                     return true;
@@ -181,7 +181,7 @@ async function getTemplates(args) {
         setTimeout(() => getTemplates(args), 0);
         return;
     }
-    cli_utils_1.log('\n' + cli_utils_1.chalk.green.underline(summary));
+    summary && cli_utils_1.log('\n' + cli_utils_1.chalk.green.underline(summary));
     let isClone = false;
     if (repository.startsWith('clone://')) {
         isClone = true;
@@ -218,7 +218,8 @@ function parseTemplates(floder) {
     cli_utils_1.readDirSync(floder).forEach((file) => {
         if (file.isFile && file.name.endsWith('.conf.js')) {
             const tplPath = path_1.default.join(floder, file.name);
-            const tpl = require(tplPath);
+            const tplFun = new Function(cli_utils_1.fs.readFileSync(tplPath).toString());
+            const tpl = tplFun();
             templates.push(tpl);
         }
     });

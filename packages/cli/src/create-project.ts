@@ -117,7 +117,7 @@ async function askProxy(systemProxy: string): Promise<string> {
     prompts.push({
       type: 'input',
       name: 'inputProxy',
-      message: '是否需要设置代理',
+      message: '是否使用代理【输入代理地址或回车跳过】',
       validate(input: string) {
         if (!input) {
           return true;
@@ -184,7 +184,7 @@ async function getTemplates(args: {
     setTimeout(() => getTemplates(args), 0);
     return;
   }
-  log('\n' + chalk.green.underline(summary));
+  summary && log('\n' + chalk.green.underline(summary));
   let isClone = false;
   if (repository.startsWith('clone://')) {
     isClone = true;
@@ -221,7 +221,8 @@ function parseTemplates(floder: string): ITemplate[] {
   readDirSync(floder).forEach((file) => {
     if (file.isFile && file.name.endsWith('.conf.js')) {
       const tplPath = path.join(floder, file.name);
-      const tpl = require(tplPath) as ITemplate;
+      const tplFun = new Function(fs.readFileSync(tplPath).toString());
+      const tpl = tplFun() as ITemplate;
       templates.push(tpl);
     }
   });

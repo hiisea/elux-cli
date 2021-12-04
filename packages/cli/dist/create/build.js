@@ -62,6 +62,9 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
     const templateData = template.data ? template.data({ ...featChoices, projectName }) : { ...featChoices, projectName };
     const tempDir = path_1.default.join(templateDir, './$');
     (template.operation || []).forEach((item) => {
+        if (item.from.includes('..') || item.to.includes('..')) {
+            return;
+        }
         const from = path_1.default.join(templateDir, item.from);
         const to = path_1.default.join(templateDir, item.to);
         if (item.action === 'copy') {
