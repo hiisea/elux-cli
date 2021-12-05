@@ -6,7 +6,7 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const typescript_json_schema_1 = require("typescript-json-schema");
 const cli_utils_1 = require("@elux/cli-utils");
-module.exports = async function moduleExports(_entryFilePath, _echo) {
+module.exports = async function moduleExports(_entryFilePath, echo) {
     const { stdout } = await cli_utils_1.execa('tsc', ['--project', './src', '--showConfig']);
     const rootPath = process.cwd();
     const srcPath = path_1.default.join(rootPath, 'src');
@@ -30,31 +30,34 @@ module.exports = async function moduleExports(_entryFilePath, _echo) {
     };
     const entryFilePath = _entryFilePath || (fs_1.default.existsSync(path_1.default.join(srcPath, 'Global.ts')) ? path_1.default.join(srcPath, 'Global.ts') : path_1.default.join(srcPath, 'Global.tsx'));
     const source = fs_1.default.readFileSync(entryFilePath).toString();
-    const arr = source.match(/patchActions\s*\(([^)]+)\)/m);
+    const arr = source.match(/(getApp<\w+>\s*\()([^)]*?)(\))/m);
+    const typeName = 'PatchActions';
     if (arr) {
-        const [args1, ...args2] = arr[1].split(',');
-        const typeName = args1.trim();
-        const json = args2.join(',').trim();
+        const arg = arr[2].trim();
+        const actions2 = arg ? JSON.parse(arg) : {};
         const files = [entryFilePath];
-        cli_utils_1.log(`patchActions using type ${cli_utils_1.chalk.magenta(`${typeName.substr(1, typeName.length - 2)}`)} for ${entryFilePath}`);
+        cli_utils_1.log(`Patch actions for ${entryFilePath}`);
         const program = typescript_json_schema_1.getProgramFromFiles(files, compilerOptions);
-        const defineType = typescript_json_schema_1.generateSchema(program, typeName.substr(1, typeName.length - 2), { ignoreErrors: false });
+        const defineType = typescript_json_schema_1.generateSchema(program, typeName, { ignoreErrors: false });
         const properties = defineType.properties;
         const actions = Object.keys(properties).reduce((obj, key) => {
             obj[key] = properties[key].enum;
             return obj;
         }, {});
-        const json2 = `'${JSON.stringify(actions)}'`;
-        if (_echo) {
-            cli_utils_1.log(`\n${cli_utils_1.chalk.green(JSON.stringify(actions, null, 4))}\n`);
-        }
-        else if (json !== json2) {
-            const newSource = source.replace(arr[0], `patchActions(${typeName}, ${json2})`);
-            fs_1.default.writeFileSync(entryFilePath, newSource);
-            cli_utils_1.log(cli_utils_1.chalk.green(`\n✔ ${entryFilePath} has been patched!\n`));
+        const json = JSON.stringify(actions);
+        const json2 = JSON.stringify(actions2);
+        if (json === json2) {
+            cli_utils_1.log(cli_utils_1.chalk.green('\nThere was no changes!\n'));
         }
         else {
-            cli_utils_1.log(cli_utils_1.chalk.green('\nThere was no changes!\n'));
+            if (echo) {
+                cli_utils_1.log(`\n${cli_utils_1.chalk.green(JSON.stringify(actions, null, 4))}\n`);
+            }
+            else {
+                const newSource = source.replace(arr[0], `${arr[1]}${json}${arr[3]}`);
+                fs_1.default.writeFileSync(entryFilePath, newSource);
+                cli_utils_1.log(cli_utils_1.chalk.green(`\n✔ ${entryFilePath} has been patched!\n`));
+            }
         }
     }
 };
