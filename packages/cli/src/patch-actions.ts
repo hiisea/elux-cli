@@ -30,8 +30,13 @@ export = async function moduleExports(_entryFilePath?: string, echo?: boolean): 
   const arr = source.match(/(getApp<\w+>\s*\()([^)]*?)(\))/m);
   const typeName = 'PatchActions';
   if (arr) {
-    const arg = arr[2].trim();
-    const actions2 = arg ? JSON.parse(arg) : {};
+    const demoteForProdOnly = arr[2].substr(0, arr[2].indexOf(',')).trim() || 'true';
+    const actionStr = arr[2].substr(arr[2].indexOf(',') + 1).trim();
+    let actions2 = {};
+    if (actionStr) {
+      actions2 = {};
+      eval('actions2 = ' + actionStr);
+    }
     const files = [entryFilePath];
     log(`Patch actions for ${entryFilePath}`);
     const program = getProgramFromFiles(files, compilerOptions);
@@ -49,7 +54,7 @@ export = async function moduleExports(_entryFilePath?: string, echo?: boolean): 
       if (echo) {
         log(`\n${chalk.green(JSON.stringify(actions, null, 4))}\n`);
       } else {
-        const newSource = source.replace(arr[0], `${arr[1]}${json}${arr[3]}`);
+        const newSource = source.replace(arr[0], `${arr[1]}${demoteForProdOnly}, ${json}${arr[3]}`);
         fs.writeFileSync(entryFilePath, newSource);
         log(chalk.green(`\n✔ ${entryFilePath} has been patched!\n`));
       }
