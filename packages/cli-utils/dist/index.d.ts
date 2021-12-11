@@ -6,6 +6,7 @@ import execa from 'execa';
 import ora from 'ora';
 import { Agent as HttpAgent } from 'http';
 import { Agent as HttpsAgent } from 'https';
+import { Listr } from 'listr2';
 declare function slash(path: string): string;
 declare function log(message: string): void;
 declare function err(message: string): void;
@@ -46,6 +47,7 @@ declare const _default: {
         (options?: string | ora.Options | undefined): ora.Ora;
         promise(action: PromiseLike<unknown>, options?: string | ora.Options | undefined): ora.Ora;
     };
+    Listr: typeof Listr;
     localIP: string;
     log: typeof log;
     err: typeof err;

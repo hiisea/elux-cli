@@ -36,7 +36,7 @@ async function build({
   logInstallInfo = function () {
     log('');
     log('- 进入项目 ' + chalk.cyan(`cd ${cdPath}`));
-    log('- 以下目录需要安装依赖 ' + chalk.cyan('yarn install') + chalk.yellow(' (推荐yarn，支持workspaces一次性安装)'));
+    log('- 以下目录需要安装依赖 ' + chalk.cyan('yarn install') + chalk.yellow(' (推荐yarn，使用workspaces一次性安装)'));
     template.install.forEach((dir) => {
       log(chalk.green(`  ${dir}`));
     });

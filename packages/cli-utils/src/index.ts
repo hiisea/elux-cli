@@ -17,6 +17,7 @@ import got from 'got';
 import tunnel from 'tunnel';
 import getProxy from 'get-proxy';
 import {execSync} from 'child_process';
+import {Listr} from 'listr2';
 
 function getLocalIP() {
   let result = 'localhost';
@@ -217,6 +218,7 @@ export = {
   minimist,
   fs,
   ora,
+  Listr,
   localIP,
   log,
   err,

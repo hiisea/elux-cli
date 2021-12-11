@@ -18,6 +18,7 @@ const got_1 = __importDefault(require("got"));
 const tunnel_1 = __importDefault(require("tunnel"));
 const get_proxy_1 = __importDefault(require("get-proxy"));
 const child_process_1 = require("child_process");
+const listr2_1 = require("listr2");
 function getLocalIP() {
     let result = 'localhost';
     const interfaces = os_1.networkInterfaces();
@@ -192,6 +193,7 @@ module.exports = {
     minimist: minimist_1.default,
     fs: fs_extra_1.default,
     ora: ora_1.default,
+    Listr: listr2_1.Listr,
     localIP,
     log,
     err,

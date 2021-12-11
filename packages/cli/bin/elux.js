@@ -10,8 +10,15 @@ const program = require('commander');
 program.version(`@elux/cli ${require('../package').version}`).usage('<command> [options]');
 
 program
+  .command('init')
+  .description('Initialize new project')
+  .action(() => {
+    require('../dist/create-project')({packageJson});
+  });
+
+program
   .command('dev [env]')
-  .description('Use a preset env configurations to start the devServer. Default is local')
+  .description('Use a preset env configurations to start the devServer. Default env is local')
   .option('-c, --compiler <value>', 'Default is webpack')
   .option('-p, --port <value>', 'Normalize a port into a number. Default is to load from elux.config.js')
   .action((env, options) => {
@@ -22,7 +29,7 @@ program
 
 program
   .command('build [env]')
-  .description('Use a preset env configurations to build the project. Default is local')
+  .description('Use a preset env configurations to build the project. Default env is local')
   .option('-c, --compiler <value>', 'Default is webpack')
   .option('-p, --port <value>', 'Normalize a port into a number. Default is to load from elux.config.js')
   .action((env, options) => {
@@ -43,17 +50,6 @@ program
   });
 
 program
-  .command('pack <input> <output>')
-  .description('Packaging JS files using a packer')
-  .option('-c, --compiler <value>', 'Default is webpack')
-  .option('-t, --target <type>', 'Refer to the target of webpack. Default is es5')
-  .action((input, output, options) => {
-    const moduleName = `@elux/cli-${options.compiler || 'webpack'}`;
-    const args = [input, output, options.target || 'es5'];
-    require(moduleName).pack(...args);
-  });
-
-program
   .command('demote [entry]')
   .description('Patch the actions without proxy, Make it compatible with lower version browsers')
   .option('--echo', 'echo only, do not write')
@@ -63,29 +59,40 @@ program
   });
 
 program
-  .command('init')
-  .description('Initialize new project')
-  .action(() => {
-    require('../dist/create-project')({packageJson});
+  .command('pack <input> <output>')
+  .description('Packaging JS bundle using a packager. Default is webpack')
+  .option('-c, --compiler <value>', 'Default is webpack')
+  .option('-t, --target <type>', 'Refer to the target of webpack. Default is es5')
+  .action((input, output, options) => {
+    const moduleName = `@elux/cli-${options.compiler || 'webpack'}`;
+    const args = [input, output, options.target || 'es5'];
+    require(moduleName).pack(...args);
+  });
+
+program
+  .command('gen [configPath]')
+  .description('Download and generate web pages from URLs. Default config is ./elux.gen.js')
+  .action((configPath) => {
+    require('../dist/download-gen')(process.cwd(), configPath || './elux.gen.js');
   });
 
 // output help information on unknown commands
 program.on('command:*', ([cmd]) => {
   program.outputHelp();
   log(`  ` + chalk.red(`Unknown command ${chalk.yellow(cmd)}.`));
-  log();
+  log('');
   suggestCommands(cmd);
   process.exitCode = 1;
 });
 
 // add some useful info on help
 program.on('--help', () => {
-  log();
+  log('');
   log(`  Run ${chalk.cyan(`elux <command> --help`)} for detailed usage of given command.`);
-  log();
+  log('');
 });
 
-program.commands.forEach((c) => c.on('--help', () => log()));
+program.commands.forEach((c) => c.on('--help', () => log('')));
 
 program.parse(process.argv);
 

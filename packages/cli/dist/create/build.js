@@ -45,7 +45,7 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
     logInstallInfo = function () {
         cli_utils_1.log('');
         cli_utils_1.log('- 进入项目 ' + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
-        cli_utils_1.log('- 以下目录需要安装依赖 ' + cli_utils_1.chalk.cyan('yarn install') + cli_utils_1.chalk.yellow(' (推荐yarn，支持workspaces一次性安装)'));
+        cli_utils_1.log('- 以下目录需要安装依赖 ' + cli_utils_1.chalk.cyan('yarn install') + cli_utils_1.chalk.yellow(' (推荐yarn，使用workspaces一次性安装)'));
         template.install.forEach((dir) => {
             cli_utils_1.log(cli_utils_1.chalk.green(`  ${dir}`));
         });
