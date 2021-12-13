@@ -1,6 +1,6 @@
 {
   "name": "@elux/cli-utils",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "shared utilities for development tools",
   "repository": "https://github.com/hiisea/elux/tree/master/packages/cli-utils",
   "author": "hiisea <hiisea@qq.com>",
@@ -31,10 +31,10 @@
     "listr2": "^3.13.5",
     "minimist": "^1.2.5",
     "ora": "^5.4.1",
+    "schema-utils": "^3.0.0",
     "semver": "^7.3.5",
     "strip-ansi": "^6.0.0",
-    "tunnel": "^0.0.6",
-    "schema-utils": "^3.0.0"
+    "tunnel": "^0.0.6"
   },
   "gitHead": "c2d8bb9ed8d10102413bdf655c7326e94f4a4464"
 }

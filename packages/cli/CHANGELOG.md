@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.1](https://github.com/hiisea/elux/compare/@elux/cli@1.1.0...@elux/cli@1.1.1) (2021-12-13)
+
+
+### Bug Fixes
+
+* 修复mac下spawn参数错误、优化部分交互提示文本 ([729bd25](https://github.com/hiisea/elux/commit/729bd25aea39b883d19f99a81068d52504a18c1a))
+* ssr生成时retry导致内存溢出 ([bf52f27](https://github.com/hiisea/elux/commit/bf52f27484d9ec35f40c06ecba468c18638810d6))
+
+
+
+
+
 # 1.1.0 (2021-12-12)
 
 
