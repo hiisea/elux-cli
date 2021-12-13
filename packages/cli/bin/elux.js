@@ -62,7 +62,8 @@ program
   .action((env) => {
     env = env || 'local';
     const {config} = getConfig(process.cwd(), env);
-    require('../dist/download-gen')(config);
+    const args = [process.cwd(), config, env];
+    require('../dist/download-gen')(...args);
   });
 
 program

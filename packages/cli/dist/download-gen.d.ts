@@ -10,10 +10,10 @@ interface Config {
     override?: boolean;
     replace?: (code: string) => string;
     onComplete?: (skipItems: Record<string, string>, errorItems: Record<string, string>, successItems: number) => void;
-    entries: Array<() => Task[]>;
+    entries: Array<(envName: string) => Task[]>;
 }
 interface EluxConfig {
     gen: Config;
 }
-declare const _default: (eluxConfig: EluxConfig) => Promise<void>;
+declare const _default: (rootPath: string, eluxConfig: EluxConfig, envName: string) => Promise<void>;
 export = _default;

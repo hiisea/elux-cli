@@ -13,7 +13,7 @@ interface Config {
   override?: boolean;
   replace?: (code: string) => string;
   onComplete?: (skipItems: Record<string, string>, errorItems: Record<string, string>, successItems: number) => void;
-  entries: Array<() => Task[]>;
+  entries: Array<(envName: string) => Task[]>;
 }
 
 interface EluxConfig {
@@ -46,7 +46,7 @@ const EluxConfigSchema: any = {
         },
         entries: {
           type: 'array',
-          description: 'Array<()=>{url:string;dist:string;timeout?:number;override?:boolean;replace?:(code:string)=>string}[]>',
+          description: 'Array<(envName: string)=>{url:string;dist:string;timeout?:number;override?:boolean;replace?:(code:string)=>string}[]>',
           minItems: 1,
           items: {
             instanceof: 'Function',
@@ -57,6 +57,7 @@ const EluxConfigSchema: any = {
   },
 };
 interface MetaData {
+  rootPath: string;
   config: Config;
   skipItems: Record<string, string>;
   errorItems: Record<string, string>;
@@ -76,7 +77,8 @@ interface MetaData {
 // }
 
 async function execTask(task: Task, ctx: {title: string}, metaData: MetaData): Promise<void> {
-  const {url, dist} = task;
+  const {url} = task;
+  const dist = path.resolve(metaData.rootPath, task.dist);
   const {config, skipItems} = metaData;
   const timeout = task.timeout || config.timeout || 10000;
   const override = task.override ?? config.override ?? false;
@@ -122,28 +124,29 @@ async function execEntryTasks(entryTasks: Task[], metaData: MetaData) {
   }
 }
 
-async function execEntries(metaData: MetaData) {
+async function execEntries(metaData: MetaData, envName: string) {
   const config = metaData.config;
   const entries = config.entries;
   const n = entries.length;
   while (entries.length) {
     log(`共${chalk.red(n)}个任务，正在执行第${chalk.red(n - entries.length + 1)}个`);
     const entry = entries.shift();
-    await execEntryTasks(entry!(), metaData);
+    await execEntryTasks(entry!(envName), metaData);
   }
 }
-export = async function moduleExports(eluxConfig: EluxConfig): Promise<void> {
+export = async function moduleExports(rootPath: string, eluxConfig: EluxConfig, envName: string): Promise<void> {
   schemaValidate(EluxConfigSchema, eluxConfig, {name: '@elux/cli/gen'});
   const config = eluxConfig.gen;
   const skipItems: Record<string, string> = {};
   const errorItems: Record<string, string> = {};
   const metaData: MetaData = {
+    rootPath,
     config,
     skipItems,
     errorItems,
     successItems: 0,
   };
-  await execEntries(metaData);
+  await execEntries(metaData, envName);
   log(
     '执行完成！' +
       chalk.green(`成功${metaData.successItems}条(`) +

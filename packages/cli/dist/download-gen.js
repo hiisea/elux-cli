@@ -30,7 +30,7 @@ const EluxConfigSchema = {
                 },
                 entries: {
                     type: 'array',
-                    description: 'Array<()=>{url:string;dist:string;timeout?:number;override?:boolean;replace?:(code:string)=>string}[]>',
+                    description: 'Array<(envName: string)=>{url:string;dist:string;timeout?:number;override?:boolean;replace?:(code:string)=>string}[]>',
                     minItems: 1,
                     items: {
                         instanceof: 'Function',
@@ -41,7 +41,8 @@ const EluxConfigSchema = {
     },
 };
 async function execTask(task, ctx, metaData) {
-    const { url, dist } = task;
+    const { url } = task;
+    const dist = path_1.default.resolve(metaData.rootPath, task.dist);
     const { config, skipItems } = metaData;
     const timeout = task.timeout || config.timeout || 10000;
     const override = task.override ?? config.override ?? false;
@@ -78,28 +79,29 @@ async function execEntryTasks(entryTasks, metaData) {
         await listr.run();
     }
 }
-async function execEntries(metaData) {
+async function execEntries(metaData, envName) {
     const config = metaData.config;
     const entries = config.entries;
     const n = entries.length;
     while (entries.length) {
         cli_utils_1.log(`共${cli_utils_1.chalk.red(n)}个任务，正在执行第${cli_utils_1.chalk.red(n - entries.length + 1)}个`);
         const entry = entries.shift();
-        await execEntryTasks(entry(), metaData);
+        await execEntryTasks(entry(envName), metaData);
     }
 }
-module.exports = async function moduleExports(eluxConfig) {
+module.exports = async function moduleExports(rootPath, eluxConfig, envName) {
     cli_utils_1.schemaValidate(EluxConfigSchema, eluxConfig, { name: '@elux/cli/gen' });
     const config = eluxConfig.gen;
     const skipItems = {};
     const errorItems = {};
     const metaData = {
+        rootPath,
         config,
         skipItems,
         errorItems,
         successItems: 0,
     };
-    await execEntries(metaData);
+    await execEntries(metaData, envName);
     cli_utils_1.log('执行完成！' +
         cli_utils_1.chalk.green(`成功${metaData.successItems}条(`) +
         cli_utils_1.chalk.yellow(`跳过${Object.keys(metaData.skipItems).length}条`) +
