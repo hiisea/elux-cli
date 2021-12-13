@@ -52,7 +52,7 @@ async function execTask(task, ctx, metaData) {
         ctx.title = '[s]' + ctx.title;
         return Promise.resolve();
     }
-    let { body = '' } = await cli_utils_1.got(url, { timeout, retry: 0 });
+    let { body = '' } = await cli_utils_1.got(url, { timeout, retry: 1 });
     if (replace) {
         body = replace(body);
     }
@@ -67,12 +67,12 @@ async function execEntryTasks(entryTasks, metaData) {
         const listr = new cli_utils_1.Listr(tasks.map((item) => {
             return {
                 title: item.url,
-                retry: 1,
+                retry: 0,
                 task: (_, task) => execTask(item, task, metaData).then(() => {
                     metaData.successItems++;
                 }, (e) => {
                     metaData.errorItems[item.url + '|' + item.dist] = e.message;
-                    throw e;
+                    throw new Error(item.url + ' | ' + e.message.replace(item.url, ''));
                 }),
             };
         }), { concurrent: true, exitOnError: false });

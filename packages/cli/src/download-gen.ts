@@ -88,7 +88,7 @@ async function execTask(task: Task, ctx: {title: string}, metaData: MetaData): P
     ctx.title = '[s]' + ctx.title;
     return Promise.resolve();
   }
-  let {body = ''} = await got(url, {timeout, retry: 0});
+  let {body = ''} = await got(url, {timeout, retry: 1});
   if (replace) {
     body = replace(body);
   }
@@ -105,7 +105,7 @@ async function execEntryTasks(entryTasks: Task[], metaData: MetaData) {
       tasks.map((item) => {
         return {
           title: item.url,
-          retry: 1,
+          retry: 0,
           task: (_, task) =>
             execTask(item, task, metaData).then(
               () => {
@@ -113,7 +113,7 @@ async function execEntryTasks(entryTasks: Task[], metaData: MetaData) {
               },
               (e: Error) => {
                 metaData.errorItems[item.url + '|' + item.dist] = e.message;
-                throw e;
+                throw new Error(item.url + ' | ' + e.message.replace(item.url, ''));
               }
             ),
         };
