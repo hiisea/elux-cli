@@ -117,7 +117,7 @@ async function askProxy(systemProxy: string): Promise<string> {
     prompts.push({
       type: 'input',
       name: 'inputProxy',
-      message: '是否使用代理【输入代理地址或回车跳过】',
+      message: '是否需要代理(翻墙)【输入代理地址或回车跳过】',
       validate(input: string) {
         if (!input) {
           return true;
@@ -130,7 +130,7 @@ async function askProxy(systemProxy: string): Promise<string> {
       {
         type: 'list',
         name: 'proxy',
-        message: '是否需要设置代理',
+        message: '是否需要代理(翻墙)',
         choices: [
           {
             name: '使用全局代理',
@@ -191,7 +191,7 @@ async function getTemplates(args: {
     repository = repository.replace('clone://', '');
   }
   const globalProxy = getProxy() || '';
-  log(chalk.magenta('\n* ' + (globalProxy ? `发现全局代理设置 -> ${globalProxy}` : '未发现全局代理设置')));
+  log(chalk.magenta('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
   const proxy = await askProxy(globalProxy);
   log(chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
   const spinner = ora(`Pulling template from ${chalk.blue.underline(repository)}`).start();

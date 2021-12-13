@@ -50,7 +50,8 @@ module.exports = function (rootPath, baseEluxConfig, options) {
             }
             process.env.SRC = src;
             process.env.PORT = port + '';
-            child_process_1.spawn(cmd, {
+            const arr = cmd.split(/\s+/);
+            child_process_1.spawn(arr[0], arr.slice(1), {
                 stdio: 'inherit',
                 shell: process.platform === 'win32',
             });
