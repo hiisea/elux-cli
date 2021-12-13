@@ -25,7 +25,6 @@
     "@elux/cli-utils": "*",
     "express": "*",
     "fs-monkey": "*",
-    "schema-utils": "*",
     "terser-webpack-plugin": "*"
   },
   "dependencies": {

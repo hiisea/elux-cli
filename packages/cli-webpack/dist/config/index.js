@@ -10,9 +10,9 @@ const terser_webpack_plugin_1 = __importDefault(require("terser-webpack-plugin")
 const webpack_1 = __importDefault(require("webpack"));
 const cli_utils_1 = require("@elux/cli-utils");
 const gen_1 = __importDefault(require("./gen"));
-async function dev(projPath, projEnvName, port) {
-    const config = gen_1.default(projPath, projEnvName, 'development', port);
-    const { devServerConfig, clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, projectType, serverPort, nodeEnv, envPath, projEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar }, useSSR, onCompiled, }, } = config;
+async function dev(rootPath, baseEluxConfig, envName, envPath, port) {
+    const config = gen_1.default(rootPath, baseEluxConfig, envName, envPath, 'development', port);
+    const { devServerConfig, clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, projectType, serverPort, nodeEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar }, useSSR, onCompiled, }, } = config;
     const protAvailable = await cli_utils_1.checkPort(serverPort);
     if (!protAvailable) {
         cli_utils_1.err(cli_utils_1.chalk.red(`\n\n[error] The port: ${serverPort} is occupied. DevServer startup failed!\n\n`));
@@ -26,7 +26,7 @@ async function dev(projPath, projEnvName, port) {
         envInfo.serverGlobalVar = serverGlobalVar;
     }
     cli_utils_1.log(`projectType: ${cli_utils_1.chalk.magenta(projectType)} runMode: ${cli_utils_1.chalk.magenta(nodeEnv)} sourceMap: ${cli_utils_1.chalk.magenta(sourceMap)}`);
-    cli_utils_1.log(`EnvName: ${cli_utils_1.chalk.magenta(projEnv)} EnvPath: ${cli_utils_1.chalk.magenta(envPath)} EnvData: \n${cli_utils_1.chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
+    cli_utils_1.log(`EnvName: ${cli_utils_1.chalk.magenta(envName)} EnvPath: ${cli_utils_1.chalk.magenta(envPath)} EnvData: \n${cli_utils_1.chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
     let webpackCompiler;
     if (useSSR) {
         const compiler = webpack_1.default([clientWebpackConfig, serverWebpackConfig]);
@@ -85,16 +85,16 @@ async function dev(projPath, projEnvName, port) {
     devServer.start().catch(() => process.exit(1));
 }
 exports.dev = dev;
-function build(projPath, projEnvName, port) {
-    const config = gen_1.default(projPath, projEnvName, 'production', port);
-    const { clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, envPath, publicPath, distPath, projectType, nodeEnv, projEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar }, useSSR, serverPort, apiProxy, onCompiled, }, } = config;
+function build(rootPath, baseEluxConfig, envName, envPath, port) {
+    const config = gen_1.default(rootPath, baseEluxConfig, envName, envPath, 'production', port);
+    const { clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, publicPath, distPath, projectType, nodeEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar }, useSSR, serverPort, apiProxy, onCompiled, }, } = config;
     const envInfo = {
         clientPublicPath,
         clientGlobalVar,
         serverGlobalVar,
     };
     cli_utils_1.log(`projectType: ${cli_utils_1.chalk.magenta(projectType)} runMode: ${cli_utils_1.chalk.magenta(nodeEnv)} sourceMap: ${cli_utils_1.chalk.magenta(sourceMap)}`);
-    cli_utils_1.log(`EnvName: ${cli_utils_1.chalk.magenta(projEnv)} EnvPath: ${cli_utils_1.chalk.magenta(envPath)} EnvData: \n${cli_utils_1.chalk.blue(JSON.stringify(envInfo, null, 4))} \n`);
+    cli_utils_1.log(`EnvName: ${cli_utils_1.chalk.magenta(envName)} EnvPath: ${cli_utils_1.chalk.magenta(envPath)} EnvData: \n${cli_utils_1.chalk.blue(JSON.stringify(envInfo, null, 4))} \n`);
     cli_utils_1.fs.ensureDirSync(distPath);
     cli_utils_1.fs.emptyDirSync(distPath);
     cli_utils_1.fs.copySync(publicPath, distPath, { dereference: true });

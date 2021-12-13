@@ -1,6 +1,5 @@
 import path from 'path';
-import {fs, deepExtend} from '@elux/cli-utils';
-import {validate} from 'schema-utils';
+import {deepExtend, schemaValidate} from '@elux/cli-utils';
 import genConfig from './utils';
 import type {WebpackLoader, WebpackConfig, DevServerConfig} from './utils';
 
@@ -22,18 +21,13 @@ interface EnvConfig {
 
 interface EluxConfig {
   type: 'vue' | 'react' | 'vue ssr' | 'react ssr';
-  dir: {
-    srcPath: string;
-    distPath: string;
-    publicPath: string;
-    mockPath: string;
-    envPath: string;
-  };
+  srcPath: string;
+  distPath: string;
+  publicPath: string;
   cssProcessors: {less: WebpackLoader | boolean; sass: WebpackLoader | boolean};
   cssModulesOptions: Record<string, any>;
   moduleFederation: Record<string, any>;
   devServerConfigTransform: (config: DevServerConfig) => DevServerConfig;
-  mockServer: {port: number};
   all: EnvConfig;
   dev?: Partial<EnvConfig>;
   prod?: Partial<EnvConfig>;
@@ -41,7 +35,7 @@ interface EluxConfig {
 
 const EluxConfigSchema: any = {
   type: 'object',
-  additionalProperties: false,
+  additionalProperties: true,
   definitions: {
     CssLoader: {type: 'object', properties: {loader: {type: 'string'}}},
     EnvConfig: {
@@ -88,31 +82,17 @@ const EluxConfigSchema: any = {
     type: {
       enum: ['vue', 'vue ssr', 'react', 'react ssr'],
     },
-    dir: {
-      type: 'object',
-      additionalProperties: false,
-      properties: {
-        srcPath: {
-          type: 'string',
-          description: 'Relative to the project root directory. Defalut is ./src',
-        },
-        distPath: {
-          type: 'string',
-          description: 'Relative to the project root directory. Defalut is ./dist',
-        },
-        publicPath: {
-          type: 'string',
-          description: 'Relative to the project root directory. Defalut is ./public',
-        },
-        mockPath: {
-          type: 'string',
-          description: 'Relative to the project root directory. Defalut is ./mock',
-        },
-        envPath: {
-          type: 'string',
-          description: 'Relative to the project root directory. Defalut is ./env',
-        },
-      },
+    srcPath: {
+      type: 'string',
+      description: 'Relative to the project root directory. Defalut is ./src',
+    },
+    distPath: {
+      type: 'string',
+      description: 'Relative to the project root directory. Defalut is ./dist',
+    },
+    publicPath: {
+      type: 'string',
+      description: 'Relative to the project root directory. Defalut is ./public',
     },
     cssModulesOptions: {
       type: 'object',
@@ -150,16 +130,6 @@ const EluxConfigSchema: any = {
       instanceof: 'Function',
       description: 'Provides an custom function to transform webpack devServerConfig: (devServerConfig) => devServerConfig',
     },
-    mockServer: {
-      type: 'object',
-      additionalProperties: false,
-      properties: {
-        port: {
-          type: 'number',
-          description: 'Default is 3003',
-        },
-      },
-    },
     all: {
       $ref: '#/definitions/EnvConfig',
     },
@@ -181,11 +151,11 @@ interface Info {
     nodeEnv: 'production' | 'development';
     cache: string;
     rootPath: string;
-    projEnv: string;
+    envName: string;
+    envPath: string;
     srcPath: string;
     distPath: string;
     publicPath: string;
-    envPath: string;
     envConfig: EnvConfig;
     useSSR: boolean;
     serverPort: number;
@@ -195,27 +165,21 @@ interface Info {
   };
 }
 
-function moduleExports(rootPath: string, projEnv: string, nodeEnv: 'production' | 'development', _serverPort?: number): Info {
-  const baseEluxConfig: Partial<EluxConfig> = fs.existsSync(path.join(rootPath, 'elux.config.js'))
-    ? require(path.join(rootPath, 'elux.config.js'))
-    : {};
-  validate(EluxConfigSchema, baseEluxConfig, {name: '@elux/EluxConfig'});
-  const envPath = baseEluxConfig.dir?.envPath || './env';
-  const projEnvPath = path.resolve(rootPath, envPath, `./${projEnv}`);
-  fs.ensureDirSync(projEnvPath);
-  const envEluxConfig: Partial<EluxConfig> = fs.existsSync(path.join(projEnvPath, `elux.config.js`))
-    ? require(path.join(projEnvPath, `elux.config.js`))
-    : {};
-  validate(EluxConfigSchema, envEluxConfig, {name: '@elux/EluxConfig'});
+function moduleExports(
+  rootPath: string,
+  baseEluxConfig: Partial<EluxConfig>,
+  envName: string,
+  envPath: string,
+  nodeEnv: 'production' | 'development',
+  _serverPort?: number
+): Info {
+  schemaValidate(EluxConfigSchema, baseEluxConfig, {name: '@elux/cli-webpack'});
+
   const defaultBaseConfig: EluxConfig = {
     type: 'react',
-    dir: {
-      srcPath: './src',
-      distPath: './dist',
-      publicPath: './public',
-      mockPath: './mock',
-      envPath: './env',
-    },
+    srcPath: './src',
+    distPath: './dist',
+    publicPath: './public',
     cssProcessors: {less: false, sass: false},
     cssModulesOptions: {},
     moduleFederation: {},
@@ -238,19 +202,11 @@ function moduleExports(rootPath: string, projEnv: string, nodeEnv: 'production' 
     prod: {
       sourceMap: 'hidden-cheap-module-source-map',
     },
-    mockServer: {port: 3003},
   };
-  const eluxConfig: EluxConfig = deepExtend(defaultBaseConfig, baseEluxConfig, envEluxConfig);
+  const eluxConfig: EluxConfig = deepExtend(defaultBaseConfig, baseEluxConfig);
   const envConfig: EnvConfig = deepExtend(eluxConfig.all, eluxConfig[nodeEnv === 'development' ? 'dev' : 'prod']);
 
-  const {
-    dir: {srcPath, publicPath},
-    type,
-    moduleFederation,
-    devServerConfigTransform,
-    cssProcessors,
-    cssModulesOptions,
-  } = eluxConfig;
+  const {srcPath, publicPath, type, moduleFederation, devServerConfigTransform, cssProcessors, cssModulesOptions} = eluxConfig;
 
   const {
     serverPort,
@@ -270,18 +226,18 @@ function moduleExports(rootPath: string, projEnv: string, nodeEnv: 'production' 
 
   const useSSR = type === 'react ssr' || type === 'vue ssr';
   const UIType = type.split(' ')[0] as 'react' | 'vue';
-  const distPath = path.resolve(rootPath, eluxConfig.dir.distPath, projEnv);
+  const distPath = path.resolve(rootPath, eluxConfig.distPath, envName);
 
   let {devServerConfig, clientWebpackConfig, serverWebpackConfig} = genConfig({
     cache,
     sourceMap,
     nodeEnv,
     rootPath,
+    envPath,
     srcPath: path.resolve(rootPath, srcPath),
     distPath: path.resolve(rootPath, distPath),
     publicPath: path.resolve(rootPath, publicPath),
     clientPublicPath,
-    envPath: projEnvPath,
     cssProcessors,
     cssModulesOptions,
     enableEslintPlugin: eslint,
@@ -306,12 +262,12 @@ function moduleExports(rootPath: string, projEnv: string, nodeEnv: 'production' 
     serverWebpackConfig,
     projectConfig: {
       rootPath,
-      projEnv,
+      envName,
+      envPath,
       nodeEnv,
       srcPath: path.resolve(rootPath, srcPath),
       distPath: path.resolve(rootPath, distPath),
       publicPath: path.resolve(rootPath, publicPath),
-      envPath: projEnvPath,
       sourceMap,
       cache: cache === true ? 'memory' : cache === false ? '' : cache.type,
       projectType: type,

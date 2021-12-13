@@ -18,6 +18,7 @@ import tunnel from 'tunnel';
 import getProxy from 'get-proxy';
 import {execSync} from 'child_process';
 import {Listr} from 'listr2';
+import {validate as schemaValidate} from 'schema-utils';
 
 function getLocalIP() {
   let result = 'localhost';
@@ -235,4 +236,5 @@ export = {
   createProxyAgent,
   testHttpUrl,
   checkPort,
+  schemaValidate,
 };

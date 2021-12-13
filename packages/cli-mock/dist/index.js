@@ -5,29 +5,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 const path_1 = __importDefault(require("path"));
 const child_process_1 = require("child_process");
 const cli_utils_1 = require("@elux/cli-utils");
-function genMockConfig(rootPath, projEnv, port, mockPath) {
-    const baseEluxConfig = cli_utils_1.fs.existsSync(path_1.default.join(rootPath, 'elux.config.js'))
-        ? require(path_1.default.join(rootPath, 'elux.config.js'))
-        : {};
-    const envPath = baseEluxConfig.dir?.envPath || './env';
-    const projEnvPath = path_1.default.resolve(rootPath, envPath, `./${projEnv}`);
-    const envEluxConfig = cli_utils_1.fs.existsSync(path_1.default.join(projEnvPath, `elux.config.js`))
-        ? require(path_1.default.join(projEnvPath, `elux.config.js`))
-        : {};
-    const defaultBaseConfig = {
-        dir: {
-            mockPath: './mock',
-            envPath: './env',
-        },
+const EluxConfigSchema = {
+    type: 'object',
+    additionalProperties: true,
+    properties: {
         mockServer: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                port: {
+                    type: 'number',
+                    description: 'Default is 3003',
+                },
+                dir: {
+                    type: 'string',
+                    description: 'Defalut is ./mock',
+                },
+            },
+        },
+    },
+};
+module.exports = function (rootPath, baseEluxConfig, options) {
+    cli_utils_1.schemaValidate(EluxConfigSchema, baseEluxConfig, { name: '@elux/cli-mock' });
+    const defaultBaseConfig = {
+        mockServer: {
+            dir: './mock',
             port: 3003,
         },
     };
-    const eluxConfig = cli_utils_1.deepExtend(defaultBaseConfig, baseEluxConfig, envEluxConfig);
-    return { port: port || eluxConfig.mockServer.port, dir: path_1.default.resolve(rootPath, mockPath || eluxConfig.dir.mockPath) };
-}
-module.exports = function (projectPath, env, options) {
-    const { port, dir } = genMockConfig(projectPath, env, options.port, options.dir);
+    const eluxConfig = cli_utils_1.deepExtend(defaultBaseConfig, baseEluxConfig);
+    const port = options.port || eluxConfig.mockServer.port;
+    const dir = path_1.default.resolve(rootPath, options.dir || eluxConfig.mockServer.dir);
     cli_utils_1.checkPort(port).then((available) => {
         if (available) {
             const src = path_1.default.join(dir, './src');

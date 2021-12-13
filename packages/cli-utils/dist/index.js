@@ -19,6 +19,7 @@ const tunnel_1 = __importDefault(require("tunnel"));
 const get_proxy_1 = __importDefault(require("get-proxy"));
 const child_process_1 = require("child_process");
 const listr2_1 = require("listr2");
+const schema_utils_1 = require("schema-utils");
 function getLocalIP() {
     let result = 'localhost';
     const interfaces = os_1.networkInterfaces();
@@ -210,4 +211,5 @@ module.exports = {
     createProxyAgent,
     testHttpUrl,
     checkPort,
+    schemaValidate: schema_utils_1.validate,
 };

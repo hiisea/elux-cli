@@ -7,6 +7,7 @@ import ora from 'ora';
 import { Agent as HttpAgent } from 'http';
 import { Agent as HttpsAgent } from 'https';
 import { Listr } from 'listr2';
+import { validate as schemaValidate } from 'schema-utils';
 declare function slash(path: string): string;
 declare function log(message: string): void;
 declare function err(message: string): void;
@@ -88,5 +89,6 @@ declare const _default: {
     createProxyAgent: typeof createProxyAgent;
     testHttpUrl: typeof testHttpUrl;
     checkPort: typeof checkPort;
+    schemaValidate: typeof schemaValidate;
 };
 export = _default;

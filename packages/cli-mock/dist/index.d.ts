@@ -1,4 +1,4 @@
-declare const _default: (projectPath: string, env: string, options: {
+declare const _default: (rootPath: string, baseEluxConfig: Record<string, any>, options: {
     port?: number;
     dir?: string;
     watch?: boolean;

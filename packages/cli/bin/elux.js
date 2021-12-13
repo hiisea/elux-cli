@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-
-const {chalk, log, checkNodeVersion} = require('@elux/cli-utils');
+const path = require('path');
+const fs = require('fs');
 const leven = require('leven');
+const {chalk, log, checkNodeVersion, deepExtend} = require('@elux/cli-utils');
 const packageJson = require('../package.json');
 
 checkNodeVersion(packageJson.engines.node, '@elux/cli');
@@ -23,7 +24,9 @@ program
   .option('-p, --port <value>', 'Normalize a port into a number. Default is to load from elux.config.js')
   .action((env, options) => {
     const moduleName = `@elux/cli-${options.compiler || 'webpack'}`;
-    const args = [process.cwd(), env || 'local', options.port];
+    env = env || 'local';
+    const {config, envPath} = getConfig(process.cwd(), env);
+    const args = [process.cwd(), config, env, envPath, options.port];
     require(moduleName).dev(...args);
   });
 
@@ -34,19 +37,32 @@ program
   .option('-p, --port <value>', 'Normalize a port into a number. Default is to load from elux.config.js')
   .action((env, options) => {
     const moduleName = `@elux/cli-${options.compiler || 'webpack'}`;
-    const args = [process.cwd(), env || 'local', options.port];
+    env = env || 'local';
+    const {config, envPath} = getConfig(process.cwd(), env);
+    const args = [process.cwd(), config, env, envPath, options.port];
     require(moduleName).build(...args);
   });
 
 program
   .command('mock [env]')
-  .description('Use a preset env configurations to start the mockServer')
+  .description('Use a preset env configurations to start the mockServer. Default env is local')
   .option('-w, --watch', 'Watching for file changes')
   .option('-d, --dir <value>', 'Specify the mock dir path. Default is to load from elux.config.js')
   .option('-p, --port <value>', 'Normalize a port into a number. Default is to load from elux.config.js')
   .action((env, options) => {
-    const args = [process.cwd(), env || 'local', options];
+    env = env || 'local';
+    const {config} = getConfig(process.cwd(), env);
+    const args = [process.cwd(), config, options];
     require('@elux/cli-mock')(...args);
+  });
+
+program
+  .command('gen [env]')
+  .description('Use a preset env configurations to download and generate web page. Default env is local')
+  .action((env) => {
+    env = env || 'local';
+    const {config} = getConfig(process.cwd(), env);
+    require('../dist/download-gen')(config);
   });
 
 program
@@ -67,13 +83,6 @@ program
     const moduleName = `@elux/cli-${options.compiler || 'webpack'}`;
     const args = [input, output, options.target || 'es5'];
     require(moduleName).pack(...args);
-  });
-
-program
-  .command('gen [configPath]')
-  .description('Download and generate web pages from URLs. Default config is ./elux.gen.js')
-  .action((configPath) => {
-    require('../dist/download-gen')(process.cwd(), configPath || './elux.gen.js');
   });
 
 // output help information on unknown commands
@@ -111,4 +120,12 @@ function suggestCommands(unknownCommand) {
   if (suggestion) {
     log(`  ` + chalk.red(`Did you mean ${chalk.yellow(suggestion)}?`));
   }
+}
+
+function getConfig(rootPath, env) {
+  const baseEluxConfig = fs.existsSync(path.join(rootPath, 'elux.config.js')) ? require(path.join(rootPath, 'elux.config.js')) : {};
+  const envDir = baseEluxConfig.envDir || './env';
+  const envPath = path.resolve(rootPath, envDir, `./${env}`);
+  const envEluxConfig = fs.existsSync(path.join(envPath, `elux.config.js`)) ? require(path.join(envPath, `elux.config.js`)) : {};
+  return {config: deepExtend(baseEluxConfig, envEluxConfig), envPath};
 }

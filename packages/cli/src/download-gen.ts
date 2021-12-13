@@ -1,21 +1,61 @@
 import path from 'path';
-import {log, chalk, Listr, fs, got} from '@elux/cli-utils';
+import {log, chalk, Listr, fs, got, schemaValidate} from '@elux/cli-utils';
 
 interface Task {
   url: string;
   dist: string;
   timeout?: number;
-  override?: number;
+  override?: boolean;
   replace?: (code: string) => string;
 }
 interface Config {
   timeout?: number;
-  override?: number;
+  override?: boolean;
   replace?: (code: string) => string;
   onComplete?: (skipItems: Record<string, string>, errorItems: Record<string, string>, successItems: number) => void;
   entries: Array<() => Task[]>;
 }
 
+interface EluxConfig {
+  gen: Config;
+}
+
+const EluxConfigSchema: any = {
+  type: 'object',
+  additionalProperties: true,
+  properties: {
+    gen: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        timeout: {
+          type: 'number',
+          description: 'Default is 10000',
+        },
+        override: {
+          type: 'boolean',
+          description: 'Defalut is false',
+        },
+        replace: {
+          instanceof: 'Function',
+          description: '(html:string)=>string',
+        },
+        onComplete: {
+          instanceof: 'Function',
+          description: '(skipItems:Record<string,string>,errorItems:Record<string,string>,successItems:number) => void',
+        },
+        entries: {
+          type: 'array',
+          description: 'Array<()=>{url:string;dist:string;timeout?:number;override?:boolean;replace?:(code:string)=>string}[]>',
+          minItems: 1,
+          items: {
+            instanceof: 'Function',
+          },
+        },
+      },
+    },
+  },
+};
 interface MetaData {
   config: Config;
   skipItems: Record<string, string>;
@@ -92,8 +132,9 @@ async function execEntries(metaData: MetaData) {
     await execEntryTasks(entry!(), metaData);
   }
 }
-export = async function moduleExports(root: string, configPath: string): Promise<void> {
-  const config = require(path.resolve(root, configPath)) as Config;
+export = async function moduleExports(eluxConfig: EluxConfig): Promise<void> {
+  schemaValidate(EluxConfigSchema, eluxConfig, {name: '@elux/cli/gen'});
+  const config = eluxConfig.gen;
   const skipItems: Record<string, string> = {};
   const errorItems: Record<string, string> = {};
   const metaData: MetaData = {

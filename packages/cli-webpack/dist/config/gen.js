@@ -4,11 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const path_1 = __importDefault(require("path"));
 const cli_utils_1 = require("@elux/cli-utils");
-const schema_utils_1 = require("schema-utils");
 const utils_1 = __importDefault(require("./utils"));
 const EluxConfigSchema = {
     type: 'object',
-    additionalProperties: false,
+    additionalProperties: true,
     definitions: {
         CssLoader: { type: 'object', properties: { loader: { type: 'string' } } },
         EnvConfig: {
@@ -55,31 +54,17 @@ const EluxConfigSchema = {
         type: {
             enum: ['vue', 'vue ssr', 'react', 'react ssr'],
         },
-        dir: {
-            type: 'object',
-            additionalProperties: false,
-            properties: {
-                srcPath: {
-                    type: 'string',
-                    description: 'Relative to the project root directory. Defalut is ./src',
-                },
-                distPath: {
-                    type: 'string',
-                    description: 'Relative to the project root directory. Defalut is ./dist',
-                },
-                publicPath: {
-                    type: 'string',
-                    description: 'Relative to the project root directory. Defalut is ./public',
-                },
-                mockPath: {
-                    type: 'string',
-                    description: 'Relative to the project root directory. Defalut is ./mock',
-                },
-                envPath: {
-                    type: 'string',
-                    description: 'Relative to the project root directory. Defalut is ./env',
-                },
-            },
+        srcPath: {
+            type: 'string',
+            description: 'Relative to the project root directory. Defalut is ./src',
+        },
+        distPath: {
+            type: 'string',
+            description: 'Relative to the project root directory. Defalut is ./dist',
+        },
+        publicPath: {
+            type: 'string',
+            description: 'Relative to the project root directory. Defalut is ./public',
         },
         cssModulesOptions: {
             type: 'object',
@@ -117,16 +102,6 @@ const EluxConfigSchema = {
             instanceof: 'Function',
             description: 'Provides an custom function to transform webpack devServerConfig: (devServerConfig) => devServerConfig',
         },
-        mockServer: {
-            type: 'object',
-            additionalProperties: false,
-            properties: {
-                port: {
-                    type: 'number',
-                    description: 'Default is 3003',
-                },
-            },
-        },
         all: {
             $ref: '#/definitions/EnvConfig',
         },
@@ -138,27 +113,13 @@ const EluxConfigSchema = {
         },
     },
 };
-function moduleExports(rootPath, projEnv, nodeEnv, _serverPort) {
-    const baseEluxConfig = cli_utils_1.fs.existsSync(path_1.default.join(rootPath, 'elux.config.js'))
-        ? require(path_1.default.join(rootPath, 'elux.config.js'))
-        : {};
-    schema_utils_1.validate(EluxConfigSchema, baseEluxConfig, { name: '@elux/EluxConfig' });
-    const envPath = baseEluxConfig.dir?.envPath || './env';
-    const projEnvPath = path_1.default.resolve(rootPath, envPath, `./${projEnv}`);
-    cli_utils_1.fs.ensureDirSync(projEnvPath);
-    const envEluxConfig = cli_utils_1.fs.existsSync(path_1.default.join(projEnvPath, `elux.config.js`))
-        ? require(path_1.default.join(projEnvPath, `elux.config.js`))
-        : {};
-    schema_utils_1.validate(EluxConfigSchema, envEluxConfig, { name: '@elux/EluxConfig' });
+function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, _serverPort) {
+    cli_utils_1.schemaValidate(EluxConfigSchema, baseEluxConfig, { name: '@elux/cli-webpack' });
     const defaultBaseConfig = {
         type: 'react',
-        dir: {
-            srcPath: './src',
-            distPath: './dist',
-            publicPath: './public',
-            mockPath: './mock',
-            envPath: './env',
-        },
+        srcPath: './src',
+        distPath: './dist',
+        publicPath: './public',
         cssProcessors: { less: false, sass: false },
         cssModulesOptions: {},
         moduleFederation: {},
@@ -181,25 +142,24 @@ function moduleExports(rootPath, projEnv, nodeEnv, _serverPort) {
         prod: {
             sourceMap: 'hidden-cheap-module-source-map',
         },
-        mockServer: { port: 3003 },
     };
-    const eluxConfig = cli_utils_1.deepExtend(defaultBaseConfig, baseEluxConfig, envEluxConfig);
+    const eluxConfig = cli_utils_1.deepExtend(defaultBaseConfig, baseEluxConfig);
     const envConfig = cli_utils_1.deepExtend(eluxConfig.all, eluxConfig[nodeEnv === 'development' ? 'dev' : 'prod']);
-    const { dir: { srcPath, publicPath }, type, moduleFederation, devServerConfigTransform, cssProcessors, cssModulesOptions, } = eluxConfig;
+    const { srcPath, publicPath, type, moduleFederation, devServerConfigTransform, cssProcessors, cssModulesOptions } = eluxConfig;
     const { serverPort, cache, eslint, stylelint, urlLoaderLimitSize, resolveAlias, clientPublicPath, clientGlobalVar, serverGlobalVar, sourceMap, onCompiled, webpackConfigTransform, apiProxy, } = envConfig;
     const useSSR = type === 'react ssr' || type === 'vue ssr';
     const UIType = type.split(' ')[0];
-    const distPath = path_1.default.resolve(rootPath, eluxConfig.dir.distPath, projEnv);
+    const distPath = path_1.default.resolve(rootPath, eluxConfig.distPath, envName);
     let { devServerConfig, clientWebpackConfig, serverWebpackConfig } = utils_1.default({
         cache,
         sourceMap,
         nodeEnv,
         rootPath,
+        envPath,
         srcPath: path_1.default.resolve(rootPath, srcPath),
         distPath: path_1.default.resolve(rootPath, distPath),
         publicPath: path_1.default.resolve(rootPath, publicPath),
         clientPublicPath,
-        envPath: projEnvPath,
         cssProcessors,
         cssModulesOptions,
         enableEslintPlugin: eslint,
@@ -224,12 +184,12 @@ function moduleExports(rootPath, projEnv, nodeEnv, _serverPort) {
         serverWebpackConfig,
         projectConfig: {
             rootPath,
-            projEnv,
+            envName,
+            envPath,
             nodeEnv,
             srcPath: path_1.default.resolve(rootPath, srcPath),
             distPath: path_1.default.resolve(rootPath, distPath),
             publicPath: path_1.default.resolve(rootPath, publicPath),
-            envPath: projEnvPath,
             sourceMap,
             cache: cache === true ? 'memory' : cache === false ? '' : cache.type,
             projectType: type,

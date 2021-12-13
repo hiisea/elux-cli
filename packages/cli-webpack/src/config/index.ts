@@ -5,8 +5,8 @@ import webpack, {Compiler, MultiCompiler} from 'webpack';
 import {fs, chalk, localIP, log, err, checkPort} from '@elux/cli-utils';
 import genConfig from './gen';
 
-export async function dev(projPath: string, projEnvName: string, port?: number): Promise<void> {
-  const config = genConfig(projPath, projEnvName, 'development', port);
+export async function dev(rootPath: string, baseEluxConfig: Record<string, any>, envName: string, envPath: string, port?: number): Promise<void> {
+  const config = genConfig(rootPath, baseEluxConfig, envName, envPath, 'development', port);
   const {
     devServerConfig,
     clientWebpackConfig,
@@ -17,8 +17,6 @@ export async function dev(projPath: string, projEnvName: string, port?: number):
       projectType,
       serverPort,
       nodeEnv,
-      envPath,
-      projEnv,
       envConfig: {clientPublicPath, clientGlobalVar, serverGlobalVar},
       useSSR,
       onCompiled,
@@ -37,7 +35,7 @@ export async function dev(projPath: string, projEnvName: string, port?: number):
     envInfo.serverGlobalVar = serverGlobalVar;
   }
   log(`projectType: ${chalk.magenta(projectType)} runMode: ${chalk.magenta(nodeEnv)} sourceMap: ${chalk.magenta(sourceMap)}`);
-  log(`EnvName: ${chalk.magenta(projEnv)} EnvPath: ${chalk.magenta(envPath)} EnvData: \n${chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
+  log(`EnvName: ${chalk.magenta(envName)} EnvPath: ${chalk.magenta(envPath)} EnvData: \n${chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
 
   let webpackCompiler: MultiCompiler | Compiler;
   if (useSSR) {
@@ -110,20 +108,18 @@ export async function dev(projPath: string, projEnvName: string, port?: number):
   // });
 }
 
-export function build(projPath: string, projEnvName: string, port?: number): void {
-  const config = genConfig(projPath, projEnvName, 'production', port);
+export function build(rootPath: string, baseEluxConfig: Record<string, any>, envName: string, envPath: string, port?: number): void {
+  const config = genConfig(rootPath, baseEluxConfig, envName, envPath, 'production', port);
   const {
     clientWebpackConfig,
     serverWebpackConfig,
     projectConfig: {
       cache,
       sourceMap,
-      envPath,
       publicPath,
       distPath,
       projectType,
       nodeEnv,
-      projEnv,
       envConfig: {clientPublicPath, clientGlobalVar, serverGlobalVar},
       useSSR,
       serverPort,
@@ -138,7 +134,7 @@ export function build(projPath: string, projEnvName: string, port?: number): voi
     serverGlobalVar,
   };
   log(`projectType: ${chalk.magenta(projectType)} runMode: ${chalk.magenta(nodeEnv)} sourceMap: ${chalk.magenta(sourceMap)}`);
-  log(`EnvName: ${chalk.magenta(projEnv)} EnvPath: ${chalk.magenta(envPath)} EnvData: \n${chalk.blue(JSON.stringify(envInfo, null, 4))} \n`);
+  log(`EnvName: ${chalk.magenta(envName)} EnvPath: ${chalk.magenta(envPath)} EnvData: \n${chalk.blue(JSON.stringify(envInfo, null, 4))} \n`);
 
   fs.ensureDirSync(distPath);
   fs.emptyDirSync(distPath);

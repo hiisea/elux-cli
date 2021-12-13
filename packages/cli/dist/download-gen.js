@@ -4,18 +4,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const path_1 = __importDefault(require("path"));
 const cli_utils_1 = require("@elux/cli-utils");
-function download() {
-    return new Promise((resove, reject) => {
-        setTimeout(() => {
-            if (Math.random() > 0.5) {
-                resove({ body: '222' });
-            }
-            else {
-                reject('111');
-            }
-        }, 10000);
-    });
-}
+const EluxConfigSchema = {
+    type: 'object',
+    additionalProperties: true,
+    properties: {
+        gen: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+                timeout: {
+                    type: 'number',
+                    description: 'Default is 10000',
+                },
+                override: {
+                    type: 'boolean',
+                    description: 'Defalut is false',
+                },
+                replace: {
+                    instanceof: 'Function',
+                    description: '(html:string)=>string',
+                },
+                onComplete: {
+                    instanceof: 'Function',
+                    description: '(skipItems:Record<string,string>,errorItems:Record<string,string>,successItems:number) => void',
+                },
+                entries: {
+                    type: 'array',
+                    description: 'Array<()=>{url:string;dist:string;timeout?:number;override?:boolean;replace?:(code:string)=>string}[]>',
+                    minItems: 1,
+                    items: {
+                        instanceof: 'Function',
+                    },
+                },
+            },
+        },
+    },
+};
 async function execTask(task, ctx, metaData) {
     const { url, dist } = task;
     const { config, skipItems } = metaData;
@@ -64,8 +88,9 @@ async function execEntries(metaData) {
         await execEntryTasks(entry(), metaData);
     }
 }
-module.exports = async function moduleExports(root, configPath) {
-    const config = require(path_1.default.resolve(root, configPath));
+module.exports = async function moduleExports(eluxConfig) {
+    cli_utils_1.schemaValidate(EluxConfigSchema, eluxConfig, { name: '@elux/cli/gen' });
+    const config = eluxConfig.gen;
     const skipItems = {};
     const errorItems = {};
     const metaData = {

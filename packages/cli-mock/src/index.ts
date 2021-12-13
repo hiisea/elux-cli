@@ -1,51 +1,48 @@
 import path from 'path';
 import {spawn} from 'child_process';
-import {checkPort, fs, deepExtend, chalk, log} from '@elux/cli-utils';
+import {checkPort, deepExtend, chalk, log, schemaValidate} from '@elux/cli-utils';
 
 interface MockServerPreset {
   port: number;
+  dir: string;
 }
 interface EluxConfig {
-  dir: {
-    mockPath: string;
-    envPath: string;
-  };
   mockServer: MockServerPreset;
 }
 
-function genMockConfig(
-  rootPath: string,
-  projEnv: string,
-  port?: number,
-  mockPath?: string
-): {
-  port: number;
-  dir: string;
-} {
-  const baseEluxConfig: Partial<EluxConfig> = fs.existsSync(path.join(rootPath, 'elux.config.js'))
-    ? require(path.join(rootPath, 'elux.config.js'))
-    : {};
-  const envPath = baseEluxConfig.dir?.envPath || './env';
-  const projEnvPath = path.resolve(rootPath, envPath, `./${projEnv}`);
-  const envEluxConfig: Partial<EluxConfig> = fs.existsSync(path.join(projEnvPath, `elux.config.js`))
-    ? require(path.join(projEnvPath, `elux.config.js`))
-    : {};
-
-  const defaultBaseConfig: EluxConfig = {
-    dir: {
-      mockPath: './mock',
-      envPath: './env',
-    },
+const EluxConfigSchema: any = {
+  type: 'object',
+  additionalProperties: true,
+  properties: {
     mockServer: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        port: {
+          type: 'number',
+          description: 'Default is 3003',
+        },
+        dir: {
+          type: 'string',
+          description: 'Defalut is ./mock',
+        },
+      },
+    },
+  },
+};
+
+export = function (rootPath: string, baseEluxConfig: Record<string, any>, options: {port?: number; dir?: string; watch?: boolean}): void {
+  schemaValidate(EluxConfigSchema, baseEluxConfig, {name: '@elux/cli-mock'});
+  const defaultBaseConfig: EluxConfig = {
+    mockServer: {
+      dir: './mock',
       port: 3003,
     },
   };
-  const eluxConfig: EluxConfig = deepExtend(defaultBaseConfig, baseEluxConfig, envEluxConfig);
-  return {port: port || eluxConfig.mockServer.port, dir: path.resolve(rootPath, mockPath || eluxConfig.dir.mockPath)};
-}
+  const eluxConfig: EluxConfig = deepExtend(defaultBaseConfig, baseEluxConfig);
+  const port = options.port || eluxConfig.mockServer.port;
+  const dir = path.resolve(rootPath, options.dir || eluxConfig.mockServer.dir);
 
-export = function (projectPath: string, env: string, options: {port?: number; dir?: string; watch?: boolean}): void {
-  const {port, dir} = genMockConfig(projectPath, env, options.port, options.dir);
   checkPort(port).then((available) => {
     if (available) {
       const src = path.join(dir, './src');
