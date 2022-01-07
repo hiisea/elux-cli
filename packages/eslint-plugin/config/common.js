@@ -14,8 +14,9 @@ module.exports = {
     },
   },
   extends: ['eslint:recommended', 'plugin:prettier/recommended', 'plugin:markdown/recommended'],
-  plugins: ['import'],
+  plugins: ['import', 'eslint-plugin-tsdoc'],
   rules: {
+    'tsdoc/syntax': 'warn',
     'import/no-extraneous-dependencies': 'warn',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',

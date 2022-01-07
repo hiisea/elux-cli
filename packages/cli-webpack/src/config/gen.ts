@@ -24,7 +24,7 @@ interface EluxConfig {
   srcPath: string;
   distPath: string;
   publicPath: string;
-  cssProcessors: {less: WebpackLoader | boolean; sass: WebpackLoader | boolean};
+  cssProcessors: {less: Record<string, any> | boolean; sass: Record<string, any> | boolean};
   cssModulesOptions: Record<string, any>;
   moduleFederation: Record<string, any>;
   devServerConfigTransform: (config: DevServerConfig) => DevServerConfig;
@@ -37,7 +37,6 @@ const EluxConfigSchema: any = {
   type: 'object',
   additionalProperties: true,
   definitions: {
-    CssLoader: {type: 'object', properties: {loader: {type: 'string'}}},
     EnvConfig: {
       type: 'object',
       additionalProperties: false,
@@ -107,7 +106,7 @@ const EluxConfigSchema: any = {
               type: 'boolean',
             },
             {
-              $ref: '#/definitions/CssLoader',
+              type: 'object',
             },
           ],
         },
@@ -117,7 +116,7 @@ const EluxConfigSchema: any = {
               type: 'boolean',
             },
             {
-              $ref: '#/definitions/CssLoader',
+              type: 'object',
             },
           ],
         },

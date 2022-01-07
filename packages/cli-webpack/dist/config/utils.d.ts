@@ -32,8 +32,8 @@ interface ConfigOptions {
     clientPublicPath: string;
     envPath: string;
     cssProcessors: {
-        less?: WebpackLoader | boolean;
-        sass?: WebpackLoader | boolean;
+        less?: Record<string, any> | boolean;
+        sass?: Record<string, any> | boolean;
     };
     cssModulesOptions: Record<string, any>;
     limitSize: number;

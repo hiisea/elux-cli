@@ -32,38 +32,23 @@ function getCssScopedName(srcPath, localName, mfileName) {
         .replace(/^modules-.*?(\w+)-components(-?)(.*)/, '$1-comp$2$3');
     return localName === 'root' ? mfileName : `${mfileName}_${localName}`;
 }
-function getUrlLoader(isProdModel, type, disable, limitSize) {
-    const fileLoader = {
-        loader: 'file-loader',
-        options: {
-            name: `${type}/[name]${isProdModel ? '.[hash:8]' : ''}.[ext]`,
-        },
-    };
-    if (disable) {
-        return fileLoader;
-    }
-    return {
-        loader: 'url-loader',
-        options: {
-            limit: limitSize,
-            fallback: fileLoader,
-        },
-    };
-}
-function oneOfCssLoader(isProdModel, srcPath, isVue, isServer, cssModulesOptions, extensionLoader) {
+function oneOfCssLoader(isProdModel, srcPath, isVue, isServer, cssModulesOptions, cssType, options) {
     let cssProcessors = null;
-    if (extensionLoader === 'less') {
+    if (cssType === 'less') {
         cssProcessors = {
             loader: 'less-loader',
+            options: {
+                lessOptions: options || { javascriptEnabled: true },
+            },
         };
     }
-    else if (extensionLoader === 'sass') {
+    else if (cssType === 'sass') {
         cssProcessors = {
             loader: 'sass-loader',
+            options: {
+                sassOptions: options || {},
+            },
         };
-    }
-    else if (extensionLoader) {
-        cssProcessors = extensionLoader;
     }
     const styleLoader = isProdModel
         ? { loader: MiniCssExtractPlugin.loader }
@@ -245,6 +230,7 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
             path: path_1.default.join(distPath, './client'),
             hashDigestLength: 8,
             filename: isProdModel ? 'js/[name].[contenthash].js' : 'js/[name].js',
+            assetModuleFilename: isProdModel ? 'imgs/[hash][ext][query]' : 'imgs/[name]-[hash][ext][query]',
         },
         resolve: { extensions: [...scriptExtensions, '.json'], alias: { ...commonAlias, ...clientAlias } },
         optimization: {
@@ -268,20 +254,31 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                 {
                     oneOf: [
                         {
-                            test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
-                            use: getUrlLoader(isProdModel, 'imgs', false, limitSize),
+                            test: /\.(svg|png|jpe?g|gif|webp)$/i,
+                            type: 'asset',
+                            parser: {
+                                dataUrlCondition: {
+                                    maxSize: limitSize,
+                                },
+                            },
                         },
                         {
-                            test: /\.(svg)(\?.*)?$/,
-                            use: getUrlLoader(isProdModel, 'imgs', true, limitSize),
+                            test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)$/i,
+                            type: 'asset/resource',
+                            generator: {
+                                filename: 'media/[hash][ext][query]',
+                            },
                         },
                         {
-                            test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-                            use: getUrlLoader(isProdModel, 'media', false, limitSize),
+                            test: /\.(woff2?|eot|ttf|otf)$/i,
+                            type: 'asset/resource',
+                            generator: {
+                                filename: 'fonts/[hash][ext][query]',
+                            },
                         },
                         {
-                            test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
-                            use: getUrlLoader(isProdModel, 'fonts', false, limitSize),
+                            test: /\.txt/,
+                            type: 'asset/source',
                         },
                         {
                             test: /\.(jsx|js)$/,
@@ -307,11 +304,11 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                         },
                         cssProcessors.less && {
                             test: /\.less$/,
-                            oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, false, cssModulesOptions, cssProcessors.less === true ? 'less' : cssProcessors.less),
+                            oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, false, cssModulesOptions, 'less', typeof cssProcessors.less === 'object' ? cssProcessors.less : undefined),
                         },
                         cssProcessors.sass && {
                             test: /\.s[ac]ss$/,
-                            oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, false, cssModulesOptions, cssProcessors.sass === true ? 'sass' : cssProcessors.sass),
+                            oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, false, cssModulesOptions, 'sass', typeof cssProcessors.sass === 'object' ? cssProcessors.sass : undefined),
                         },
                     ].filter(Boolean),
                 },
@@ -385,6 +382,7 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                 path: path_1.default.join(distPath, './server'),
                 hashDigestLength: 8,
                 filename: '[name].js',
+                assetModuleFilename: isProdModel ? 'imgs/[hash][ext][query]' : 'imgs/[name]-[hash][ext][query]',
             },
             resolve: { extensions: [...scriptExtensions, '.json'], alias: { ...commonAlias, ...serverAlias } },
             module: {
@@ -398,20 +396,31 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                     {
                         oneOf: [
                             {
-                                test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
-                                use: getUrlLoader(isProdModel, 'imgs', false, limitSize),
+                                test: /\.(svg|png|jpe?g|gif|webp)$/i,
+                                type: 'asset',
+                                parser: {
+                                    dataUrlCondition: {
+                                        maxSize: limitSize,
+                                    },
+                                },
                             },
                             {
-                                test: /\.(svg)(\?.*)?$/,
-                                use: getUrlLoader(isProdModel, 'imgs', true, limitSize),
+                                test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)$/i,
+                                type: 'asset/resource',
+                                generator: {
+                                    filename: 'media/[hash][ext][query]',
+                                },
                             },
                             {
-                                test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-                                use: getUrlLoader(isProdModel, 'media', false, limitSize),
+                                test: /\.(woff2?|eot|ttf|otf)$/i,
+                                type: 'asset/resource',
+                                generator: {
+                                    filename: 'fonts/[hash][ext][query]',
+                                },
                             },
                             {
-                                test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
-                                use: getUrlLoader(isProdModel, 'fonts', false, limitSize),
+                                test: /\.txt/,
+                                type: 'asset/source',
                             },
                             {
                                 test: /\.(jsx|js)$/,
@@ -435,11 +444,11 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                             },
                             cssProcessors.less && {
                                 test: /\.less$/,
-                                oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, true, cssModulesOptions, cssProcessors.less === true ? 'less' : cssProcessors.less),
+                                oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, true, cssModulesOptions, 'less', typeof cssProcessors.less === 'object' ? cssProcessors.less : undefined),
                             },
                             cssProcessors.sass && {
                                 test: /\.s[ac]ss$/,
-                                oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, true, cssModulesOptions, cssProcessors.sass === true ? 'sass' : cssProcessors.sass),
+                                oneOf: oneOfCssLoader(isProdModel, srcPath, isVue, true, cssModulesOptions, 'sass', typeof cssProcessors.sass === 'object' ? cssProcessors.sass : undefined),
                             },
                         ].filter(Boolean),
                     },

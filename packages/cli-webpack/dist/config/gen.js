@@ -9,7 +9,6 @@ const EluxConfigSchema = {
     type: 'object',
     additionalProperties: true,
     definitions: {
-        CssLoader: { type: 'object', properties: { loader: { type: 'string' } } },
         EnvConfig: {
             type: 'object',
             additionalProperties: false,
@@ -79,7 +78,7 @@ const EluxConfigSchema = {
                             type: 'boolean',
                         },
                         {
-                            $ref: '#/definitions/CssLoader',
+                            type: 'object',
                         },
                     ],
                 },
@@ -89,7 +88,7 @@ const EluxConfigSchema = {
                             type: 'boolean',
                         },
                         {
-                            $ref: '#/definitions/CssLoader',
+                            type: 'object',
                         },
                     ],
                 },

@@ -22,8 +22,8 @@ interface EluxConfig {
     distPath: string;
     publicPath: string;
     cssProcessors: {
-        less: WebpackLoader | boolean;
-        sass: WebpackLoader | boolean;
+        less: Record<string, any> | boolean;
+        sass: Record<string, any> | boolean;
     };
     cssModulesOptions: Record<string, any>;
     moduleFederation: Record<string, any>;
