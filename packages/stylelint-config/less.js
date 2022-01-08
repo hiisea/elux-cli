@@ -7,6 +7,7 @@ module.exports = {
     'alpha-value-notation': 'number',
     'no-descending-specificity': null,
     'no-invalid-position-at-import-rule': null,
+    'selector-class-pattern': null,
     'selector-pseudo-class-no-unknown': [
       true,
       {
