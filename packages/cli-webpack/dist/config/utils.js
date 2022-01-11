@@ -364,7 +364,7 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
             context: rootPath,
             name: 'server',
             mode: nodeEnv,
-            target: 'node',
+            target: `node${ssrNodeVersion}`,
             stats: 'minimal',
             optimization: {
                 minimize: false,

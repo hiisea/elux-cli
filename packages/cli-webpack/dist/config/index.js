@@ -11,7 +11,10 @@ const webpack_1 = __importDefault(require("webpack"));
 const cli_utils_1 = require("@elux/cli-utils");
 const gen_1 = __importDefault(require("./gen"));
 async function dev(rootPath, baseEluxConfig, envName, envPath, packageJSON, port) {
-    const ssrNodeVersion = (packageJSON.ssrnode || process.version).replace(/[^\d.]/g, '');
+    const ssrNodeVersion = (packageJSON.ssrnode || process.version)
+        .replace(/[^\d.]/g, '')
+        .split('.', 2)
+        .join('.');
     const config = gen_1.default(rootPath, baseEluxConfig, envName, envPath, 'development', ssrNodeVersion, port);
     const { devServerConfig, clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, projectType, serverPort, nodeEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar }, useSSR, onCompiled, }, } = config;
     const protAvailable = await cli_utils_1.checkPort(serverPort);
@@ -87,7 +90,10 @@ async function dev(rootPath, baseEluxConfig, envName, envPath, packageJSON, port
 }
 exports.dev = dev;
 function build(rootPath, baseEluxConfig, envName, envPath, packageJSON, port) {
-    const ssrNodeVersion = (packageJSON.ssrnode || process.version).replace(/[^\d.]/g, '');
+    const ssrNodeVersion = (packageJSON.ssrnode || process.version)
+        .replace(/[^\d.]/g, '')
+        .split('.', 2)
+        .join('.');
     const config = gen_1.default(rootPath, baseEluxConfig, envName, envPath, 'production', ssrNodeVersion, port);
     const { clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, publicPath, distPath, projectType, nodeEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar }, useSSR, serverPort, apiProxy, onCompiled, }, } = config;
     const envInfo = {
@@ -103,7 +109,7 @@ function build(rootPath, baseEluxConfig, envName, envPath, packageJSON, port) {
     if (cli_utils_1.fs.existsSync(envPath)) {
         cli_utils_1.fs.copySync(envPath, distPath, { dereference: true, filter: (fpath) => !fpath.endsWith('elux.config.js') });
     }
-    cli_utils_1.fs.outputFileSync(path_1.default.join(distPath, 'config.js'), `module.exports = ${JSON.stringify({ projectType, port: serverPort, proxy: apiProxy, clientGlobalVar, serverGlobalVar }, null, 4)}`);
+    cli_utils_1.fs.outputFileSync(path_1.default.join(distPath, 'config.js'), `module.exports = ${JSON.stringify({ projectType, port: serverPort, proxy: apiProxy, clientGlobalVar, serverGlobalVar, node: ssrNodeVersion }, null, 4)}`);
     const webpackCompiler = useSSR ? webpack_1.default([clientWebpackConfig, serverWebpackConfig]) : webpack_1.default(clientWebpackConfig);
     webpackCompiler.run((err, stats) => {
         if (err)
@@ -116,6 +122,11 @@ function build(rootPath, baseEluxConfig, envName, envPath, packageJSON, port) {
             chunkModules: false,
         })}\n\n`);
         cli_utils_1.log(`WebpackCache: ${cli_utils_1.chalk.blue(cache)}`);
+        if (useSSR) {
+            ['imgs', 'media', 'fonts'].forEach((dir) => {
+                cli_utils_1.fs.removeSync(path_1.default.join(distPath, 'server', dir));
+            });
+        }
         onCompiled();
     });
 }

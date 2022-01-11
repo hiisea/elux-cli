@@ -13,7 +13,10 @@ export async function dev(
   packageJSON: Record<string, any>,
   port?: number
 ): Promise<void> {
-  const ssrNodeVersion: string = (packageJSON.ssrnode || process.version).replace(/[^\d.]/g, '');
+  const ssrNodeVersion: string = (packageJSON.ssrnode || process.version)
+    .replace(/[^\d.]/g, '')
+    .split('.', 2)
+    .join('.');
   const config = genConfig(rootPath, baseEluxConfig, envName, envPath, 'development', ssrNodeVersion, port);
   const {
     devServerConfig,
@@ -124,7 +127,10 @@ export function build(
   packageJSON: Record<string, any>,
   port?: number
 ): void {
-  const ssrNodeVersion: string = (packageJSON.ssrnode || process.version).replace(/[^\d.]/g, '');
+  const ssrNodeVersion: string = (packageJSON.ssrnode || process.version)
+    .replace(/[^\d.]/g, '')
+    .split('.', 2)
+    .join('.');
   const config = genConfig(rootPath, baseEluxConfig, envName, envPath, 'production', ssrNodeVersion, port);
   const {
     clientWebpackConfig,
@@ -160,7 +166,11 @@ export function build(
   }
   fs.outputFileSync(
     path.join(distPath, 'config.js'),
-    `module.exports = ${JSON.stringify({projectType, port: serverPort, proxy: apiProxy, clientGlobalVar, serverGlobalVar}, null, 4)}`
+    `module.exports = ${JSON.stringify(
+      {projectType, port: serverPort, proxy: apiProxy, clientGlobalVar, serverGlobalVar, node: ssrNodeVersion},
+      null,
+      4
+    )}`
   );
   const webpackCompiler = useSSR ? webpack([clientWebpackConfig, serverWebpackConfig]) : webpack(clientWebpackConfig);
 
@@ -176,6 +186,11 @@ export function build(
       })}\n\n`
     );
     log(`WebpackCache: ${chalk.blue(cache)}`);
+    if (useSSR) {
+      ['imgs', 'media', 'fonts'].forEach((dir) => {
+        fs.removeSync(path.join(distPath, 'server', dir));
+      });
+    }
     onCompiled();
   });
 }

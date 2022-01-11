@@ -63,7 +63,7 @@ const EluxConfigSchema: any = {
         },
         urlLoaderLimitSize: {
           type: 'number',
-          description: 'Default is 8192',
+          description: 'Default is 4096',
         },
         apiProxy: {type: 'object'},
         serverPort: {
@@ -190,7 +190,7 @@ function moduleExports(
       stylelint: true,
       cache: true,
       resolveAlias: {},
-      urlLoaderLimitSize: 8192,
+      urlLoaderLimitSize: 4096,
       clientPublicPath: '/client/',
       clientGlobalVar: {},
       serverGlobalVar: {},

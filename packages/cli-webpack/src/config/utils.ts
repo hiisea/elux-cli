@@ -465,7 +465,7 @@ function moduleExports({
         context: rootPath,
         name: 'server',
         mode: nodeEnv,
-        target: 'node',
+        target: `node${ssrNodeVersion}`,
         stats: 'minimal',
         optimization: {
           minimize: false,
