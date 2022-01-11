@@ -170,6 +170,7 @@ function moduleExports(
   envName: string,
   envPath: string,
   nodeEnv: 'production' | 'development',
+  ssrNodeVersion: string,
   _serverPort?: number
 ): Info {
   schemaValidate(EluxConfigSchema, baseEluxConfig, {name: '@elux/cli-webpack'});
@@ -247,6 +248,7 @@ function moduleExports(
     apiProxy,
     useSSR,
     serverPort: _serverPort || serverPort,
+    ssrNodeVersion,
     resolveAlias,
     moduleFederation: Object.keys(moduleFederation).length > 0 ? moduleFederation : undefined,
   });

@@ -5,8 +5,16 @@ import webpack, {Compiler, MultiCompiler} from 'webpack';
 import {fs, chalk, localIP, log, err, checkPort} from '@elux/cli-utils';
 import genConfig from './gen';
 
-export async function dev(rootPath: string, baseEluxConfig: Record<string, any>, envName: string, envPath: string, port?: number): Promise<void> {
-  const config = genConfig(rootPath, baseEluxConfig, envName, envPath, 'development', port);
+export async function dev(
+  rootPath: string,
+  baseEluxConfig: Record<string, any>,
+  envName: string,
+  envPath: string,
+  packageJSON: Record<string, any>,
+  port?: number
+): Promise<void> {
+  const ssrNodeVersion: string = (packageJSON.ssrnode || process.version).replace(/[^\d.]/g, '');
+  const config = genConfig(rootPath, baseEluxConfig, envName, envPath, 'development', ssrNodeVersion, port);
   const {
     devServerConfig,
     clientWebpackConfig,
@@ -108,8 +116,16 @@ export async function dev(rootPath: string, baseEluxConfig: Record<string, any>,
   // });
 }
 
-export function build(rootPath: string, baseEluxConfig: Record<string, any>, envName: string, envPath: string, port?: number): void {
-  const config = genConfig(rootPath, baseEluxConfig, envName, envPath, 'production', port);
+export function build(
+  rootPath: string,
+  baseEluxConfig: Record<string, any>,
+  envName: string,
+  envPath: string,
+  packageJSON: Record<string, any>,
+  port?: number
+): void {
+  const ssrNodeVersion: string = (packageJSON.ssrnode || process.version).replace(/[^\d.]/g, '');
+  const config = genConfig(rootPath, baseEluxConfig, envName, envPath, 'production', ssrNodeVersion, port);
   const {
     clientWebpackConfig,
     serverWebpackConfig,

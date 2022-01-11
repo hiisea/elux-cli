@@ -6,11 +6,12 @@
   "command": {
     "publish": {
       "registry": "https://registry.npmjs.org/",
-      "message": "chore(release): publish %s"
+      "message": "chore(release): publish"
     },
     "version": {
       "allowBranch": "main",
-      "conventionalCommits": true
+      "conventionalCommits": true,
+      "createRelease": "github"
     }
   },
   "ignoreChanges": ["**/test/**", "**/*.md"]

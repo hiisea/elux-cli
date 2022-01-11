@@ -112,7 +112,7 @@ const EluxConfigSchema = {
         },
     },
 };
-function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, _serverPort) {
+function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, ssrNodeVersion, _serverPort) {
     cli_utils_1.schemaValidate(EluxConfigSchema, baseEluxConfig, { name: '@elux/cli-webpack' });
     const defaultBaseConfig = {
         type: 'react',
@@ -169,6 +169,7 @@ function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, _ser
         apiProxy,
         useSSR,
         serverPort: _serverPort || serverPort,
+        ssrNodeVersion,
         resolveAlias,
         moduleFederation: Object.keys(moduleFederation).length > 0 ? moduleFederation : undefined,
     });

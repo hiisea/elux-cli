@@ -151,16 +151,15 @@ function oneOfCssLoader(
       ];
 }
 
-function oneOfTsLoader(isProdModel: boolean, isVue: boolean, isServer: boolean): WebpackLoader[] {
+function oneOfTsLoader(isProdModel: boolean, isVue: boolean, isServer: boolean, ssrNodeVersion: string): WebpackLoader[] {
   const loaders: WebpackLoader[] = [
     {
       loader: 'babel-loader',
+      options: {caller: {versions: isServer ? `{"node":"${ssrNodeVersion}"}` : ''}},
     },
   ];
   if (!isVue && !isServer && !isProdModel) {
-    loaders[0].options = {
-      plugins: [require.resolve('react-refresh/babel')],
-    };
+    loaders[0].options!.plugins = [require.resolve('react-refresh/babel')];
   }
   if (isServer) {
     return [
@@ -180,16 +179,15 @@ function oneOfTsLoader(isProdModel: boolean, isVue: boolean, isServer: boolean):
   ];
 }
 
-function tsxLoaders(isProdModel: boolean, isVue: boolean, isServer: boolean): WebpackLoader[] {
+function tsxLoaders(isProdModel: boolean, isVue: boolean, isServer: boolean, ssrNodeVersion: string): WebpackLoader[] {
   const loaders: WebpackLoader[] = [
     {
       loader: 'babel-loader',
+      options: {caller: {versions: isServer ? `{"node":"${ssrNodeVersion}"}` : ''}},
     },
   ];
   if (!isVue && !isServer && !isProdModel) {
-    loaders[0].options = {
-      plugins: [require.resolve('react-refresh/babel')],
-    };
+    loaders[0].options!.plugins = [require.resolve('react-refresh/babel')];
   }
   return loaders;
 }
@@ -211,6 +209,7 @@ interface ConfigOptions {
   useSSR: boolean;
   UIType: 'react' | 'vue';
   serverPort: number;
+  ssrNodeVersion: string;
   resolveAlias: Record<string, string>;
   moduleFederation?: Record<string, any>;
   enableEslintPlugin: boolean;
@@ -237,6 +236,7 @@ function moduleExports({
   apiProxy,
   useSSR,
   serverPort,
+  ssrNodeVersion,
   resolveAlias,
   moduleFederation,
 }: ConfigOptions): {clientWebpackConfig: WebpackConfig; serverWebpackConfig: WebpackConfig; devServerConfig: DevServerConfig} {
@@ -368,17 +368,18 @@ function moduleExports({
               use: {
                 loader: 'babel-loader',
                 options: {
+                  caller: {versions: ''},
                   plugins: !isVue && !isProdModel ? [require.resolve('react-refresh/babel')] : [],
                 },
               },
             },
             {
               test: /\.ts$/,
-              oneOf: oneOfTsLoader(isProdModel, isVue, false),
+              oneOf: oneOfTsLoader(isProdModel, isVue, false, ssrNodeVersion),
             },
             {
               test: /\.tsx$/,
-              use: tsxLoaders(isProdModel, isVue, false),
+              use: tsxLoaders(isProdModel, isVue, false, ssrNodeVersion),
             },
             {
               test: /\.css$/,
@@ -526,16 +527,16 @@ function moduleExports({
                   exclude: /node_modules/,
                   use: {
                     loader: 'babel-loader',
-                    options: {},
+                    options: {caller: {versions: `{"node":"${ssrNodeVersion}"}`}},
                   },
                 },
                 {
                   test: /\.ts$/,
-                  oneOf: oneOfTsLoader(isProdModel, isVue, true),
+                  oneOf: oneOfTsLoader(isProdModel, isVue, true, ssrNodeVersion),
                 },
                 {
                   test: /\.tsx$/,
-                  use: tsxLoaders(isProdModel, isVue, true),
+                  use: tsxLoaders(isProdModel, isVue, true, ssrNodeVersion),
                 },
                 {
                   test: /\.css$/,

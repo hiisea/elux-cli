@@ -56,7 +56,7 @@ interface Info {
         onCompiled: () => void;
     };
 }
-declare function moduleExports(rootPath: string, baseEluxConfig: Partial<EluxConfig>, envName: string, envPath: string, nodeEnv: 'production' | 'development', _serverPort?: number): Info;
+declare function moduleExports(rootPath: string, baseEluxConfig: Partial<EluxConfig>, envName: string, envPath: string, nodeEnv: 'production' | 'development', ssrNodeVersion: string, _serverPort?: number): Info;
 declare namespace moduleExports {
     export { EnvConfig, EluxConfig, Info, WebpackLoader, WebpackConfig, DevServerConfig };
 }

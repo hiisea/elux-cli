@@ -4,7 +4,7 @@ const fs = require('fs');
 const leven = require('leven');
 const {chalk, log, checkNodeVersion, deepExtend} = require('@elux/cli-utils');
 const packageJson = require('../package.json');
-
+const projectPackageJson = fs.existsSync(path.join(process.cwd(), 'package.json')) ? require(path.join(process.cwd(), 'package.json')) : {};
 checkNodeVersion(packageJson.engines.node, '@elux/cli');
 
 const program = require('commander');
@@ -26,7 +26,7 @@ program
     const moduleName = `@elux/cli-${options.compiler || 'webpack'}`;
     env = env || 'local';
     const {config, envPath} = getConfig(process.cwd(), env);
-    const args = [process.cwd(), config, env, envPath, options.port];
+    const args = [process.cwd(), config, env, envPath, projectPackageJson, options.port];
     require(moduleName).dev(...args);
   });
 
@@ -39,7 +39,7 @@ program
     const moduleName = `@elux/cli-${options.compiler || 'webpack'}`;
     env = env || 'local';
     const {config, envPath} = getConfig(process.cwd(), env);
-    const args = [process.cwd(), config, env, envPath, options.port];
+    const args = [process.cwd(), config, env, envPath, projectPackageJson, options.port];
     require(moduleName).build(...args);
   });
 

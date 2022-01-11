@@ -2,13 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const runtimeVersion = require('@babel/runtime/package.json').version;
 module.exports = function (api, options = {}) {
-    if (process.env.NODE_ENV === 'test' || api.caller((caller) => caller && caller.target === 'node')) {
+    if (process.env.NODE_ENV === 'test') {
         options.module = 'cjs';
-    }
-    if (options.module === 'cjs' && !options.targets) {
         options.targets = { node: 'current' };
     }
-    const { module = 'esm', targets, presets = [], moduleResolver, rootImport, plugins = [], classPropertiesLoose = true, ui } = options;
+    const versions = api.caller((caller) => {
+        return caller?.versions || '';
+    });
+    const targetsCustom = versions ? JSON.parse(versions) : {};
+    const { module = 'esm', targets = targetsCustom, presets = [], moduleResolver, rootImport, plugins = [], classPropertiesLoose = true, ui } = options;
     if (ui === 'react') {
         presets.unshift(['@babel/preset-react', { runtime: 'automatic' }]);
     }

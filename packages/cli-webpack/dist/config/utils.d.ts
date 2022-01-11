@@ -47,12 +47,13 @@ interface ConfigOptions {
     useSSR: boolean;
     UIType: 'react' | 'vue';
     serverPort: number;
+    ssrNodeVersion: string;
     resolveAlias: Record<string, string>;
     moduleFederation?: Record<string, any>;
     enableEslintPlugin: boolean;
     enableStylelintPlugin: boolean;
 }
-declare function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath, publicPath, clientPublicPath, envPath, cssProcessors, cssModulesOptions, enableEslintPlugin, enableStylelintPlugin, UIType, limitSize, globalVar, apiProxy, useSSR, serverPort, resolveAlias, moduleFederation, }: ConfigOptions): {
+declare function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath, publicPath, clientPublicPath, envPath, cssProcessors, cssModulesOptions, enableEslintPlugin, enableStylelintPlugin, UIType, limitSize, globalVar, apiProxy, useSSR, serverPort, ssrNodeVersion, resolveAlias, moduleFederation, }: ConfigOptions): {
     clientWebpackConfig: WebpackConfig;
     serverWebpackConfig: WebpackConfig;
     devServerConfig: DevServerConfig;

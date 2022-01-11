@@ -10,8 +10,9 @@ const terser_webpack_plugin_1 = __importDefault(require("terser-webpack-plugin")
 const webpack_1 = __importDefault(require("webpack"));
 const cli_utils_1 = require("@elux/cli-utils");
 const gen_1 = __importDefault(require("./gen"));
-async function dev(rootPath, baseEluxConfig, envName, envPath, port) {
-    const config = gen_1.default(rootPath, baseEluxConfig, envName, envPath, 'development', port);
+async function dev(rootPath, baseEluxConfig, envName, envPath, packageJSON, port) {
+    const ssrNodeVersion = (packageJSON.ssrnode || process.version).replace(/[^\d.]/g, '');
+    const config = gen_1.default(rootPath, baseEluxConfig, envName, envPath, 'development', ssrNodeVersion, port);
     const { devServerConfig, clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, projectType, serverPort, nodeEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar }, useSSR, onCompiled, }, } = config;
     const protAvailable = await cli_utils_1.checkPort(serverPort);
     if (!protAvailable) {
@@ -85,8 +86,9 @@ async function dev(rootPath, baseEluxConfig, envName, envPath, port) {
     devServer.start().catch(() => process.exit(1));
 }
 exports.dev = dev;
-function build(rootPath, baseEluxConfig, envName, envPath, port) {
-    const config = gen_1.default(rootPath, baseEluxConfig, envName, envPath, 'production', port);
+function build(rootPath, baseEluxConfig, envName, envPath, packageJSON, port) {
+    const ssrNodeVersion = (packageJSON.ssrnode || process.version).replace(/[^\d.]/g, '');
+    const config = gen_1.default(rootPath, baseEluxConfig, envName, envPath, 'production', ssrNodeVersion, port);
     const { clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, publicPath, distPath, projectType, nodeEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar }, useSSR, serverPort, apiProxy, onCompiled, }, } = config;
     const envInfo = {
         clientPublicPath,

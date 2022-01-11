@@ -117,16 +117,15 @@ function oneOfCssLoader(isProdModel, srcPath, isVue, isServer, cssModulesOptions
             { use: withoutModule },
         ];
 }
-function oneOfTsLoader(isProdModel, isVue, isServer) {
+function oneOfTsLoader(isProdModel, isVue, isServer, ssrNodeVersion) {
     const loaders = [
         {
             loader: 'babel-loader',
+            options: { caller: { versions: isServer ? `{"node":"${ssrNodeVersion}"}` : '' } },
         },
     ];
     if (!isVue && !isServer && !isProdModel) {
-        loaders[0].options = {
-            plugins: [require.resolve('react-refresh/babel')],
-        };
+        loaders[0].options.plugins = [require.resolve('react-refresh/babel')];
     }
     if (isServer) {
         return [
@@ -145,20 +144,19 @@ function oneOfTsLoader(isProdModel, isVue, isServer) {
         { use: loaders },
     ];
 }
-function tsxLoaders(isProdModel, isVue, isServer) {
+function tsxLoaders(isProdModel, isVue, isServer, ssrNodeVersion) {
     const loaders = [
         {
             loader: 'babel-loader',
+            options: { caller: { versions: isServer ? `{"node":"${ssrNodeVersion}"}` : '' } },
         },
     ];
     if (!isVue && !isServer && !isProdModel) {
-        loaders[0].options = {
-            plugins: [require.resolve('react-refresh/babel')],
-        };
+        loaders[0].options.plugins = [require.resolve('react-refresh/babel')];
     }
     return loaders;
 }
-function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath, publicPath, clientPublicPath, envPath, cssProcessors, cssModulesOptions, enableEslintPlugin, enableStylelintPlugin, UIType, limitSize, globalVar, apiProxy, useSSR, serverPort, resolveAlias, moduleFederation, }) {
+function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath, publicPath, clientPublicPath, envPath, cssProcessors, cssModulesOptions, enableEslintPlugin, enableStylelintPlugin, UIType, limitSize, globalVar, apiProxy, useSSR, serverPort, ssrNodeVersion, resolveAlias, moduleFederation, }) {
     const isProdModel = nodeEnv === 'production';
     if (!isProdModel) {
         clientPublicPath = `${clientPublicPath.replace('//', '``').replace(/\/.+$/, '').replace('``', '//')}/client/`;
@@ -286,17 +284,18 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                             use: {
                                 loader: 'babel-loader',
                                 options: {
+                                    caller: { versions: '' },
                                     plugins: !isVue && !isProdModel ? [require.resolve('react-refresh/babel')] : [],
                                 },
                             },
                         },
                         {
                             test: /\.ts$/,
-                            oneOf: oneOfTsLoader(isProdModel, isVue, false),
+                            oneOf: oneOfTsLoader(isProdModel, isVue, false, ssrNodeVersion),
                         },
                         {
                             test: /\.tsx$/,
-                            use: tsxLoaders(isProdModel, isVue, false),
+                            use: tsxLoaders(isProdModel, isVue, false, ssrNodeVersion),
                         },
                         {
                             test: /\.css$/,
@@ -427,16 +426,16 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                                 exclude: /node_modules/,
                                 use: {
                                     loader: 'babel-loader',
-                                    options: {},
+                                    options: { caller: { versions: `{"node":"${ssrNodeVersion}"}` } },
                                 },
                             },
                             {
                                 test: /\.ts$/,
-                                oneOf: oneOfTsLoader(isProdModel, isVue, true),
+                                oneOf: oneOfTsLoader(isProdModel, isVue, true, ssrNodeVersion),
                             },
                             {
                                 test: /\.tsx$/,
-                                use: tsxLoaders(isProdModel, isVue, true),
+                                use: tsxLoaders(isProdModel, isVue, true, ssrNodeVersion),
                             },
                             {
                                 test: /\.css$/,
