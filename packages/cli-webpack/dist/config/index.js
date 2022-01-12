@@ -111,9 +111,13 @@ function build(rootPath, baseEluxConfig, envName, envPath, packageJSON, port) {
     }
     cli_utils_1.fs.outputFileSync(path_1.default.join(distPath, 'config.js'), `module.exports = ${JSON.stringify({ projectType, port: serverPort, proxy: apiProxy, clientGlobalVar, serverGlobalVar, node: ssrNodeVersion }, null, 4)}`);
     const webpackCompiler = useSSR ? webpack_1.default([clientWebpackConfig, serverWebpackConfig]) : webpack_1.default(clientWebpackConfig);
-    webpackCompiler.run((err, stats) => {
-        if (err)
-            throw err;
+    webpackCompiler.run((error, stats) => {
+        if (error)
+            throw error;
+        if (stats?.hasErrors() || stats?.hasWarnings()) {
+            cli_utils_1.err(stats.toString('errors-warnings'));
+            process.exit(1);
+        }
         process.stdout.write(`${stats.toString({
             colors: true,
             modules: false,
@@ -162,9 +166,13 @@ function pack(input, output, target) {
         plugins: [new webpack_1.default.BannerPlugin({ banner: 'eslint-disable', entryOnly: true })],
     };
     const compiler = webpack_1.default(webpackConfig);
-    compiler.run((err, stats) => {
-        if (err)
-            throw err;
+    compiler.run((error, stats) => {
+        if (error)
+            throw error;
+        if (stats?.hasErrors() || stats?.hasWarnings()) {
+            cli_utils_1.err(stats.toString('errors-warnings'));
+            process.exit(1);
+        }
         process.stdout.write(`${stats.toString({
             colors: true,
             modules: false,

@@ -174,8 +174,12 @@ export function build(
   );
   const webpackCompiler = useSSR ? webpack([clientWebpackConfig, serverWebpackConfig]) : webpack(clientWebpackConfig);
 
-  webpackCompiler.run((err: any, stats: any) => {
-    if (err) throw err;
+  webpackCompiler.run((error: any, stats: any) => {
+    if (error) throw error;
+    if (stats?.hasErrors() || stats?.hasWarnings()) {
+      err(stats.toString('errors-warnings'));
+      process.exit(1);
+    }
     process.stdout.write(
       `${stats!.toString({
         colors: true,
@@ -226,8 +230,12 @@ export function pack(input: string, output: string, target: string): void {
   };
   const compiler = webpack(webpackConfig);
 
-  compiler.run((err, stats) => {
-    if (err) throw err;
+  compiler.run((error, stats) => {
+    if (error) throw error;
+    if (stats?.hasErrors() || stats?.hasWarnings()) {
+      err(stats.toString('errors-warnings'));
+      process.exit(1);
+    }
     process.stdout.write(
       `${stats!.toString({
         colors: true,

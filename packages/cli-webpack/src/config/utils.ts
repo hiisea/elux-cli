@@ -299,6 +299,7 @@ function moduleExports({
     mode: nodeEnv,
     target: 'browserslist',
     stats: 'minimal',
+    bail: isProdModel,
     devtool: sourceMap,
     entry: path.join(srcPath, './index'),
     performance: false,
@@ -436,8 +437,8 @@ function moduleExports({
               },
             },
           }),
-      enableEslintPlugin && new EslintWebpackPlugin({cache: true, extensions: scriptExtensions}),
-      enableStylelintPlugin && new StylelintPlugin({files: `src/**/*.{${cssExtensions.join(',')}}`}),
+      enableEslintPlugin && new EslintWebpackPlugin({cache: true, extensions: scriptExtensions, failOnWarning: true}),
+      enableStylelintPlugin && new StylelintPlugin({files: `src/**/*.{${cssExtensions.join(',')}}`, failOnWarning: true}),
       new webpack.DefinePlugin({
         'process.env.PROJ_ENV': JSON.stringify(globalVar.client || {}),
         ...(isVue ? {__VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false} : {}),
@@ -467,6 +468,7 @@ function moduleExports({
         mode: nodeEnv,
         target: `node${ssrNodeVersion}`,
         stats: 'minimal',
+        bail: isProdModel,
         optimization: {
           minimize: false,
         },
