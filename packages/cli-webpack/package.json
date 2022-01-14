@@ -25,7 +25,8 @@
     "@elux/cli-utils": "*",
     "express": "*",
     "fs-monkey": "*",
-    "terser-webpack-plugin": "*"
+    "terser-webpack-plugin": "*",
+    "schema-utils": "*"
   },
   "dependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",

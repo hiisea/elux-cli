@@ -78,11 +78,12 @@ program
 program
   .command('pack <input> <output>')
   .description('Packaging JS bundle using a packager. Default is webpack')
+  .option('-m, --minimize', 'Minimize for output')
   .option('-c, --compiler <value>', 'Default is webpack')
   .option('-t, --target <type>', 'Refer to the target of webpack. Default is es5')
   .action((input, output, options) => {
     const moduleName = `@elux/cli-${options.compiler || 'webpack'}`;
-    const args = [input, output, options.target || 'es5'];
+    const args = [input, output, options.target || 'es5', !!options.minimize];
     require(moduleName).pack(...args);
   });
 

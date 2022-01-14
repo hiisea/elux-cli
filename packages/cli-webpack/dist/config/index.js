@@ -135,7 +135,7 @@ function build(rootPath, baseEluxConfig, envName, envPath, packageJSON, port) {
     });
 }
 exports.build = build;
-function pack(input, output, target) {
+function pack(input, output, target, minimize) {
     let outputPath;
     let ouputName;
     if (path_1.default.extname(output)) {
@@ -148,17 +148,19 @@ function pack(input, output, target) {
     }
     const webpackConfig = {
         mode: 'production',
-        target,
+        target: ['web', target],
         stats: 'minimal',
         devtool: false,
         entry: path_1.default.resolve(input),
-        optimization: {
-            minimizer: [
-                new terser_webpack_plugin_1.default({
-                    extractComments: false,
-                }),
-            ],
-        },
+        optimization: minimize
+            ? {
+                minimizer: [
+                    new terser_webpack_plugin_1.default({
+                        extractComments: false,
+                    }),
+                ],
+            }
+            : { minimize: false },
         output: {
             path: path_1.default.resolve(outputPath),
             filename: ouputName,

@@ -199,7 +199,7 @@ export function build(
   });
 }
 
-export function pack(input: string, output: string, target: string): void {
+export function pack(input: string, output: string, target: string, minimize: boolean): void {
   let outputPath;
   let ouputName;
   if (path.extname(output)) {
@@ -211,17 +211,19 @@ export function pack(input: string, output: string, target: string): void {
   }
   const webpackConfig: any = {
     mode: 'production',
-    target,
+    target: ['web', target],
     stats: 'minimal',
     devtool: false,
     entry: path.resolve(input),
-    optimization: {
-      minimizer: [
-        new TerserPlugin({
-          extractComments: false,
-        }),
-      ],
-    },
+    optimization: minimize
+      ? {
+          minimizer: [
+            new TerserPlugin({
+              extractComments: false,
+            }),
+          ],
+        }
+      : {minimize: false},
     output: {
       path: path.resolve(outputPath),
       filename: ouputName,
