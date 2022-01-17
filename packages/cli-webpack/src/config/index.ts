@@ -125,13 +125,14 @@ export function build(
   envName: string,
   envPath: string,
   packageJSON: Record<string, any>,
-  port?: number
+  port?: number,
+  analyzerPort?: number
 ): void {
   const ssrNodeVersion: string = (packageJSON.ssrnode || process.version)
     .replace(/[^\d.]/g, '')
     .split('.', 2)
     .join('.');
-  const config = genConfig(rootPath, baseEluxConfig, envName, envPath, 'production', ssrNodeVersion, port);
+  const config = genConfig(rootPath, baseEluxConfig, envName, envPath, 'production', ssrNodeVersion, port, analyzerPort);
   const {
     clientWebpackConfig,
     serverWebpackConfig,

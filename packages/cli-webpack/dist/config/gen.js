@@ -30,6 +30,8 @@ const EluxConfigSchema = {
                 },
                 eslint: { type: 'boolean' },
                 stylelint: { type: 'boolean' },
+                clientMinimize: { type: 'boolean' },
+                serverMinimize: { type: 'boolean' },
                 resolveAlias: {
                     type: 'object',
                 },
@@ -112,7 +114,7 @@ const EluxConfigSchema = {
         },
     },
 };
-function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, ssrNodeVersion, _serverPort) {
+function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, ssrNodeVersion, _serverPort, analyzerPort) {
     cli_utils_1.schemaValidate(EluxConfigSchema, baseEluxConfig, { name: '@elux/cli-webpack' });
     const defaultBaseConfig = {
         type: 'react',
@@ -127,6 +129,8 @@ function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, ssrN
             serverPort: 4003,
             eslint: true,
             stylelint: true,
+            clientMinimize: true,
+            serverMinimize: false,
             cache: true,
             resolveAlias: {},
             urlLoaderLimitSize: 4096,
@@ -139,13 +143,13 @@ function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, ssrN
             apiProxy: {},
         },
         prod: {
-            sourceMap: 'hidden-cheap-module-source-map',
+            sourceMap: 'hidden-source-map',
         },
     };
     const eluxConfig = cli_utils_1.deepExtend(defaultBaseConfig, baseEluxConfig);
     const envConfig = cli_utils_1.deepExtend(eluxConfig.all, eluxConfig[nodeEnv === 'development' ? 'dev' : 'prod']);
     const { srcPath, publicPath, type, moduleFederation, devServerConfigTransform, cssProcessors, cssModulesOptions } = eluxConfig;
-    const { serverPort, cache, eslint, stylelint, urlLoaderLimitSize, resolveAlias, clientPublicPath, clientGlobalVar, serverGlobalVar, sourceMap, onCompiled, webpackConfigTransform, apiProxy, } = envConfig;
+    const { serverPort, cache, eslint, stylelint, clientMinimize, serverMinimize, urlLoaderLimitSize, resolveAlias, clientPublicPath, clientGlobalVar, serverGlobalVar, sourceMap, onCompiled, webpackConfigTransform, apiProxy, } = envConfig;
     const useSSR = type === 'react ssr' || type === 'vue ssr';
     const UIType = type.split(' ')[0];
     const distPath = path_1.default.resolve(rootPath, eluxConfig.distPath, envName);
@@ -163,6 +167,9 @@ function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, ssrN
         cssModulesOptions,
         enableEslintPlugin: eslint,
         enableStylelintPlugin: stylelint,
+        clientMinimize,
+        serverMinimize,
+        analyzerPort,
         UIType,
         limitSize: urlLoaderLimitSize,
         globalVar: { client: clientGlobalVar, server: serverGlobalVar },

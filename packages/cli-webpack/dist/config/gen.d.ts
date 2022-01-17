@@ -8,6 +8,8 @@ interface EnvConfig {
     cache: boolean | Record<string, any>;
     eslint: boolean;
     stylelint: boolean;
+    clientMinimize: boolean;
+    serverMinimize: boolean;
     resolveAlias: Record<string, string>;
     urlLoaderLimitSize: number;
     apiProxy: Record<string, {
@@ -56,7 +58,7 @@ interface Info {
         onCompiled: () => void;
     };
 }
-declare function moduleExports(rootPath: string, baseEluxConfig: Partial<EluxConfig>, envName: string, envPath: string, nodeEnv: 'production' | 'development', ssrNodeVersion: string, _serverPort?: number): Info;
+declare function moduleExports(rootPath: string, baseEluxConfig: Partial<EluxConfig>, envName: string, envPath: string, nodeEnv: 'production' | 'development', ssrNodeVersion: string, _serverPort?: number, analyzerPort?: number): Info;
 declare namespace moduleExports {
     export { EnvConfig, EluxConfig, Info, WebpackLoader, WebpackConfig, DevServerConfig };
 }

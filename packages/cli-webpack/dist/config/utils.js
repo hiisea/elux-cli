@@ -14,6 +14,7 @@ const EslintWebpackPlugin = require('eslint-webpack-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { VueLoaderPlugin } = require('vue-loader');
 const ModuleFederationPlugin = require('../../libs/ModuleFederationPlugin');
 const ContainerReferencePlugin = require('../../libs/ContainerReferencePlugin');
@@ -156,7 +157,7 @@ function tsxLoaders(isProdModel, isVue, isServer, ssrNodeVersion) {
     }
     return loaders;
 }
-function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath, publicPath, clientPublicPath, envPath, cssProcessors, cssModulesOptions, enableEslintPlugin, enableStylelintPlugin, UIType, limitSize, globalVar, apiProxy, useSSR, serverPort, ssrNodeVersion, resolveAlias, moduleFederation, }) {
+function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath, publicPath, clientPublicPath, envPath, cssProcessors, cssModulesOptions, enableEslintPlugin, enableStylelintPlugin, clientMinimize, serverMinimize, analyzerPort, UIType, limitSize, globalVar, apiProxy, useSSR, serverPort, ssrNodeVersion, resolveAlias, moduleFederation, }) {
     const isProdModel = nodeEnv === 'production';
     if (!isProdModel) {
         clientPublicPath = `${clientPublicPath.replace('//', '``').replace(/\/.+$/, '').replace('``', '//')}/client/`;
@@ -233,6 +234,10 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
         },
         resolve: { extensions: [...scriptExtensions, '.json'], alias: { ...commonAlias, ...clientAlias } },
         optimization: {
+            splitChunks: {
+                chunks: 'all',
+            },
+            minimize: isProdModel ? clientMinimize : false,
             minimizer: ['...', new CssMinimizerPlugin()],
         },
         module: {
@@ -356,6 +361,7 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                 }),
             useSSR && SsrPlugin.client,
             !isProdModel && !isVue && new ReactRefreshWebpackPlugin({ overlay: false }),
+            analyzerPort && new BundleAnalyzerPlugin({ reportTitle: 'client', generateStatsFile: true, analyzerPort }),
             new webpack_1.default.ProgressPlugin(),
         ].filter(Boolean),
     };
@@ -369,7 +375,10 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
             stats: 'minimal',
             bail: isProdModel,
             optimization: {
-                minimize: false,
+                splitChunks: {
+                    chunks: 'all',
+                },
+                minimize: isProdModel ? serverMinimize : false,
             },
             devtool: sourceMap,
             watchOptions: {
@@ -462,6 +471,7 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                     'process.env.PROJ_ENV': JSON.stringify(globalVar.server || {}),
                     ...(isVue ? { __VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false } : {}),
                 }),
+                analyzerPort && new BundleAnalyzerPlugin({ reportTitle: 'server', generateStatsFile: true, analyzerPort: analyzerPort + 1 }),
                 new webpack_1.default.ProgressPlugin(),
             ].filter(Boolean),
         }

@@ -12,6 +12,8 @@ interface EnvConfig {
   cache: boolean | Record<string, any>;
   eslint: boolean;
   stylelint: boolean;
+  clientMinimize: boolean;
+  serverMinimize: boolean;
   resolveAlias: Record<string, string>;
   urlLoaderLimitSize: number;
   apiProxy: Record<string, {target: string}>;
@@ -58,6 +60,8 @@ const EluxConfigSchema: any = {
         },
         eslint: {type: 'boolean'},
         stylelint: {type: 'boolean'},
+        clientMinimize: {type: 'boolean'},
+        serverMinimize: {type: 'boolean'},
         resolveAlias: {
           type: 'object',
         },
@@ -171,7 +175,8 @@ function moduleExports(
   envPath: string,
   nodeEnv: 'production' | 'development',
   ssrNodeVersion: string,
-  _serverPort?: number
+  _serverPort?: number,
+  analyzerPort?: number
 ): Info {
   schemaValidate(EluxConfigSchema, baseEluxConfig, {name: '@elux/cli-webpack'});
 
@@ -188,6 +193,8 @@ function moduleExports(
       serverPort: 4003,
       eslint: true,
       stylelint: true,
+      clientMinimize: true,
+      serverMinimize: false,
       cache: true,
       resolveAlias: {},
       urlLoaderLimitSize: 4096,
@@ -200,7 +207,7 @@ function moduleExports(
       apiProxy: {},
     },
     prod: {
-      sourceMap: 'hidden-cheap-module-source-map',
+      sourceMap: 'hidden-source-map',
     },
   };
   const eluxConfig: EluxConfig = deepExtend(defaultBaseConfig, baseEluxConfig);
@@ -213,6 +220,8 @@ function moduleExports(
     cache,
     eslint,
     stylelint,
+    clientMinimize,
+    serverMinimize,
     urlLoaderLimitSize,
     resolveAlias,
     clientPublicPath,
@@ -242,6 +251,9 @@ function moduleExports(
     cssModulesOptions,
     enableEslintPlugin: eslint,
     enableStylelintPlugin: stylelint,
+    clientMinimize,
+    serverMinimize,
+    analyzerPort,
     UIType,
     limitSize: urlLoaderLimitSize,
     globalVar: {client: clientGlobalVar, server: serverGlobalVar},

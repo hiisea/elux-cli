@@ -89,12 +89,12 @@ async function dev(rootPath, baseEluxConfig, envName, envPath, packageJSON, port
     devServer.start().catch(() => process.exit(1));
 }
 exports.dev = dev;
-function build(rootPath, baseEluxConfig, envName, envPath, packageJSON, port) {
+function build(rootPath, baseEluxConfig, envName, envPath, packageJSON, port, analyzerPort) {
     const ssrNodeVersion = (packageJSON.ssrnode || process.version)
         .replace(/[^\d.]/g, '')
         .split('.', 2)
         .join('.');
-    const config = gen_1.default(rootPath, baseEluxConfig, envName, envPath, 'production', ssrNodeVersion, port);
+    const config = gen_1.default(rootPath, baseEluxConfig, envName, envPath, 'production', ssrNodeVersion, port, analyzerPort);
     const { clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, publicPath, distPath, projectType, nodeEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar }, useSSR, serverPort, apiProxy, onCompiled, }, } = config;
     const envInfo = {
         clientPublicPath,

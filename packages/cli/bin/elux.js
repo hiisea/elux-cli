@@ -35,11 +35,20 @@ program
   .description('Use a preset env configurations to build the project. Default env is local')
   .option('-c, --compiler <value>', 'Default is webpack')
   .option('-p, --port <value>', 'Normalize a port into a number. Default is to load from elux.config.js')
+  .option('-a, --analyzer [value]', 'Enable webpack-bundle-analyzer and Set the server port. Default is 8888')
   .action((env, options) => {
     const moduleName = `@elux/cli-${options.compiler || 'webpack'}`;
     env = env || 'local';
     const {config, envPath} = getConfig(process.cwd(), env);
-    const args = [process.cwd(), config, env, envPath, projectPackageJson, options.port];
+    const args = [
+      process.cwd(),
+      config,
+      env,
+      envPath,
+      projectPackageJson,
+      options.port,
+      options.analyzer === true ? 8888 : options.analyzer && parseInt(options.analyzer),
+    ];
     require(moduleName).build(...args);
   });
 

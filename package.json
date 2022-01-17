@@ -24,7 +24,7 @@
     "recommit": "git commit --amend --no-edit",
     "publish-lerna": "lerna publish",
     "publish-next": "lerna publish --npm-tag=next",
-    "publish-test": "lerna publish prerelease --registry=http://localhost:4873/ --no-git-tag-version --conventional-commits=0",
+    "publish-test": "lerna publish --registry=http://localhost:4873/ --no-git-tag-version --conventional-commits=0",
     "publish-nopush": "lerna publish --no-push",
     "publish-only": "lerna publish from-package"
   },

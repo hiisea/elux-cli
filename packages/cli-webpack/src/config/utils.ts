@@ -12,6 +12,7 @@ const EslintWebpackPlugin = require('eslint-webpack-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 //const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const {VueLoaderPlugin} = require('vue-loader');
 
@@ -214,6 +215,9 @@ interface ConfigOptions {
   moduleFederation?: Record<string, any>;
   enableEslintPlugin: boolean;
   enableStylelintPlugin: boolean;
+  clientMinimize: boolean;
+  serverMinimize: boolean;
+  analyzerPort?: number;
 }
 
 function moduleExports({
@@ -230,6 +234,9 @@ function moduleExports({
   cssModulesOptions,
   enableEslintPlugin,
   enableStylelintPlugin,
+  clientMinimize,
+  serverMinimize,
+  analyzerPort,
   UIType,
   limitSize,
   globalVar,
@@ -316,7 +323,10 @@ function moduleExports({
     },
     resolve: {extensions: [...scriptExtensions, '.json'], alias: {...commonAlias, ...clientAlias}},
     optimization: {
-      // minimize: false,
+      splitChunks: {
+        chunks: 'all',
+      },
+      minimize: isProdModel ? clientMinimize : false,
       minimizer: ['...', new CssMinimizerPlugin()],
     },
     module: {
@@ -456,6 +466,7 @@ function moduleExports({
         }),
       useSSR && SsrPlugin.client,
       !isProdModel && !isVue && new ReactRefreshWebpackPlugin({overlay: false}),
+      analyzerPort && new BundleAnalyzerPlugin({reportTitle: 'client', generateStatsFile: true, analyzerPort}),
       new webpack.ProgressPlugin(),
     ].filter(Boolean),
   };
@@ -470,7 +481,10 @@ function moduleExports({
         stats: 'minimal',
         bail: isProdModel,
         optimization: {
-          minimize: false,
+          splitChunks: {
+            chunks: 'all',
+          },
+          minimize: isProdModel ? serverMinimize : false,
         },
         devtool: sourceMap,
         watchOptions: {
@@ -579,6 +593,7 @@ function moduleExports({
             'process.env.PROJ_ENV': JSON.stringify(globalVar.server || {}),
             ...(isVue ? {__VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false} : {}),
           }),
+          analyzerPort && new BundleAnalyzerPlugin({reportTitle: 'server', generateStatsFile: true, analyzerPort: analyzerPort + 1}),
           new webpack.ProgressPlugin(),
         ].filter(Boolean),
       }
