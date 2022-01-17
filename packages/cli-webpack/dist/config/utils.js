@@ -375,9 +375,6 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
             stats: 'minimal',
             bail: isProdModel,
             optimization: {
-                splitChunks: {
-                    chunks: 'all',
-                },
                 minimize: isProdModel ? serverMinimize : false,
             },
             devtool: sourceMap,
