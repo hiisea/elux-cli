@@ -481,9 +481,6 @@ function moduleExports({
         stats: 'minimal',
         bail: isProdModel,
         optimization: {
-          splitChunks: {
-            chunks: 'all',
-          },
           minimize: isProdModel ? serverMinimize : false,
         },
         devtool: sourceMap,
