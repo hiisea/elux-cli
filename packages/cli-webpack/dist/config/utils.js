@@ -16,6 +16,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { VueLoaderPlugin } = require('vue-loader');
+const openInEditor = require('launch-editor-middleware');
 const ModuleFederationPlugin = require('../../libs/ModuleFederationPlugin');
 const ContainerReferencePlugin = require('../../libs/ContainerReferencePlugin');
 function getCssScopedName(srcPath, localName, mfileName) {
@@ -490,6 +491,9 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                 warnings: false,
                 errors: true,
             },
+        },
+        onBeforeSetupMiddleware: function (devServer) {
+            devServer.app.use('/__open-in-editor', openInEditor());
         },
     };
     if (useSSR) {

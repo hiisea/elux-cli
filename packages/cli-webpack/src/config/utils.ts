@@ -15,6 +15,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 //const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const {VueLoaderPlugin} = require('vue-loader');
+const openInEditor = require('launch-editor-middleware');
 
 // const ModuleFederationPlugin = webpack.container.ModuleFederationPlugin;
 const ModuleFederationPlugin = require('../../libs/ModuleFederationPlugin');
@@ -36,6 +37,7 @@ interface DevServerConfig {
   https?: boolean;
   host?: string;
   devMiddleware?: {publicPath?: string; serverSideRender?: boolean};
+  onBeforeSetupMiddleware?: (server: {app: Express}) => void;
   onAfterSetupMiddleware?: (server: {app: Express}) => void;
   [key: string]: any;
 }
@@ -613,6 +615,9 @@ function moduleExports({
         warnings: false,
         errors: true,
       },
+    },
+    onBeforeSetupMiddleware: function (devServer: {app: Express}) {
+      devServer.app.use('/__open-in-editor', openInEditor());
     },
   };
   if (useSSR) {

@@ -16,6 +16,9 @@ interface DevServerConfig {
         publicPath?: string;
         serverSideRender?: boolean;
     };
+    onBeforeSetupMiddleware?: (server: {
+        app: Express;
+    }) => void;
     onAfterSetupMiddleware?: (server: {
         app: Express;
     }) => void;
