@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/hiisea/elux/compare/@elux/cli@1.1.2...@elux/cli@1.2.0) (2022-02-13)
+
+
+### Bug Fixes
+
+* ssr时无法指定Node版本 ([9a484b2](https://github.com/hiisea/elux/commit/9a484b2eccda6573713cef0d0ba9b14a07f420a7))
+
+
+### Features
+
+* 增加webpack-bundle-analyzer预设 ([88a6d46](https://github.com/hiisea/elux/commit/88a6d46230698150988c16f7ae5abf080efa9151))
+* pack命名增加minimize参数 ([e860c20](https://github.com/hiisea/elux/commit/e860c2094d53ad935ab2f6cb2e6aa0cff25ad05c))
+
+
+
+
+
 ## [1.1.2](https://github.com/hiisea/elux/compare/@elux/cli@1.1.1...@elux/cli@1.1.2) (2022-01-08)
 
 **Note:** Version bump only for package @elux/cli

@@ -1,6 +1,6 @@
 {
   "name": "@elux/cli",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Command line interface for rapid elux project",
   "repository": "https://github.com/hiisea/elux/tree/master/packages/cli",
   "author": "hiisea <hiisea@qq.com>",
@@ -38,8 +38,8 @@
     }
   ],
   "optionalDependencies": {
-    "@elux/cli-mock": "^1.1.0",
-    "@elux/cli-webpack": "^1.1.1"
+    "@elux/cli-mock": "^1.1.1",
+    "@elux/cli-webpack": "^1.2.0"
   },
   "devDependencies": {
     "@types/ejs": "^3.0.6",
@@ -47,7 +47,7 @@
     "@types/mem-fs-editor": "^7.0.1"
   },
   "dependencies": {
-    "@elux/cli-utils": "^1.1.1",
+    "@elux/cli-utils": "^1.1.2",
     "commander": "^7.0.0",
     "download-git-repo": "^3.0.2",
     "inquirer": "^8.2.0",
