@@ -27,7 +27,7 @@ export = async function moduleExports(_entryFilePath?: string, echo?: boolean): 
   const entryFilePath =
     _entryFilePath || (fs.existsSync(path.join(srcPath, 'Global.ts')) ? path.join(srcPath, 'Global.ts') : path.join(srcPath, 'Global.tsx'));
   const source = fs.readFileSync(entryFilePath).toString();
-  const arr = source.match(/(getApp<\w+>\s*\()([^)]*?)(\))/m);
+  const arr = source.match(/(getApi<[\w, ]+>\s*\()([^)]*?)(\))/m);
   const typeName = 'PatchActions';
   if (arr) {
     const demoteForProdOnly = arr[2].substr(0, arr[2].indexOf(',')).trim() || 'true';

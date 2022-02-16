@@ -86,13 +86,13 @@ class Creator {
     };
     if (data[Framework.reactRedux].length > 0) {
       choices.push({
-        name: `React + Redux [${chalk.red(getPics(data[Framework.reactRedux]) + 'P')}]`,
+        name: `React [${chalk.red(getPics(data[Framework.reactRedux]) + 'P')}]`,
         value: Framework.reactRedux,
       });
     }
     if (data[Framework.vueVuex].length > 0) {
       choices.push({
-        name: `Vue3 + Vuex [${chalk.red(getPics(data[Framework.vueVuex]) + 'P')}]`,
+        name: `Vue3 [${chalk.red(getPics(data[Framework.vueVuex]) + 'P')}]`,
         value: Framework.vueVuex,
       });
     }
