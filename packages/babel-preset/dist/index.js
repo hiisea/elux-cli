@@ -10,7 +10,7 @@ module.exports = function (api, options = {}) {
         return caller?.versions || '';
     });
     const targetsCustom = versions ? JSON.parse(versions) : {};
-    const { module = 'esm', targets = targetsCustom, presets = [], moduleResolver, rootImport, plugins = [], classPropertiesLoose = true, ui } = options;
+    const { module = 'esm', targets = targetsCustom, presets = [], moduleResolver, rootImport, plugins = [], decoratorsLegacy = false, loose = true, ui, } = options;
     if (ui === 'react') {
         presets.unshift(['@babel/preset-react', { runtime: 'automatic' }]);
     }
@@ -24,8 +24,8 @@ module.exports = function (api, options = {}) {
         rootImport && ['babel-plugin-root-import', rootImport],
         moduleResolver && ['module-resolver', moduleResolver],
         ...plugins,
-        ['@babel/plugin-proposal-decorators', { legacy: false, decoratorsBeforeExport: true }],
-        ['@babel/plugin-proposal-class-properties', { loose: classPropertiesLoose }],
+        ['@babel/plugin-proposal-decorators', decoratorsLegacy ? { legacy: true } : { legacy: false, decoratorsBeforeExport: true }],
+        ['@babel/plugin-proposal-class-properties', { loose }],
         [
             '@babel/plugin-transform-runtime',
             {
@@ -40,7 +40,7 @@ module.exports = function (api, options = {}) {
             [
                 '@babel/preset-env',
                 {
-                    loose: true,
+                    loose,
                     modules: module === 'cjs' ? 'cjs' : false,
                     targets,
                 },

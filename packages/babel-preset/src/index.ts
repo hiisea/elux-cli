@@ -5,7 +5,8 @@ export type Options = {
   plugins?: any[];
   moduleResolver?: {root: string[]; alias: {[key: string]: string}};
   rootImport?: any;
-  classPropertiesLoose?: boolean;
+  loose?: boolean;
+  decoratorsLegacy?: boolean;
   ui?: 'react' | 'vue' | 'vue2' | 'vue3';
 };
 const runtimeVersion = require('@babel/runtime/package.json').version;
@@ -20,7 +21,17 @@ module.exports = function (api: any, options: Options = {}) {
   });
   const targetsCustom = versions ? JSON.parse(versions) : {};
 
-  const {module = 'esm', targets = targetsCustom, presets = [], moduleResolver, rootImport, plugins = [], classPropertiesLoose = true, ui} = options;
+  const {
+    module = 'esm',
+    targets = targetsCustom,
+    presets = [],
+    moduleResolver,
+    rootImport,
+    plugins = [],
+    decoratorsLegacy = false,
+    loose = true,
+    ui,
+  } = options;
 
   if (ui === 'react') {
     presets.unshift(['@babel/preset-react', {runtime: 'automatic'}]);
@@ -34,8 +45,8 @@ module.exports = function (api: any, options: Options = {}) {
     rootImport && ['babel-plugin-root-import', rootImport],
     moduleResolver && ['module-resolver', moduleResolver],
     ...plugins,
-    ['@babel/plugin-proposal-decorators', {legacy: false, decoratorsBeforeExport: true}],
-    ['@babel/plugin-proposal-class-properties', {loose: classPropertiesLoose}],
+    ['@babel/plugin-proposal-decorators', decoratorsLegacy ? {legacy: true} : {legacy: false, decoratorsBeforeExport: true}],
+    ['@babel/plugin-proposal-class-properties', {loose}],
     [
       '@babel/plugin-transform-runtime',
       {
@@ -51,7 +62,7 @@ module.exports = function (api: any, options: Options = {}) {
       [
         '@babel/preset-env',
         {
-          loose: true,
+          loose,
           modules: module === 'cjs' ? 'cjs' : false,
           targets,
         },

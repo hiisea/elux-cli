@@ -10,6 +10,7 @@ export declare type Options = {
         };
     };
     rootImport?: any;
-    classPropertiesLoose?: boolean;
+    loose?: boolean;
+    decoratorsLegacy?: boolean;
     ui?: 'react' | 'vue' | 'vue2' | 'vue3';
 };
