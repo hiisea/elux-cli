@@ -23,8 +23,8 @@ export enum Platform {
   micro = 'micro',
 }
 export enum Framework {
-  reactRedux = 'reactRedux',
-  vueVuex = 'vueVuex',
+  react = 'react',
+  vue = 'vue',
 }
 export enum CSS {
   less = 'less',
@@ -34,7 +34,6 @@ export interface ITemplate {
   platform: Platform[];
   framework: Framework[];
   css: CSS[];
-  install: string[];
   getTitle: (args: FeatChoices) => string;
   operation?: {action: 'copy' | 'move'; from: string; to: string}[];
   data?: (args: FeatChoices & {projectName: string}) => {[key: string]: string};

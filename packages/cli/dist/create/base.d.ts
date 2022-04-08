@@ -23,8 +23,8 @@ export declare enum Platform {
     micro = "micro"
 }
 export declare enum Framework {
-    reactRedux = "reactRedux",
-    vueVuex = "vueVuex"
+    react = "react",
+    vue = "vue"
 }
 export declare enum CSS {
     less = "less",
@@ -34,7 +34,6 @@ export interface ITemplate {
     platform: Platform[];
     framework: Framework[];
     css: CSS[];
-    install: string[];
     getTitle: (args: FeatChoices) => string;
     operation?: {
         action: 'copy' | 'move';

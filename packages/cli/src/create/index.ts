@@ -70,8 +70,8 @@ class Creator {
   }
   askFramework(templates: ITemplate[]): Promise<{feat: string; templates: ITemplate[]}> {
     const data: {[key in Framework]: ITemplate[]} = {
-      [Framework.reactRedux]: [],
-      [Framework.vueVuex]: [],
+      [Framework.react]: [],
+      [Framework.vue]: [],
     };
     templates.forEach((item) => {
       item.framework.forEach((framework) => {
@@ -84,16 +84,16 @@ class Creator {
         return pre + cur.css.length;
       }, 0);
     };
-    if (data[Framework.reactRedux].length > 0) {
+    if (data[Framework.react].length > 0) {
       choices.push({
-        name: `React [${chalk.red(getPics(data[Framework.reactRedux]) + 'P')}]`,
-        value: Framework.reactRedux,
+        name: `React [${chalk.red(getPics(data[Framework.react]) + 'P')}]`,
+        value: Framework.react,
       });
     }
-    if (data[Framework.vueVuex].length > 0) {
+    if (data[Framework.vue].length > 0) {
       choices.push({
-        name: `Vue3 [${chalk.red(getPics(data[Framework.vueVuex]) + 'P')}]`,
-        value: Framework.vueVuex,
+        name: `Vue3 [${chalk.red(getPics(data[Framework.vue]) + 'P')}]`,
+        value: Framework.vue,
       });
     }
     return inquirer

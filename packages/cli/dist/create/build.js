@@ -45,10 +45,7 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
     logInstallInfo = function () {
         cli_utils_1.log('');
         cli_utils_1.log('- 进入项目 ' + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
-        cli_utils_1.log('- 以下目录需要安装依赖 ' + cli_utils_1.chalk.cyan('yarn install') + cli_utils_1.chalk.yellow(' (推荐yarn，使用workspaces一次性安装)'));
-        template.install.forEach((dir) => {
-            cli_utils_1.log(cli_utils_1.chalk.green(`  ${dir}`));
-        });
+        cli_utils_1.log('- 安装依赖 ' + cli_utils_1.chalk.cyan('yarn install') + cli_utils_1.chalk.yellow(' (或"npm install --legacy-peer-deps",npm版本需>=7.0)'));
         cli_utils_1.log('- 运行程序 ' + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或查看readme.txt)'));
         cli_utils_1.log('');
     };
@@ -135,14 +132,14 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
             const choices = [];
             if (yarnVersion) {
                 choices.push({
-                    name: 'yarn install(推荐)',
+                    name: 'yarn install',
                     value: 'yarn',
                 });
             }
             if (npmVersion) {
                 choices.push({
-                    name: 'npm install' + (cli_utils_1.semver.lt(npmVersion, '6.9.0') ? cli_utils_1.chalk.red('(Current version < 6.9.0, May cause exceptions!)') : ''),
-                    value: 'npm',
+                    name: 'npm install' + (cli_utils_1.semver.lt(npmVersion, '7.0.0') ? cli_utils_1.chalk.red('(当前版本<7.0.0,不可用!)') : ''),
+                    value: cli_utils_1.semver.lt(npmVersion, '7.0.0') ? '' : 'npm',
                 });
             }
             if (cnpmVersion) {
@@ -164,10 +161,9 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
             })
                 .then(({ installCmd }) => {
                 if (installCmd) {
-                    const subDirs = installCmd === 'yarn' ? [template.install[0]] : template.install;
-                    const installExec = installCmd === 'npm' && cli_utils_1.semver.gte(npmVersion, '7.0.0') ? [installCmd, ['install', '--legacy-peer-deps']] : [installCmd, ['install']];
+                    const installExec = installCmd === 'npm' ? [installCmd, ['install', '--legacy-peer-deps']] : [installCmd, ['install']];
                     cli_utils_1.log('');
-                    setTimeout(() => install(installExec, projectDir, subDirs), 0);
+                    setTimeout(() => install(installExec, projectDir), 0);
                 }
             });
         }
@@ -176,24 +172,18 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
         }
     });
 }
-function install(installExec, projectDir, subDirs) {
-    const dir = subDirs.shift();
-    cli_utils_1.log(`  正在为 ${cli_utils_1.chalk.green(dir)} 安装依赖，请稍后...`);
+function install(installExec, projectDir) {
+    cli_utils_1.log(`  正在安装依赖，请稍后...`);
     const spinner = cli_utils_1.ora('...').start();
-    process.chdir(path_1.default.resolve(projectDir, dir));
+    process.chdir(path_1.default.resolve(projectDir));
     const subProcess = cli_utils_1.execa(installExec[0], installExec[1]);
     subProcess.stdin.pipe(process.stdin);
     subProcess.stdout.pipe(process.stdout);
     subProcess.stderr.pipe(process.stderr);
     subProcess.then(() => {
         spinner.stop();
-        if (subDirs.length > 0) {
-            setTimeout(() => install(installExec, projectDir, subDirs), 0);
-        }
-        else {
-            cli_utils_1.log(cli_utils_1.chalk.green('\n✔ 项目依赖安装成功！'));
-            logSuccessInfo();
-        }
+        cli_utils_1.log(cli_utils_1.chalk.green('\n✔ 项目依赖安装成功！'));
+        logSuccessInfo();
     }, () => {
         spinner.stop();
         cli_utils_1.log(cli_utils_1.chalk.red('\n✖ 项目依赖安装失败，请稍后自行安装！\n\n'));

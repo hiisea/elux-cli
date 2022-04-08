@@ -8,11 +8,11 @@ import Creator from './create';
 
 function parseProjectName(input: string) {
   const cwd = process.cwd();
-  const inCurrent = input === '.';
-  const projectName = inCurrent ? path.relative('../', cwd) : input;
   const projectDir = path.resolve(cwd, input);
+  const projectName = projectDir.split(path.sep).pop() || '';
   return {projectName, projectDir};
 }
+
 function askProjectName(): Promise<{projectNameInput: string; override?: boolean}> {
   return inquirer.prompt([
     {
@@ -217,11 +217,13 @@ async function getTemplates(args: {
   }
 }
 function parseTemplates(floder: string): ITemplate[] {
+  const baseFuns = fs.readFileSync(path.join(floder, './base.js')).toString();
   const templates: ITemplate[] = [];
   readDirSync(floder).forEach((file) => {
     if (file.isFile && file.name.endsWith('.conf.js')) {
       const tplPath = path.join(floder, file.name);
-      const tplFun = new Function(fs.readFileSync(tplPath).toString());
+      const tplScript = fs.readFileSync(tplPath).toString();
+      const tplFun = new Function(baseFuns + '\n' + tplScript);
       const tpl = tplFun() as ITemplate;
       templates.push(tpl);
     }

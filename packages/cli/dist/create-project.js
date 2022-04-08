@@ -11,9 +11,8 @@ const loadRepository_1 = require("./create/loadRepository");
 const create_1 = __importDefault(require("./create"));
 function parseProjectName(input) {
     const cwd = process.cwd();
-    const inCurrent = input === '.';
-    const projectName = inCurrent ? path_1.default.relative('../', cwd) : input;
     const projectDir = path_1.default.resolve(cwd, input);
+    const projectName = projectDir.split(path_1.default.sep).pop() || '';
     return { projectName, projectDir };
 }
 function askProjectName() {
@@ -214,11 +213,13 @@ async function getTemplates(args) {
     }
 }
 function parseTemplates(floder) {
+    const baseFuns = cli_utils_1.fs.readFileSync(path_1.default.join(floder, './base.js')).toString();
     const templates = [];
     cli_utils_1.readDirSync(floder).forEach((file) => {
         if (file.isFile && file.name.endsWith('.conf.js')) {
             const tplPath = path_1.default.join(floder, file.name);
-            const tplFun = new Function(cli_utils_1.fs.readFileSync(tplPath).toString());
+            const tplScript = cli_utils_1.fs.readFileSync(tplPath).toString();
+            const tplFun = new Function(baseFuns + '\n' + tplScript);
             const tpl = tplFun();
             templates.push(tpl);
         }

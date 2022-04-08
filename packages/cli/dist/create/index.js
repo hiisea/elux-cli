@@ -72,8 +72,8 @@ class Creator {
     }
     askFramework(templates) {
         const data = {
-            [base_1.Framework.reactRedux]: [],
-            [base_1.Framework.vueVuex]: [],
+            [base_1.Framework.react]: [],
+            [base_1.Framework.vue]: [],
         };
         templates.forEach((item) => {
             item.framework.forEach((framework) => {
@@ -86,16 +86,16 @@ class Creator {
                 return pre + cur.css.length;
             }, 0);
         };
-        if (data[base_1.Framework.reactRedux].length > 0) {
+        if (data[base_1.Framework.react].length > 0) {
             choices.push({
-                name: `React [${cli_utils_1.chalk.red(getPics(data[base_1.Framework.reactRedux]) + 'P')}]`,
-                value: base_1.Framework.reactRedux,
+                name: `React [${cli_utils_1.chalk.red(getPics(data[base_1.Framework.react]) + 'P')}]`,
+                value: base_1.Framework.react,
             });
         }
-        if (data[base_1.Framework.vueVuex].length > 0) {
+        if (data[base_1.Framework.vue].length > 0) {
             choices.push({
-                name: `Vue3 [${cli_utils_1.chalk.red(getPics(data[base_1.Framework.vueVuex]) + 'P')}]`,
-                value: base_1.Framework.vueVuex,
+                name: `Vue3 [${cli_utils_1.chalk.red(getPics(data[base_1.Framework.vue]) + 'P')}]`,
+                value: base_1.Framework.vue,
             });
         }
         return inquirer_1.default

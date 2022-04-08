@@ -10,8 +10,8 @@ var Platform;
 })(Platform = exports.Platform || (exports.Platform = {}));
 var Framework;
 (function (Framework) {
-    Framework["reactRedux"] = "reactRedux";
-    Framework["vueVuex"] = "vueVuex";
+    Framework["react"] = "react";
+    Framework["vue"] = "vue";
 })(Framework = exports.Framework || (exports.Framework = {}));
 var CSS;
 (function (CSS) {
