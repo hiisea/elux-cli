@@ -1,8 +1,8 @@
 import path from 'path';
 import validateProjectName from 'validate-npm-package-name';
-import {log, chalk, fs, semver, ora, readDirSync, got, getProxy, testHttpUrl, clearConsole} from '@elux/cli-utils';
+import {log, chalk, fs, semver, ora, readDirSync, getProxy, testHttpUrl, clearConsole, loadPackageVesrion, loadPackageFields} from '@elux/cli-utils';
 import inquirer from 'inquirer';
-import {CommandOptions, PackageJson, TemplateResources, ITemplate, PACKAGE_INFO_GITEE, USER_AGENT} from './create/base';
+import {CommandOptions, TemplateResources, ITemplate} from './create/base';
 import {loadRepository} from './create/loadRepository';
 import Creator from './create';
 
@@ -59,55 +59,57 @@ async function getProjectName(args: {title: string; templateResources: TemplateR
     getTemplates({title, projectName, projectDir, templateResources, options});
   }
 }
-function askTemplateSource(templateResources: TemplateResources[]): Promise<{url: string; summary: string}> {
+function askTemplateSource(templateResources: TemplateResources[]): Promise<{repository: string; summary: string}> {
   return inquirer
     .prompt([
       {
         type: 'list',
         name: 'templateSource',
-        message: '请选择或输入远程模板源',
+        message: '请选择或输入模板源',
         pageSize: 8,
         loop: false,
         choices: [
           ...templateResources.map((item) => ({name: `${item.title} [${chalk.red(item.count + 'P')}]`, value: item})),
           {
-            name: '输入Http下载地址...',
-            value: 'inputHttp',
-            short: '地址格式参见 https://www.npmjs.com/package/download-git-repo',
+            name: '输入模版文件URL...',
+            value: 'inputUrl',
+            short: 'Url格式如:http://xxx/xxx.zip',
           },
           {
-            name: '输入GitClone地址...',
-            value: 'inputClone',
-            short: '地址格式参见 https://www.npmjs.com/package/download-git-repo',
+            name: '输入本地模版目录...',
+            value: 'inputPath',
+            short: '相对或绝对路径如:../xxx/xxx',
           },
         ],
       },
       {
         type: 'input',
-        name: 'templateSourceInputHttp',
-        message: '输入Http下载地址',
+        name: 'templateSourceInputUrl',
+        message: '输入模版文件URL',
         when(answers: {templateSource: string}) {
-          return answers.templateSource === 'inputHttp';
+          return answers.templateSource === 'inputUrl';
         },
       },
       {
         type: 'input',
-        name: 'templateSourceInputClone',
-        message: '输入GitClone地址',
+        name: 'templateSourceInputPath',
+        message: '输入本地模版目录',
         when(answers: {templateSource: string}) {
-          return answers.templateSource === 'inputClone';
+          return answers.templateSource === 'inputPath';
         },
       },
     ])
-    .then(({templateSource, templateSourceInputHttp, templateSourceInputClone}: any) => {
-      if (templateSourceInputClone) {
-        return {url: 'clone://' + templateSourceInputClone, summary: ''};
-      } else if (templateSourceInputHttp) {
-        return {url: templateSourceInputHttp, summary: ''};
+    .then(({templateSource, templateSourceInputUrl, templateSourceInputPath}: any) => {
+      if (templateSourceInputPath || templateSourceInputUrl) {
+        const repository = templateSourceInputPath ? path.resolve(process.cwd(), templateSourceInputPath) : templateSourceInputUrl;
+        return {
+          repository,
+          summary: repository,
+        };
       } else {
-        return templateSource === 'inputHttp' || templateSource === 'inputClone'
-          ? {url: '', summary: ''}
-          : {url: templateSource.url, summary: templateSource.summary};
+        return templateSource === 'inputUrl' || templateSource === 'inputPath'
+          ? {repository: '', summary: ''}
+          : {repository: templateSource.url, summary: templateSource.summary};
       }
     });
 }
@@ -122,7 +124,7 @@ async function askProxy(systemProxy: string): Promise<string> {
         if (!input) {
           return true;
         }
-        return testHttpUrl(input) || chalk.red('格式错误，如:http://127.0.0.1:1080');
+        return testHttpUrl(input) || chalk.red('格式错误如:http://127.0.0.1:1080');
       },
     });
   } else {
@@ -177,50 +179,63 @@ async function getTemplates(args: {
 }): Promise<void> {
   log('');
   const templateSource = await askTemplateSource(args.templateResources);
-  let repository = templateSource.url;
-  const summary = templateSource.summary;
+  const {repository, summary} = templateSource;
   if (!repository) {
     log(`${chalk.green('Please reselect...')}\n`);
     setTimeout(() => getTemplates(args), 0);
     return;
   }
   summary && log('\n' + chalk.green.underline(summary));
-  let isClone = false;
-  if (repository.startsWith('clone://')) {
-    isClone = true;
-    repository = repository.replace('clone://', '');
-  }
-  const globalProxy = getProxy() || '';
-  log(chalk.magenta('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
-  const proxy = await askProxy(globalProxy);
-  log(chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
-  const spinner = ora(`Pulling template from ${chalk.blue.underline(repository)}`).start();
-  const templateDir: string | Object = await loadRepository(repository, isClone, proxy).catch((e) => e);
-  //const templateDir: any = 'C:\\my\\cli\\src';
-  if (typeof templateDir === 'object') {
-    spinner.color = 'red';
-    spinner.fail(`${chalk.red('Pull failed from')} ${chalk.blue.underline(repository)}`);
-    log(`${chalk.gray(templateDir.toString())}, Maybe you should change an proxy agent.`);
-    log(`${chalk.green('Please reselect...')}\n`);
-    setTimeout(() => getTemplates(args), 0);
-  } else {
+  let templateDir: string = repository;
+  if (repository.startsWith('http://') || repository.startsWith('https://')) {
+    const globalProxy = getProxy() || '';
+    log(chalk.magenta('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
+    const proxy = await askProxy(globalProxy);
+    log(chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
+    const spinner = ora(`Pulling template from ${chalk.blue.underline(repository)}`).start();
+    const loadData: string | Object = await loadRepository(repository, proxy).catch((e) => e);
+    if (typeof loadData === 'object') {
+      spinner.color = 'red';
+      spinner.fail(`${chalk.red('Pull failed from')} ${chalk.blue.underline(repository)}`);
+      log(`${chalk.gray(loadData.toString())}, Maybe you should change an proxy agent.`);
+      log(`${chalk.green('Please reselect...')}\n`);
+      setTimeout(() => getTemplates(args), 0);
+      return;
+    }
+    templateDir = loadData;
     spinner.color = 'green';
     spinner.succeed(`${chalk.green('Pull successful!')}\n\n`);
-    const templates = parseTemplates(templateDir);
-    const pics = templates.reduce((pre, cur) => {
-      return pre + cur.platform.length * cur.framework.length * cur.css.length;
-    }, 0);
-    const title = args.title + `\ntotally [${chalk.red(pics + 'P')}] templates are pulled from ${chalk.blue.underline(repository)}\n`;
-    const {projectName, projectDir, options} = args;
-    const creator = new Creator(projectName, projectDir, templateDir, options, templates, title);
-    creator.create();
   }
+  //templateDir = 'C:\\my\\cli\\src';
+  const {projectName, projectDir, options} = args;
+  let templates: ITemplate[];
+  try {
+    templates = parseTemplates(templateDir, options.packageJson.version);
+  } catch (error: any) {
+    log(chalk.red('✖ 模版解析失败！'));
+    log(chalk.yellow('  ' + error.toString()) + '\n');
+    setTimeout(() => getTemplates(args), 0);
+    return;
+  }
+  const pics = templates.reduce((pre, cur) => {
+    return pre + cur.platform.length * cur.framework.length * cur.css.length;
+  }, 0);
+  const title = args.title + `\ntotally [${chalk.red(pics + 'P')}] templates are pulled from ${chalk.blue.underline(repository)}\n`;
+  const creator = new Creator(projectName, projectDir, templateDir, options, templates, title);
+  creator.create();
 }
-function parseTemplates(floder: string): ITemplate[] {
-  const baseFuns = fs.readFileSync(path.join(floder, './base.js')).toString();
+function parseTemplates(floder: string, curVerison: string): ITemplate[] {
+  const baseFuns = fs.readFileSync(path.join(floder, './base.conf.js')).toString();
+  const versionMatch = baseFuns
+    .split('\n', 1)[0]
+    .replace(/(^\/\*)|(\*\/$)|(^\/\/)/g, '')
+    .trim();
+  if (!semver.satisfies(curVerison, versionMatch)) {
+    throw `该模版不能使用当前@elux/cli版本安装（v${curVerison}不满足${versionMatch}）`;
+  }
   const templates: ITemplate[] = [];
   readDirSync(floder).forEach((file) => {
-    if (file.isFile && file.name.endsWith('.conf.js')) {
+    if (file.isFile && file.name.endsWith('.conf.js') && !file.name.endsWith('base.conf.js')) {
       const tplPath = path.join(floder, file.name);
       const tplScript = fs.readFileSync(tplPath).toString();
       const tplFun = new Function(baseFuns + '\n' + tplScript);
@@ -233,29 +248,22 @@ function parseTemplates(floder: string): ITemplate[] {
 
 async function main(options: CommandOptions): Promise<void> {
   const spinner = ora('check the latest data...').start();
-  const response: PackageJson = await got(PACKAGE_INFO_GITEE, {
-    timeout: 15000,
-    retry: 0,
-    responseType: 'json' as const,
-    headers: {
-      'user-agent': USER_AGENT,
-    },
-  }).then(
-    (response) => {
-      spinner.stop();
-      return response.body as PackageJson;
-    },
-    () => {
-      spinner.warn(chalk.yellow('Failed to get the latest data. Use local cache.'));
-      log('');
-      return options.packageJson;
-    }
-  );
-  const curVerison = options.packageJson.version;
-  const {version: latestVesrion, templateResources} = response;
+  const {packageJson} = options;
+  const curVerison = packageJson.version;
+  let templateResources = packageJson.templateResources;
+  let compatibleVersion: string = curVerison,
+    latestVesrion: string = curVerison;
+  try {
+    [compatibleVersion, latestVesrion] = loadPackageVesrion(packageJson.name, curVerison);
+    templateResources = loadPackageFields(`${packageJson.name}@${compatibleVersion}`, 'templateResources');
+  } catch (error) {
+    spinner.warn(chalk.yellow('获取最新数据失败，将使用本地缓存...'));
+    log('');
+  }
+  spinner.stop();
   let title = '@elux/cli ' + curVerison;
   if (semver.lt(curVerison, latestVesrion)) {
-    title += `, ${chalk.magenta.underline('New version available ' + latestVesrion)}`;
+    title += `, ${chalk.magenta.underline('可升级最新版本 ' + latestVesrion)}`;
   }
   getProjectName({title, templateResources, options});
 }

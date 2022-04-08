@@ -57,7 +57,7 @@ function warn(message) {
 }
 function getCmdVersion(cmd) {
     try {
-        const version = child_process_1.execSync(cmd + ' --version', { stdio: ['pipe', 'pipe', 'ignore'] });
+        const version = child_process_1.execSync(cmd + ' --version', { stdio: ['pipe', 'pipe', 'ignore'], timeout: 10000 });
         return version
             .toString()
             .trim()
@@ -70,30 +70,22 @@ function getCmdVersion(cmd) {
 const npmVersion = getCmdVersion('npm');
 const cnpmVersion = getCmdVersion('cnpm');
 const yarnVersion = getCmdVersion('yarn');
-function loadPackageVesrion(packageName) {
-    if (npmVersion) {
-        try {
-            const version = child_process_1.execSync(`npm view ${packageName} version`, { stdio: ['pipe', 'pipe', 'ignore'] });
-            return version
-                .toString()
-                .trim()
-                .replace(/^\n*|\n*$/g, '');
-        }
-        catch (e) {
-            return '';
-        }
+function loadPackageFields(packageName, fields) {
+    const str = child_process_1.execSync(`npm view ${packageName} ${fields} --json`, { stdio: ['pipe', 'pipe', 'ignore'], timeout: 10000 })
+        .toString()
+        .trim();
+    return str ? JSON.parse(str) : str;
+}
+function loadPackageVesrion(packageName, installedVersion) {
+    const latest = loadPackageFields(packageName, 'version');
+    if (!installedVersion) {
+        return latest;
     }
-    else if (yarnVersion) {
-        try {
-            const json = child_process_1.execSync(`yarn info ${packageName} version --json`, { stdio: ['pipe', 'pipe', 'ignore'] });
-            const result = JSON.parse(json.toString().trim());
-            return result.type !== 'error' ? result.data : '';
-        }
-        catch (e) {
-            return '';
-        }
+    else {
+        const result = loadPackageFields(packageName + '@^' + installedVersion, 'version');
+        const compatible = Array.isArray(result) ? result.pop() : installedVersion;
+        return [compatible, latest];
     }
-    return '';
 }
 function isEmptyObject(obj) {
     if (obj == null) {
@@ -204,6 +196,7 @@ module.exports = {
     platform,
     readDirSync,
     checkNodeVersion,
+    loadPackageFields,
     loadPackageVesrion,
     clearConsole,
     got: got_1.default,

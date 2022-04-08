@@ -9,9 +9,9 @@ const os_1 = __importDefault(require("os"));
 const download_git_repo_1 = __importDefault(require("download-git-repo"));
 const cli_utils_1 = require("@elux/cli-utils");
 const base_1 = require("./base");
-function loadRepository(repository, clone, proxy) {
+function loadRepository(url, proxy) {
     const tmpdir = path_1.default.join(os_1.default.tmpdir(), 'elux-cli-tpl');
-    const options = { clone, headers: { 'user-agent': base_1.USER_AGENT } };
+    const options = { clone: false, headers: { 'user-agent': base_1.USER_AGENT } };
     if (proxy) {
         options.proxy = proxy;
     }
@@ -23,7 +23,7 @@ function loadRepository(repository, clone, proxy) {
             if (cli_utils_1.fs.existsSync(tmpdir)) {
                 cli_utils_1.fs.removeSync(tmpdir);
             }
-            download_git_repo_1.default(repository, tmpdir, options, (e) => {
+            download_git_repo_1.default('direct:' + url, tmpdir, options, (e) => {
                 if (e) {
                     reject(e);
                 }

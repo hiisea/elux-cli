@@ -12,7 +12,9 @@ declare function slash(path: string): string;
 declare function log(message: string): void;
 declare function err(message: string): void;
 declare function getCmdVersion(cmd: string): string;
+declare function loadPackageFields(packageName: string, fields: string): any;
 declare function loadPackageVesrion(packageName: string): string;
+declare function loadPackageVesrion(packageName: string, installedVersion: string): [string, string];
 declare function isEmptyObject(obj: any): boolean;
 declare function checkNodeVersion(wanted: string, id: string): void;
 declare function readDirSync(floder: string): {
@@ -82,6 +84,7 @@ declare const _default: {
     };
     readDirSync: typeof readDirSync;
     checkNodeVersion: typeof checkNodeVersion;
+    loadPackageFields: typeof loadPackageFields;
     loadPackageVesrion: typeof loadPackageVesrion;
     clearConsole: typeof clearConsole;
     got: import("got").Got;

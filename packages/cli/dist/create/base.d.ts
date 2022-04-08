@@ -5,6 +5,7 @@ export interface TemplateResources {
     summary: string;
 }
 export interface PackageJson {
+    name: string;
     version: string;
     templateResources: TemplateResources[];
 }
@@ -49,6 +50,5 @@ export interface ITemplate {
     beforeRender?: (params: any, fpath: string, content: string) => string;
     afterRender?: (params: any, fpath: string, content: string) => string;
 }
-export declare const PACKAGE_INFO_GITEE: string;
 export declare const PACKAGE_INFO_GITHUB: string;
 export declare const USER_AGENT: string;

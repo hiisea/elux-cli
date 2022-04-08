@@ -14,7 +14,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 //const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const {VueLoaderPlugin} = require('vue-loader');
 const openInEditor = require('launch-editor-middleware');
 
 // const ModuleFederationPlugin = webpack.container.ModuleFederationPlugin;
@@ -268,9 +267,13 @@ function moduleExports({
   const {paths = {}, baseUrl = ''} = tsconfig.compilerOptions || {};
   const scriptExtensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
   const cssExtensions = ['css'];
+  let VueLoaderPlugin: any = function () {
+    return;
+  };
   if (isVue) {
     scriptExtensions.unshift('.vue');
     cssExtensions.unshift('vue');
+    VueLoaderPlugin = require('vue-loader').VueLoaderPlugin;
   }
   cssProcessors.less && cssExtensions.push('less');
   cssProcessors.sass && cssExtensions.push('sass', 'scss');
@@ -294,7 +297,7 @@ function moduleExports({
     if (key.startsWith('server//')) {
       serverAlias[key.replace('server//', '')] = target;
     } else if (key.startsWith('client//')) {
-      clientAlias[key.replace('server//', '')] = target;
+      clientAlias[key.replace('client//', '')] = target;
     } else {
       commonAlias[key] = target;
     }
@@ -325,9 +328,15 @@ function moduleExports({
     },
     resolve: {extensions: [...scriptExtensions, '.json'], alias: {...commonAlias, ...clientAlias}},
     optimization: {
-      splitChunks: {
-        chunks: 'all',
-      },
+      ...(moduleFederation
+        ? {
+            runtimeChunk: false,
+          }
+        : {
+            splitChunks: {
+              chunks: 'all',
+            },
+          }),
       minimize: isProdModel ? clientMinimize : false,
       minimizer: ['...', new CssMinimizerPlugin()],
     },
@@ -621,6 +630,14 @@ function moduleExports({
     },
   };
   if (useSSR) {
+    const errorHandler = (e: any, res: any) => {
+      if (e.code === 'ELIX.ROUTE_REDIRECT') {
+        res.redirect(e.detail);
+      } else {
+        err(e.toString());
+        res.status(500).end(e.toString());
+      }
+    };
     devServerConfig.historyApiFallback = false;
     devServerConfig.devMiddleware = {serverSideRender: true};
     devServerConfig.onAfterSetupMiddleware = function (devServer: {app: Express}) {
@@ -636,13 +653,9 @@ function moduleExports({
               .then((str: string) => {
                 res.end(str);
               })
-              .catch((e: Error) => {
-                err(e.toString());
-                res.status(500).end(`error: ${e.message}`);
-              });
+              .catch((e: any) => errorHandler(e, res));
           } catch (e: any) {
-            err(e.toString());
-            res.status(500).end(`error: ${e.message}`);
+            errorHandler(e, res);
           }
         }
       });

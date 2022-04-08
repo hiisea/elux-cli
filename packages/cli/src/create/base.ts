@@ -5,6 +5,7 @@ export interface TemplateResources {
   summary: string;
 }
 export interface PackageJson {
+  name: string;
   version: string;
   templateResources: TemplateResources[];
 }
@@ -41,6 +42,6 @@ export interface ITemplate {
   beforeRender?: (params: any, fpath: string, content: string) => string;
   afterRender?: (params: any, fpath: string, content: string) => string;
 }
-export const PACKAGE_INFO_GITEE: string = 'https://gitee.com/hiisea/elux-cli/raw/master/packages/cli/package.json';
+//export const PACKAGE_INFO_GITEE: string = 'https://gitee.com/hiisea/elux-cli/raw/master/packages/cli/package.json';
 export const PACKAGE_INFO_GITHUB: string = 'https://raw.githubusercontent.com/hiisea/elux-cli/main/packages/cli/package.json';
 export const USER_AGENT: string = 'elux-cli/1.0.0';

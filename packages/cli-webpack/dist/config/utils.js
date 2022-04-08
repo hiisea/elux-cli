@@ -15,7 +15,6 @@ const StylelintPlugin = require('stylelint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const { VueLoaderPlugin } = require('vue-loader');
 const openInEditor = require('launch-editor-middleware');
 const ModuleFederationPlugin = require('../../libs/ModuleFederationPlugin');
 const ContainerReferencePlugin = require('../../libs/ContainerReferencePlugin');
@@ -177,9 +176,13 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
     const { paths = {}, baseUrl = '' } = tsconfig.compilerOptions || {};
     const scriptExtensions = ['.js', '.jsx', '.ts', '.tsx', '.json'];
     const cssExtensions = ['css'];
+    let VueLoaderPlugin = function () {
+        return;
+    };
     if (isVue) {
         scriptExtensions.unshift('.vue');
         cssExtensions.unshift('vue');
+        VueLoaderPlugin = require('vue-loader').VueLoaderPlugin;
     }
     cssProcessors.less && cssExtensions.push('less');
     cssProcessors.sass && cssExtensions.push('sass', 'scss');
@@ -204,7 +207,7 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
             serverAlias[key.replace('server//', '')] = target;
         }
         else if (key.startsWith('client//')) {
-            clientAlias[key.replace('server//', '')] = target;
+            clientAlias[key.replace('client//', '')] = target;
         }
         else {
             commonAlias[key] = target;
@@ -235,9 +238,15 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
         },
         resolve: { extensions: [...scriptExtensions, '.json'], alias: { ...commonAlias, ...clientAlias } },
         optimization: {
-            splitChunks: {
-                chunks: 'all',
-            },
+            ...(moduleFederation
+                ? {
+                    runtimeChunk: false,
+                }
+                : {
+                    splitChunks: {
+                        chunks: 'all',
+                    },
+                }),
             minimize: isProdModel ? clientMinimize : false,
             minimizer: ['...', new CssMinimizerPlugin()],
         },
@@ -497,6 +506,15 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
         },
     };
     if (useSSR) {
+        const errorHandler = (e, res) => {
+            if (e.code === 'ELIX.ROUTE_REDIRECT') {
+                res.redirect(e.detail);
+            }
+            else {
+                cli_utils_1.err(e.toString());
+                res.status(500).end(e.toString());
+            }
+        };
         devServerConfig.historyApiFallback = false;
         devServerConfig.devMiddleware = { serverSideRender: true };
         devServerConfig.onAfterSetupMiddleware = function (devServer) {
@@ -513,14 +531,10 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                             .then((str) => {
                             res.end(str);
                         })
-                            .catch((e) => {
-                            cli_utils_1.err(e.toString());
-                            res.status(500).end(`error: ${e.message}`);
-                        });
+                            .catch((e) => errorHandler(e, res));
                     }
                     catch (e) {
-                        cli_utils_1.err(e.toString());
-                        res.status(500).end(`error: ${e.message}`);
+                        errorHandler(e, res);
                     }
                 }
             });

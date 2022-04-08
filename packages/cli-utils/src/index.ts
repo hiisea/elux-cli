@@ -67,7 +67,7 @@ function warn(message: string): void {
 
 function getCmdVersion(cmd: string): string {
   try {
-    const version = execSync(cmd + ' --version', {stdio: ['pipe', 'pipe', 'ignore']});
+    const version = execSync(cmd + ' --version', {stdio: ['pipe', 'pipe', 'ignore'], timeout: 10000});
     return version
       .toString()
       .trim()
@@ -81,27 +81,24 @@ const npmVersion = getCmdVersion('npm');
 const cnpmVersion = getCmdVersion('cnpm');
 const yarnVersion = getCmdVersion('yarn');
 
-function loadPackageVesrion(packageName: string): string {
-  if (npmVersion) {
-    try {
-      const version = execSync(`npm view ${packageName} version`, {stdio: ['pipe', 'pipe', 'ignore']});
-      return version
-        .toString()
-        .trim()
-        .replace(/^\n*|\n*$/g, '');
-    } catch (e) {
-      return '';
-    }
-  } else if (yarnVersion) {
-    try {
-      const json = execSync(`yarn info ${packageName} version --json`, {stdio: ['pipe', 'pipe', 'ignore']});
-      const result: {type: string; data: string} = JSON.parse(json.toString().trim());
-      return result.type !== 'error' ? result.data : '';
-    } catch (e) {
-      return '';
-    }
+function loadPackageFields(packageName: string, fields: string): any {
+  const str = execSync(`npm view ${packageName} ${fields} --json`, {stdio: ['pipe', 'pipe', 'ignore'], timeout: 10000})
+    .toString()
+    .trim();
+  return str ? JSON.parse(str) : str;
+}
+
+function loadPackageVesrion(packageName: string): string;
+function loadPackageVesrion(packageName: string, installedVersion: string): [string, string];
+function loadPackageVesrion(packageName: string, installedVersion?: string): string | [string, string] {
+  const latest = loadPackageFields(packageName, 'version') as string;
+  if (!installedVersion) {
+    return latest;
+  } else {
+    const result = loadPackageFields(packageName + '@^' + installedVersion, 'version');
+    const compatible = Array.isArray(result) ? result.pop() : installedVersion;
+    return [compatible, latest];
   }
-  return '';
 }
 
 function isEmptyObject(obj: any): boolean {
@@ -229,6 +226,7 @@ export = {
   platform,
   readDirSync,
   checkNodeVersion,
+  loadPackageFields,
   loadPackageVesrion,
   clearConsole,
   got,

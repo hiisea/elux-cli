@@ -3,4 +3,4 @@ export interface ITemplates {
     platforms?: string | string[];
     desc?: string;
 }
-export declare function loadRepository(repository: string, clone: boolean, proxy: string): Promise<string | Error>;
+export declare function loadRepository(url: string, proxy: string): Promise<string | Error>;
