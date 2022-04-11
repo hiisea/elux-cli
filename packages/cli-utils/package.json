@@ -1,7 +1,7 @@
 {
   "name": "@elux/cli-utils",
   "version": "1.1.2",
-  "description": "shared utilities for development tools",
+  "description": "shared utilities for development tools.",
   "repository": "https://github.com/hiisea/elux/tree/master/packages/cli-utils",
   "author": "hiisea <hiisea@qq.com>",
   "license": "MIT",
