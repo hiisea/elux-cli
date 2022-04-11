@@ -9,7 +9,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=15.0.0"
   },
   "bin": {
     "elux": "./bin/elux.js"
@@ -32,8 +32,8 @@
     }
   ],
   "optionalDependencies": {
-    "@elux/cli-mock": "^1.1.1",
-    "@elux/cli-webpack": "^1.2.0"
+    "@elux/cli-mock": "^2.0.0",
+    "@elux/cli-webpack": "^2.0.0"
   },
   "devDependencies": {
     "@types/ejs": "^3.0.6",
@@ -41,7 +41,7 @@
     "@types/mem-fs-editor": "^7.0.1"
   },
   "dependencies": {
-    "@elux/cli-utils": "^1.1.2",
+    "@elux/cli-utils": "^2.0.0",
     "commander": "^7.0.0",
     "download-git-repo": "^3.0.2",
     "inquirer": "^8.2.0",
