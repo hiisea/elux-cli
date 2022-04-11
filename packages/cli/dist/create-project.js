@@ -247,7 +247,8 @@ async function main(options) {
     let compatibleVersion = curVerison, latestVesrion = curVerison;
     try {
         [compatibleVersion, latestVesrion] = cli_utils_1.loadPackageVesrion(packageJson.name, curVerison);
-        templateResources = cli_utils_1.loadPackageFields(`${packageJson.name}@${compatibleVersion}`, 'templateResources');
+        const data = cli_utils_1.loadPackageFields(`${packageJson.name}@${compatibleVersion}`, 'templateResources') || templateResources;
+        templateResources = Array.isArray(data) ? data : [data];
     }
     catch (error) {
         spinner.warn(cli_utils_1.chalk.yellow('获取最新数据失败，将使用本地缓存...'));

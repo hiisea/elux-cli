@@ -255,7 +255,8 @@ async function main(options: CommandOptions): Promise<void> {
     latestVesrion: string = curVerison;
   try {
     [compatibleVersion, latestVesrion] = loadPackageVesrion(packageJson.name, curVerison);
-    templateResources = loadPackageFields(`${packageJson.name}@${compatibleVersion}`, 'templateResources');
+    const data = loadPackageFields(`${packageJson.name}@${compatibleVersion}`, 'templateResources') || templateResources;
+    templateResources = Array.isArray(data) ? data : [data];
   } catch (error) {
     spinner.warn(chalk.yellow('获取最新数据失败，将使用本地缓存...'));
     log('');
