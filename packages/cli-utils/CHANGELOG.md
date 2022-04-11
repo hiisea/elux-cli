@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/hiisea/elux/compare/@elux/cli-utils@1.1.2...@elux/cli-utils@2.0.0) (2022-04-11)
+
+
+### Code Refactoring
+
+* 重构创建项目向导 ([a56786c](https://github.com/hiisea/elux/commit/a56786c0447ed95e9f26d06b219d6c0858cff0a3))
+
+
+### Features
+
+* 版本升级 ([9744a36](https://github.com/hiisea/elux/commit/9744a365f06b64d09a6a5d46bf545f8309d77e83))
+* ssr支持重定向 ([8cdbbe5](https://github.com/hiisea/elux/commit/8cdbbe51a632bf88c422c36960a920a1239d6f0b))
+
+
+### BREAKING CHANGES
+
+* 跟随@elux/core升级为v2
+
+
+
+
+
 ## [1.1.2](https://github.com/hiisea/elux/compare/@elux/cli-utils@1.1.1...@elux/cli-utils@1.1.2) (2022-02-13)
 
 **Note:** Version bump only for package @elux/cli-utils
