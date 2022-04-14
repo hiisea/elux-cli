@@ -1,36 +1,28 @@
-import path from 'path';
-import os from 'os';
-import download from 'download-git-repo';
-import {fs} from '@elux/cli-utils';
-import {USER_AGENT} from './base';
-export interface ITemplates {
-  name: string;
-  platforms?: string | string[];
-  desc?: string;
-}
+import {fs, log, chalk, ora, download} from '@elux/cli-utils';
 
-export function loadRepository(url: string, proxy: string): Promise<string | Error> {
-  const tmpdir = path.join(os.tmpdir(), 'elux-cli-tpl');
-  const options: any = {clone: false, headers: {'user-agent': USER_AGENT}};
-  if (proxy) {
-    options.proxy = proxy;
-  } else {
-    options.agent = false;
+export function loadRepository(url: string, targetDir: string, removeTarget: boolean): Promise<void> {
+  if (removeTarget && fs.existsSync(targetDir)) {
+    fs.removeSync(targetDir);
   }
-  return new Promise((resolve, reject) => {
-    try {
-      if (fs.existsSync(tmpdir)) {
-        fs.removeSync(tmpdir);
-      }
-      download('direct:' + url, tmpdir, options, (e: Error) => {
-        if (e) {
-          reject(e);
-        } else {
-          resolve(tmpdir);
-        }
-      });
-    } catch (e: any) {
-      reject(e);
+  const proxyUrl = global['GLOBAL_AGENT'].HTTP_PROXY;
+  log(chalk.yellow('using proxy -> ' + (proxyUrl || 'none')));
+  log(chalk.blue.underline('Pulling from ' + url));
+  const spinner = ora('Loading...').start();
+
+  return download(url, targetDir, {
+    extract: true,
+    headers: {
+      //accept: 'application/zip',
+      'user-agent': 'Chrome/99.0',
+    },
+  }).then(
+    () => {
+      spinner.succeed(`${chalk.green('Pull successful!!!')}\n`);
+    },
+    (e) => {
+      spinner.fail(chalk.red('Pull failed!!!'));
+      log(chalk.yellow(e.toString()));
+      throw e;
     }
-  });
+  );
 }

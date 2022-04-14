@@ -36,6 +36,7 @@ export interface ITemplate {
     framework: Framework[];
     css: CSS[];
     getTitle: (args: FeatChoices) => string;
+    getNpmLockFile: (args: FeatChoices) => string;
     operation?: {
         action: 'copy' | 'move';
         from: string;
@@ -50,5 +51,3 @@ export interface ITemplate {
     beforeRender?: (params: any, fpath: string, content: string) => string;
     afterRender?: (params: any, fpath: string, content: string) => string;
 }
-export declare const PACKAGE_INFO_GITHUB: string;
-export declare const USER_AGENT: string;

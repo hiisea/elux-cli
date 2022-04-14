@@ -36,6 +36,7 @@ export interface ITemplate {
   framework: Framework[];
   css: CSS[];
   getTitle: (args: FeatChoices) => string;
+  getNpmLockFile: (args: FeatChoices) => string;
   operation?: {action: 'copy' | 'move'; from: string; to: string}[];
   data?: (args: FeatChoices & {projectName: string}) => {[key: string]: string};
   rename?: (params: any, fpath: string) => string;
@@ -43,5 +44,5 @@ export interface ITemplate {
   afterRender?: (params: any, fpath: string, content: string) => string;
 }
 //export const PACKAGE_INFO_GITEE: string = 'https://gitee.com/hiisea/elux-cli/raw/master/packages/cli/package.json';
-export const PACKAGE_INFO_GITHUB: string = 'https://raw.githubusercontent.com/hiisea/elux-cli/main/packages/cli/package.json';
-export const USER_AGENT: string = 'elux-cli/1.0.0';
+//export const PACKAGE_INFO_GITHUB: string = 'https://raw.githubusercontent.com/hiisea/elux-cli/main/packages/cli/package.json';
+//export const USER_AGENT: string = 'elux-cli/1.0.0';

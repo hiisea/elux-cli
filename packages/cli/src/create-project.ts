@@ -1,4 +1,5 @@
 import path from 'path';
+import os from 'os';
 import validateProjectName from 'validate-npm-package-name';
 import {log, chalk, fs, semver, ora, readDirSync, getProxy, testHttpUrl, clearConsole, loadPackageVesrion, loadPackageFields} from '@elux/cli-utils';
 import inquirer from 'inquirer';
@@ -71,21 +72,21 @@ function askTemplateSource(templateResources: TemplateResources[]): Promise<{rep
         choices: [
           ...templateResources.map((item) => ({name: `${item.title} [${chalk.red(item.count + 'P')}]`, value: item})),
           {
-            name: '输入模版文件URL...',
+            name: '输入模版文件Url...',
             value: 'inputUrl',
-            short: 'Url格式如:http://xxx/xxx.zip',
+            short: '=> url格式如:http://xxx/xxx.zip',
           },
           {
             name: '输入本地模版目录...',
             value: 'inputPath',
-            short: '相对或绝对路径如:../xxx/xxx',
+            short: '=> 相对或绝对路径如:../xxx/xxx',
           },
         ],
       },
       {
         type: 'input',
         name: 'templateSourceInputUrl',
-        message: '输入模版文件URL',
+        message: '输入模版文件Url',
         when(answers: {templateSource: string}) {
           return answers.templateSource === 'inputUrl';
         },
@@ -100,8 +101,9 @@ function askTemplateSource(templateResources: TemplateResources[]): Promise<{rep
       },
     ])
     .then(({templateSource, templateSourceInputUrl, templateSourceInputPath}: any) => {
-      if (templateSourceInputPath || templateSourceInputUrl) {
-        const repository = templateSourceInputPath ? path.resolve(process.cwd(), templateSourceInputPath) : templateSourceInputUrl;
+      const input = (templateSourceInputPath || templateSourceInputUrl || '').trim();
+      if (input) {
+        const repository = input.startsWith('http://') || input.startsWith('https://') ? input : path.resolve(process.cwd(), input);
         return {
           repository,
           summary: repository,
@@ -124,7 +126,7 @@ async function askProxy(systemProxy: string): Promise<string> {
         if (!input) {
           return true;
         }
-        return testHttpUrl(input) || chalk.red('格式错误如:http://127.0.0.1:1080');
+        return testHttpUrl(input) || chalk.red('格式如 http://127.0.0.1:1080');
       },
     });
   } else {
@@ -157,7 +159,7 @@ async function askProxy(systemProxy: string): Promise<string> {
           if (!input) {
             return true;
           }
-          return testHttpUrl(input) || chalk.red('地址格式错误');
+          return testHttpUrl(input) || chalk.red('格式如 http://127.0.0.1:1080');
         },
         when(answers: {proxy: string}) {
           return answers.proxy === 'inputProxy';
@@ -179,32 +181,28 @@ async function getTemplates(args: {
 }): Promise<void> {
   log('');
   const templateSource = await askTemplateSource(args.templateResources);
-  const {repository, summary} = templateSource;
+  const repository = templateSource.repository.trim();
+  const summary = templateSource.summary.trim();
   if (!repository) {
-    log(`${chalk.green('Please reselect...')}\n`);
+    log(chalk.green('Please reselect...'));
     setTimeout(() => getTemplates(args), 0);
     return;
   }
-  summary && log('\n' + chalk.green.underline(summary));
+  clearConsole(chalk.green.underline('【 ' + (summary || repository) + ' 】'));
   let templateDir: string = repository;
   if (repository.startsWith('http://') || repository.startsWith('https://')) {
     const globalProxy = getProxy() || '';
-    log(chalk.magenta('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
+    log(chalk.cyan('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
     const proxy = await askProxy(globalProxy);
-    log(chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
-    const spinner = ora(`Pulling template from ${chalk.blue.underline(repository)}`).start();
-    const loadData: string | Object = await loadRepository(repository, proxy).catch((e) => e);
-    if (typeof loadData === 'object') {
-      spinner.color = 'red';
-      spinner.fail(`${chalk.red('Pull failed from')} ${chalk.blue.underline(repository)}`);
-      log(`${chalk.gray(loadData.toString())}, Maybe you should change an proxy agent.`);
-      log(`${chalk.green('Please reselect...')}\n`);
+    global['GLOBAL_AGENT'].HTTP_PROXY = proxy || '';
+    templateDir = path.join(os.tmpdir(), 'elux-cli-tpl');
+    try {
+      await loadRepository(repository, templateDir, true);
+    } catch (error: any) {
+      log(chalk.green('Please reselect...'));
       setTimeout(() => getTemplates(args), 0);
       return;
     }
-    templateDir = loadData;
-    spinner.color = 'green';
-    spinner.succeed(`${chalk.green('Pull successful!')}\n\n`);
   }
   //templateDir = 'C:\\my\\cli\\src';
   const {projectName, projectDir, options} = args;
@@ -212,8 +210,9 @@ async function getTemplates(args: {
   try {
     templates = parseTemplates(templateDir, options.packageJson.version);
   } catch (error: any) {
-    log(chalk.red('✖ 模版解析失败！'));
-    log(chalk.yellow('  ' + error.toString()) + '\n');
+    log(chalk.red('\n✖ 模版解析失败！'));
+    log(chalk.yellow(error.toString()));
+    log(chalk.green('Please reselect...'));
     setTimeout(() => getTemplates(args), 0);
     return;
   }
@@ -258,13 +257,13 @@ async function main(options: CommandOptions): Promise<void> {
     const data = loadPackageFields(`${packageJson.name}@${compatibleVersion}`, 'templateResources') || templateResources;
     templateResources = Array.isArray(data) ? data : [data];
   } catch (error) {
-    spinner.warn(chalk.yellow('获取最新数据失败，将使用本地缓存...'));
+    spinner.warn(chalk.yellow('获取最新数据失败,使用本地缓存...'));
     log('');
   }
   spinner.stop();
-  let title = '@elux/cli ' + curVerison;
+  let title = '@elux/cli: ' + chalk.cyan(curVerison);
   if (semver.lt(curVerison, latestVesrion)) {
-    title += `, ${chalk.magenta.underline('可升级最新版本 ' + latestVesrion)}`;
+    title += `,${chalk.magenta('可升级最新版本:' + latestVesrion)}`;
   }
   getProjectName({title, templateResources, options});
 }

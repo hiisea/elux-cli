@@ -4,8 +4,6 @@ import minimist from 'minimist';
 import fs from 'fs-extra';
 import execa from 'execa';
 import ora from 'ora';
-import { Agent as HttpAgent } from 'http';
-import { Agent as HttpsAgent } from 'https';
 import { Listr } from 'listr2';
 import { validate as schemaValidate } from 'schema-utils';
 declare function slash(path: string): string;
@@ -23,10 +21,6 @@ declare function readDirSync(floder: string): {
     isFile: boolean;
 }[];
 declare function clearConsole(title: string): void;
-declare function createProxyAgent(url: string, proxyUrl: string): {
-    http?: HttpAgent;
-    https?: HttpsAgent;
-} | undefined;
 declare function testHttpUrl(url: string): boolean;
 declare function checkPort(port: number): Promise<Boolean>;
 declare const _default: {
@@ -88,8 +82,8 @@ declare const _default: {
     loadPackageVesrion: typeof loadPackageVesrion;
     clearConsole: typeof clearConsole;
     got: import("got").Got;
+    download: (url: string, dist: string, options: any) => Promise<void>;
     getProxy: () => string | null;
-    createProxyAgent: typeof createProxyAgent;
     testHttpUrl: typeof testHttpUrl;
     checkPort: typeof checkPort;
     schemaValidate: typeof schemaValidate;

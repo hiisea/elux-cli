@@ -8,3 +8,8 @@ declare module 'get-proxy' {
 }
 declare module 'semver';
 declare module 'tunnel';
+declare module 'download' {
+  const main: (url: string, dist: string, options: any) => Promise<void>;
+  export default main;
+}
+declare module 'global-agent';

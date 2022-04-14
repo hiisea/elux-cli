@@ -12,14 +12,15 @@ const ora_1 = __importDefault(require("ora"));
 const readline_1 = __importDefault(require("readline"));
 const deep_extend_1 = __importDefault(require("deep-extend"));
 const os_1 = require("os");
-const url_1 = require("url");
 const net_1 = __importDefault(require("net"));
 const got_1 = __importDefault(require("got"));
-const tunnel_1 = __importDefault(require("tunnel"));
+const download_1 = __importDefault(require("download"));
+const global_agent_1 = require("global-agent");
 const get_proxy_1 = __importDefault(require("get-proxy"));
 const child_process_1 = require("child_process");
 const listr2_1 = require("listr2");
 const schema_utils_1 = require("schema-utils");
+global_agent_1.bootstrap();
 function getLocalIP() {
     let result = 'localhost';
     const interfaces = os_1.networkInterfaces();
@@ -137,27 +138,6 @@ function clearConsole(title) {
         }
     }
 }
-function createProxyAgent(url, proxyUrl) {
-    if (!proxyUrl) {
-        return;
-    }
-    const uri = new url_1.URL(url);
-    const proxy = new url_1.URL(proxyUrl);
-    const proxyAuth = proxy.username || proxy.password ? `${proxy.username}:${proxy.password}` : '';
-    const proxyProtocol = proxy.protocol === 'https:' ? 'Https' : 'Http';
-    const port = proxy.port || (proxyProtocol === 'Https' ? 443 : 80);
-    const uriProtocol = uri.protocol === 'https' ? 'https' : 'http';
-    const method = `${uriProtocol}Over${proxyProtocol}`;
-    return {
-        [uriProtocol]: tunnel_1.default[method]({
-            proxy: {
-                port,
-                host: proxy.hostname,
-                proxyAuth,
-            },
-        }),
-    };
-}
 function testHttpUrl(url) {
     return new RegExp('https?://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]').test(url);
 }
@@ -200,8 +180,8 @@ module.exports = {
     loadPackageVesrion,
     clearConsole,
     got: got_1.default,
+    download: download_1.default,
     getProxy: get_proxy_1.default,
-    createProxyAgent,
     testHttpUrl,
     checkPort,
     schemaValidate: schema_utils_1.validate,

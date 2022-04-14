@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const path_1 = __importDefault(require("path"));
+const os_1 = __importDefault(require("os"));
 const validate_npm_package_name_1 = __importDefault(require("validate-npm-package-name"));
 const cli_utils_1 = require("@elux/cli-utils");
 const inquirer_1 = __importDefault(require("inquirer"));
@@ -73,21 +74,21 @@ function askTemplateSource(templateResources) {
             choices: [
                 ...templateResources.map((item) => ({ name: `${item.title} [${cli_utils_1.chalk.red(item.count + 'P')}]`, value: item })),
                 {
-                    name: '输入模版文件URL...',
+                    name: '输入模版文件Url...',
                     value: 'inputUrl',
-                    short: 'Url格式如:http://xxx/xxx.zip',
+                    short: '=> url格式如:http://xxx/xxx.zip',
                 },
                 {
                     name: '输入本地模版目录...',
                     value: 'inputPath',
-                    short: '相对或绝对路径如:../xxx/xxx',
+                    short: '=> 相对或绝对路径如:../xxx/xxx',
                 },
             ],
         },
         {
             type: 'input',
             name: 'templateSourceInputUrl',
-            message: '输入模版文件URL',
+            message: '输入模版文件Url',
             when(answers) {
                 return answers.templateSource === 'inputUrl';
             },
@@ -102,8 +103,9 @@ function askTemplateSource(templateResources) {
         },
     ])
         .then(({ templateSource, templateSourceInputUrl, templateSourceInputPath }) => {
-        if (templateSourceInputPath || templateSourceInputUrl) {
-            const repository = templateSourceInputPath ? path_1.default.resolve(process.cwd(), templateSourceInputPath) : templateSourceInputUrl;
+        const input = (templateSourceInputPath || templateSourceInputUrl || '').trim();
+        if (input) {
+            const repository = input.startsWith('http://') || input.startsWith('https://') ? input : path_1.default.resolve(process.cwd(), input);
             return {
                 repository,
                 summary: repository,
@@ -127,7 +129,7 @@ async function askProxy(systemProxy) {
                 if (!input) {
                     return true;
                 }
-                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('格式错误如:http://127.0.0.1:1080');
+                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('格式如 http://127.0.0.1:1080');
             },
         });
     }
@@ -159,7 +161,7 @@ async function askProxy(systemProxy) {
                 if (!input) {
                     return true;
                 }
-                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('地址格式错误');
+                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('格式如 http://127.0.0.1:1080');
             },
             when(answers) {
                 return answers.proxy === 'inputProxy';
@@ -173,32 +175,29 @@ async function askProxy(systemProxy) {
 async function getTemplates(args) {
     cli_utils_1.log('');
     const templateSource = await askTemplateSource(args.templateResources);
-    const { repository, summary } = templateSource;
+    const repository = templateSource.repository.trim();
+    const summary = templateSource.summary.trim();
     if (!repository) {
-        cli_utils_1.log(`${cli_utils_1.chalk.green('Please reselect...')}\n`);
+        cli_utils_1.log(cli_utils_1.chalk.green('Please reselect...'));
         setTimeout(() => getTemplates(args), 0);
         return;
     }
-    summary && cli_utils_1.log('\n' + cli_utils_1.chalk.green.underline(summary));
+    cli_utils_1.clearConsole(cli_utils_1.chalk.green.underline('【 ' + (summary || repository) + ' 】'));
     let templateDir = repository;
     if (repository.startsWith('http://') || repository.startsWith('https://')) {
         const globalProxy = cli_utils_1.getProxy() || '';
-        cli_utils_1.log(cli_utils_1.chalk.magenta('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
+        cli_utils_1.log(cli_utils_1.chalk.cyan('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
         const proxy = await askProxy(globalProxy);
-        cli_utils_1.log(cli_utils_1.chalk.cyan('  Using Proxy -> ' + (proxy || 'none')));
-        const spinner = cli_utils_1.ora(`Pulling template from ${cli_utils_1.chalk.blue.underline(repository)}`).start();
-        const loadData = await loadRepository_1.loadRepository(repository, proxy).catch((e) => e);
-        if (typeof loadData === 'object') {
-            spinner.color = 'red';
-            spinner.fail(`${cli_utils_1.chalk.red('Pull failed from')} ${cli_utils_1.chalk.blue.underline(repository)}`);
-            cli_utils_1.log(`${cli_utils_1.chalk.gray(loadData.toString())}, Maybe you should change an proxy agent.`);
-            cli_utils_1.log(`${cli_utils_1.chalk.green('Please reselect...')}\n`);
+        global['GLOBAL_AGENT'].HTTP_PROXY = proxy || '';
+        templateDir = path_1.default.join(os_1.default.tmpdir(), 'elux-cli-tpl');
+        try {
+            await loadRepository_1.loadRepository(repository, templateDir, true);
+        }
+        catch (error) {
+            cli_utils_1.log(cli_utils_1.chalk.green('Please reselect...'));
             setTimeout(() => getTemplates(args), 0);
             return;
         }
-        templateDir = loadData;
-        spinner.color = 'green';
-        spinner.succeed(`${cli_utils_1.chalk.green('Pull successful!')}\n\n`);
     }
     const { projectName, projectDir, options } = args;
     let templates;
@@ -206,8 +205,9 @@ async function getTemplates(args) {
         templates = parseTemplates(templateDir, options.packageJson.version);
     }
     catch (error) {
-        cli_utils_1.log(cli_utils_1.chalk.red('✖ 模版解析失败！'));
-        cli_utils_1.log(cli_utils_1.chalk.yellow('  ' + error.toString()) + '\n');
+        cli_utils_1.log(cli_utils_1.chalk.red('\n✖ 模版解析失败！'));
+        cli_utils_1.log(cli_utils_1.chalk.yellow(error.toString()));
+        cli_utils_1.log(cli_utils_1.chalk.green('Please reselect...'));
         setTimeout(() => getTemplates(args), 0);
         return;
     }
@@ -251,13 +251,13 @@ async function main(options) {
         templateResources = Array.isArray(data) ? data : [data];
     }
     catch (error) {
-        spinner.warn(cli_utils_1.chalk.yellow('获取最新数据失败，将使用本地缓存...'));
+        spinner.warn(cli_utils_1.chalk.yellow('获取最新数据失败,使用本地缓存...'));
         cli_utils_1.log('');
     }
     spinner.stop();
-    let title = '@elux/cli ' + curVerison;
+    let title = '@elux/cli: ' + cli_utils_1.chalk.cyan(curVerison);
     if (cli_utils_1.semver.lt(curVerison, latestVesrion)) {
-        title += `, ${cli_utils_1.chalk.magenta.underline('可升级最新版本 ' + latestVesrion)}`;
+        title += `,${cli_utils_1.chalk.magenta('可升级最新版本:' + latestVesrion)}`;
     }
     getProjectName({ title, templateResources, options });
 }

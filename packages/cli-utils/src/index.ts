@@ -9,16 +9,20 @@ import ora from 'ora';
 import readline from 'readline';
 import deepExtend from 'deep-extend';
 import {networkInterfaces} from 'os';
-import {URL} from 'url';
-import {Agent as HttpAgent} from 'http';
-import {Agent as HttpsAgent} from 'https';
+// import {URL} from 'url';
+// import {Agent as HttpAgent} from 'http';
+// import {Agent as HttpsAgent} from 'https';
+// import tunnel from 'tunnel';
 import net from 'net';
 import got from 'got';
-import tunnel from 'tunnel';
+import download from 'download';
+import {bootstrap} from 'global-agent';
 import getProxy from 'get-proxy';
 import {execSync} from 'child_process';
 import {Listr} from 'listr2';
 import {validate as schemaValidate} from 'schema-utils';
+
+bootstrap();
 
 function getLocalIP() {
   let result = 'localhost';
@@ -165,29 +169,29 @@ function clearConsole(title: string): void {
   }
 }
 
-function createProxyAgent(url: string, proxyUrl: string): {http?: HttpAgent; https?: HttpsAgent} | undefined {
-  if (!proxyUrl) {
-    return;
-  }
-  const uri = new URL(url);
-  const proxy = new URL(proxyUrl);
-  const proxyAuth = proxy.username || proxy.password ? `${proxy.username}:${proxy.password}` : '';
-  const proxyProtocol = proxy.protocol === 'https:' ? 'Https' : 'Http';
-  const port = proxy.port || (proxyProtocol === 'Https' ? 443 : 80);
+// function createProxyAgent(url: string, proxyUrl: string): {http?: HttpAgent; https?: HttpsAgent} | undefined {
+//   if (!proxyUrl) {
+//     return;
+//   }
+//   const uri = new URL(url);
+//   const proxy = new URL(proxyUrl);
+//   const proxyAuth = proxy.username || proxy.password ? `${proxy.username}:${proxy.password}` : '';
+//   const proxyProtocol = proxy.protocol === 'https:' ? 'Https' : 'Http';
+//   const port = proxy.port || (proxyProtocol === 'Https' ? 443 : 80);
 
-  const uriProtocol = uri.protocol === 'https' ? 'https' : 'http';
+//   const uriProtocol = uri.protocol === 'https' ? 'https' : 'http';
 
-  const method = `${uriProtocol}Over${proxyProtocol}`;
-  return {
-    [uriProtocol]: tunnel[method]({
-      proxy: {
-        port,
-        host: proxy.hostname,
-        proxyAuth,
-      },
-    }),
-  };
-}
+//   const method = `${uriProtocol}Over${proxyProtocol}`;
+//   return {
+//     [uriProtocol]: tunnel[method]({
+//       proxy: {
+//         port,
+//         host: proxy.hostname,
+//         proxyAuth,
+//       },
+//     }),
+//   };
+// }
 function testHttpUrl(url: string): boolean {
   return new RegExp('https?://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]').test(url);
 }
@@ -230,8 +234,9 @@ export = {
   loadPackageVesrion,
   clearConsole,
   got,
+  download,
   getProxy,
-  createProxyAgent,
+  //createProxyAgent,
   testHttpUrl,
   checkPort,
   schemaValidate,

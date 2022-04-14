@@ -27,11 +27,11 @@ const path_1 = __importDefault(require("path"));
 const inquirer_1 = __importDefault(require("inquirer"));
 const util_1 = require("mem-fs-editor/lib/util");
 const cli_utils_1 = require("@elux/cli-utils");
+const loadRepository_1 = require("./loadRepository");
 let logInstallInfo = () => undefined;
 let logSuccessInfo = () => undefined;
-async function build({ projectName, projectDir, templateDir, template, featChoices, }) {
+function build({ projectName, projectDir, templateDir, template, featChoices, }) {
     cli_utils_1.log(cli_utils_1.chalk.red('\n🚀 Generating files...\n'));
-    const cdPath = path_1.default.relative(process.cwd(), projectDir);
     const excludeFiles = {};
     const filter = util_1.createTransform(function (file, enc, cb) {
         if (excludeFiles[file.path]) {
@@ -42,20 +42,6 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
             cb();
         }
     });
-    logInstallInfo = function () {
-        cli_utils_1.log('');
-        cli_utils_1.log('- 进入项目 ' + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
-        cli_utils_1.log('- 安装依赖 ' + cli_utils_1.chalk.cyan('yarn install') + cli_utils_1.chalk.yellow(' (或"npm install --legacy-peer-deps",npm版本需>=7.0)'));
-        cli_utils_1.log('- 运行程序 ' + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或查看readme.txt)'));
-        cli_utils_1.log('');
-    };
-    logSuccessInfo = function () {
-        cli_utils_1.log('');
-        cli_utils_1.log(cli_utils_1.chalk.black.bold('✨ 准备好啦！开始工作吧！\n'));
-        cli_utils_1.log(cli_utils_1.chalk.green('- 进入目录 ') + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
-        cli_utils_1.log(cli_utils_1.chalk.green('- 运行程序 ') + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或查看readme.txt)'));
-        cli_utils_1.log('');
-    };
     const templateData = template.data ? template.data({ ...featChoices, projectName }) : { ...featChoices, projectName };
     const tempDir = path_1.default.join(templateDir, './$');
     (template.operation || []).forEach((item) => {
@@ -125,54 +111,116 @@ async function build({ projectName, projectDir, templateDir, template, featChoic
     cli_utils_1.fs.removeSync(tempDir);
     mfs.commit([filter], (error) => {
         if (!error) {
-            cli_utils_1.clearConsole(cli_utils_1.chalk.magenta('🎉 项目创建成功!!! 接下来...\n'));
-            logInstallInfo();
-            cli_utils_1.log('');
-            const { yarnVersion, npmVersion, cnpmVersion } = cli_utils_1.platform;
-            const choices = [];
-            if (yarnVersion) {
-                choices.push({
-                    name: 'yarn install',
-                    value: 'yarn',
-                });
-            }
-            if (npmVersion) {
-                choices.push({
-                    name: 'npm install' + (cli_utils_1.semver.lt(npmVersion, '7.0.0') ? cli_utils_1.chalk.red('(当前版本<7.0.0,不可用!)') : ''),
-                    value: cli_utils_1.semver.lt(npmVersion, '7.0.0') ? '' : 'npm',
-                });
-            }
-            if (cnpmVersion) {
-                choices.push({
-                    name: 'cnpm install',
-                    value: 'cnpm',
-                });
-            }
-            choices.push({
-                name: '稍后安装...',
-                value: '',
-            });
-            return inquirer_1.default
-                .prompt({
-                type: 'list',
-                name: 'installCmd',
-                message: cli_utils_1.chalk.green('是否自动安装依赖'),
-                choices,
-            })
-                .then(({ installCmd }) => {
-                if (installCmd) {
-                    const installExec = installCmd === 'npm' ? [installCmd, ['install', '--legacy-peer-deps']] : [installCmd, ['install']];
-                    cli_utils_1.log('');
-                    setTimeout(() => install(installExec, projectDir), 0);
-                }
-            });
+            const lockFileDir = template.getNpmLockFile(featChoices);
+            useLockFile(lockFileDir, projectDir, templateDir);
         }
         else {
             throw error;
         }
     });
 }
-function install(installExec, projectDir) {
+async function buildLockFile(lockFileDir, projectDir, templateDir) {
+    if (lockFileDir.startsWith('http://') || lockFileDir.startsWith('https://')) {
+        await loadRepository_1.loadRepository(lockFileDir, projectDir, false);
+    }
+    else {
+        const dir = path_1.default.join(templateDir, lockFileDir);
+        cli_utils_1.log(cli_utils_1.chalk.blue.underline('Pulling from ' + dir));
+        try {
+            cli_utils_1.fs.copySync(dir, projectDir);
+            cli_utils_1.log(`${cli_utils_1.chalk.green('Pull successful!!!')}\n`);
+        }
+        catch (e) {
+            cli_utils_1.log(cli_utils_1.chalk.red('Pull failed!!!'));
+            cli_utils_1.log(cli_utils_1.chalk.yellow(e.toString()));
+            throw e;
+        }
+    }
+}
+function useLockFile(lockFileDir, projectDir, templateDir) {
+    if (!lockFileDir) {
+        beforeInstall(projectDir);
+        return;
+    }
+    cli_utils_1.log(cli_utils_1.chalk.cyan('\n..拉取 yarn.lock, package-lock.json（该文件用于锁定各依赖安装版本,确保安装顺利）'));
+    buildLockFile(lockFileDir, projectDir, templateDir).then(() => beforeInstall(projectDir), () => {
+        cli_utils_1.log('');
+        inquirer_1.default
+            .prompt({
+            type: 'confirm',
+            name: 'retry',
+            message: 'Lock文件拉取失败，该文件非必需文件，是否重试或跳过?',
+            default: true,
+        })
+            .then(({ retry }) => {
+            if (retry) {
+                setTimeout(() => useLockFile(lockFileDir, projectDir, templateDir), 0);
+            }
+            else {
+                beforeInstall(projectDir);
+            }
+        });
+    });
+}
+function beforeInstall(projectDir) {
+    const cdPath = path_1.default.relative(process.cwd(), projectDir);
+    logInstallInfo = function () {
+        cli_utils_1.log('');
+        cli_utils_1.log('- 进入项目 ' + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
+        cli_utils_1.log('- 安装依赖 ' + cli_utils_1.chalk.cyan('yarn install') + cli_utils_1.chalk.yellow(' (或"npm install --legacy-peer-deps",npm版本需>=7.0)'));
+        cli_utils_1.log('- 运行程序 ' + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或查看readme.txt)'));
+        cli_utils_1.log('');
+    };
+    logSuccessInfo = function () {
+        cli_utils_1.log('');
+        cli_utils_1.log(cli_utils_1.chalk.black.bold('✨ 准备好啦！开始工作吧！\n'));
+        cli_utils_1.log(cli_utils_1.chalk.green('- 进入目录 ') + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
+        cli_utils_1.log(cli_utils_1.chalk.green('- 运行程序 ') + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或查看readme.txt)'));
+        cli_utils_1.log('');
+    };
+    cli_utils_1.clearConsole(cli_utils_1.chalk.magenta('🎉 项目创建成功!!! 接下来...\n'));
+    logInstallInfo();
+    cli_utils_1.log('');
+    const { yarnVersion, npmVersion, cnpmVersion } = cli_utils_1.platform;
+    const choices = [];
+    if (yarnVersion) {
+        choices.push({
+            name: 'yarn install',
+            value: 'yarn',
+        });
+    }
+    if (npmVersion) {
+        choices.push({
+            name: 'npm install' + (cli_utils_1.semver.lt(npmVersion, '7.0.0') ? cli_utils_1.chalk.red('(当前版本<7.0.0,不可用!)') : ''),
+            value: cli_utils_1.semver.lt(npmVersion, '7.0.0') ? '' : 'npm',
+        });
+    }
+    if (cnpmVersion) {
+        choices.push({
+            name: 'cnpm install',
+            value: 'cnpm',
+        });
+    }
+    choices.push({
+        name: '稍后安装...',
+        value: '',
+    });
+    inquirer_1.default
+        .prompt({
+        type: 'list',
+        name: 'installCmd',
+        message: cli_utils_1.chalk.green('是否自动安装依赖'),
+        choices,
+    })
+        .then(({ installCmd }) => {
+        if (installCmd) {
+            const installExec = installCmd === 'npm' ? [installCmd, ['install', '--legacy-peer-deps']] : [installCmd, ['install']];
+            cli_utils_1.log('');
+            setTimeout(() => installNpm(installExec, projectDir), 0);
+        }
+    });
+}
+function installNpm(installExec, projectDir) {
     cli_utils_1.log(`  正在安装依赖，请稍后...`);
     const spinner = cli_utils_1.ora('...').start();
     process.chdir(path_1.default.resolve(projectDir));

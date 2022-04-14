@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.USER_AGENT = exports.PACKAGE_INFO_GITHUB = exports.CSS = exports.Framework = exports.Platform = void 0;
+exports.CSS = exports.Framework = exports.Platform = void 0;
 var Platform;
 (function (Platform) {
     Platform["csr"] = "csr";
@@ -18,5 +18,3 @@ var CSS;
     CSS["less"] = "less";
     CSS["sass"] = "sass";
 })(CSS = exports.CSS || (exports.CSS = {}));
-exports.PACKAGE_INFO_GITHUB = 'https://raw.githubusercontent.com/hiisea/elux-cli/main/packages/cli/package.json';
-exports.USER_AGENT = 'elux-cli/1.0.0';

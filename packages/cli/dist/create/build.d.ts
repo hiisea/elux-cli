@@ -5,5 +5,5 @@ declare function build({ projectName, projectDir, templateDir, template, featCho
     templateDir: string;
     template: ITemplate;
     featChoices: FeatChoices;
-}): Promise<void>;
+}): void;
 export = build;
