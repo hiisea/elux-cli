@@ -23,6 +23,7 @@ declare function readDirSync(floder: string): {
 declare function clearConsole(title: string): void;
 declare function testHttpUrl(url: string): boolean;
 declare function checkPort(port: number): Promise<Boolean>;
+declare function getCssScopedName(srcPath: string, localName: string, mfileName: string): string;
 declare const _default: {
     chalk: chalk.Chalk & chalk.ChalkFunction & {
         supportsColor: false | chalk.ColorSupport;
@@ -87,5 +88,6 @@ declare const _default: {
     testHttpUrl: typeof testHttpUrl;
     checkPort: typeof checkPort;
     schemaValidate: typeof schemaValidate;
+    getCssScopedName: typeof getCssScopedName;
 };
 export = _default;

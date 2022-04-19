@@ -18,21 +18,6 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const openInEditor = require('launch-editor-middleware');
 const ModuleFederationPlugin = require('../../libs/ModuleFederationPlugin');
 const ContainerReferencePlugin = require('../../libs/ContainerReferencePlugin');
-function getCssScopedName(srcPath, localName, mfileName) {
-    if (mfileName.match(/[/\\]global.module.\w+?$/)) {
-        return `g-${localName}`;
-    }
-    mfileName = mfileName
-        .replace(/^.*[/\\]node_modules[/\\]/, 'modules/')
-        .replace(/^@.+?[/\\]/, '')
-        .replace(srcPath, '')
-        .replace(/\W/g, '-')
-        .replace(/^-|-index-module-\w+$|-module-\w+$|-index-vue$|-vue$/g, '')
-        .replace(/^components-/, 'comp-')
-        .replace(/^modules-.*?(\w+)-views(-?)(.*)/, '$1$2$3')
-        .replace(/^modules-.*?(\w+)-components(-?)(.*)/, '$1-comp$2$3');
-    return localName === 'root' ? mfileName : `${mfileName}_${localName}`;
-}
 function oneOfCssLoader(isProdModel, srcPath, isVue, isServer, cssModulesOptions, cssType, options) {
     let cssProcessors = null;
     if (cssType === 'less') {
@@ -78,7 +63,7 @@ function oneOfCssLoader(isProdModel, srcPath, isVue, isServer, cssModulesOptions
             importLoaders: 2,
             modules: {
                 getLocalIdent: (context, localIdentName, localName) => {
-                    return getCssScopedName(srcPath, localName, context.resourcePath);
+                    return cli_utils_1.getCssScopedName(srcPath, localName, context.resourcePath);
                 },
                 localIdentContext: srcPath,
                 ...cssModulesOptions,
