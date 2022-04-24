@@ -19,6 +19,7 @@ class Creator {
       [Platform.ssr]: [],
       [Platform.taro]: [],
       [Platform.micro]: [],
+      [Platform.rn]: [],
     };
     templates.forEach((item) => {
       item.platform.forEach((platform) => {
@@ -33,7 +34,7 @@ class Creator {
     };
     if (data[Platform.csr].length > 0) {
       choices.push({
-        name: `CSR: 基于浏览器渲染的单页应用 [${chalk.red(getPics(data[Platform.csr]) + 'P')}]`,
+        name: `CSR: 基于浏览器渲染的应用 [${chalk.red(getPics(data[Platform.csr]) + 'P')}]`,
         value: Platform.csr,
       });
     }
@@ -51,8 +52,14 @@ class Creator {
     }
     if (data[Platform.taro].length > 0) {
       choices.push({
-        name: `Taro: 基于Taro的跨平台应用，常用于各类小程序 [${chalk.red(getPics(data[Platform.taro]) + 'P')}]`,
+        name: `Taro: 基于Taro的跨平台应用（各类小程序） [${chalk.red(getPics(data[Platform.taro]) + 'P')}]`,
         value: Platform.taro,
+      });
+    }
+    if (data[Platform.rn].length > 0) {
+      choices.push({
+        name: `RN: 基于ReactNative的原生APP（开发中...） [${chalk.red(getPics(data[Platform.rn]) + 'P')}]`,
+        value: Platform.rn,
       });
     }
     return inquirer

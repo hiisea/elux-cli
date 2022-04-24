@@ -142,7 +142,7 @@ function tsxLoaders(isProdModel, isVue, isServer, ssrNodeVersion) {
     }
     return loaders;
 }
-function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath, publicPath, clientPublicPath, envPath, cssProcessors, cssModulesOptions, enableEslintPlugin, enableStylelintPlugin, clientMinimize, serverMinimize, analyzerPort, UIType, limitSize, globalVar, apiProxy, useSSR, serverPort, ssrNodeVersion, resolveAlias, moduleFederation, }) {
+function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath, publicPath, clientPublicPath, envPath, cssProcessors, cssModulesOptions, enableEslintPlugin, enableStylelintPlugin, clientMinimize, serverMinimize, analyzerPort, UIType, limitSize, globalVar, defineConstants, apiProxy, useSSR, serverPort, ssrNodeVersion, resolveAlias, moduleFederation, }) {
     const isProdModel = nodeEnv === 'production';
     if (!isProdModel) {
         clientPublicPath = `${clientPublicPath.replace('//', '``').replace(/\/.+$/, '').replace('``', '//')}/client/`;
@@ -341,6 +341,7 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
             enableStylelintPlugin && new StylelintPlugin({ files: `src/**/*.{${cssExtensions.join(',')}}`, failOnWarning: true }),
             new webpack_1.default.DefinePlugin({
                 'process.env.PROJ_ENV': JSON.stringify(globalVar.client || {}),
+                ...defineConstants,
                 ...(isVue ? { __VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false } : {}),
             }),
             new HtmlWebpackPlugin({
@@ -461,6 +462,7 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                 SsrPlugin.server,
                 new webpack_1.default.DefinePlugin({
                     'process.env.PROJ_ENV': JSON.stringify(globalVar.server || {}),
+                    ...defineConstants,
                     ...(isVue ? { __VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false } : {}),
                 }),
                 analyzerPort && new BundleAnalyzerPlugin({ reportTitle: 'server', generateStatsFile: true, analyzerPort: analyzerPort + 1 }),

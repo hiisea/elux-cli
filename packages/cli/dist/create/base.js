@@ -7,6 +7,7 @@ var Platform;
     Platform["ssr"] = "ssr";
     Platform["taro"] = "taro";
     Platform["micro"] = "micro";
+    Platform["rn"] = "rn";
 })(Platform = exports.Platform || (exports.Platform = {}));
 var Framework;
 (function (Framework) {

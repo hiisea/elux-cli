@@ -28,7 +28,7 @@ export async function dev(
       projectType,
       serverPort,
       nodeEnv,
-      envConfig: {clientPublicPath, clientGlobalVar, serverGlobalVar},
+      envConfig: {clientPublicPath, clientGlobalVar, serverGlobalVar, defineConstants},
       useSSR,
       onCompiled,
     },
@@ -40,6 +40,7 @@ export async function dev(
   }
   const envInfo: any = {
     clientPublicPath,
+    defineConstants,
     clientGlobalVar,
   };
   if (useSSR) {

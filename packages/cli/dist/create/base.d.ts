@@ -21,7 +21,8 @@ export declare enum Platform {
     csr = "csr",
     ssr = "ssr",
     taro = "taro",
-    micro = "micro"
+    micro = "micro",
+    rn = "rn"
 }
 export declare enum Framework {
     react = "react",
@@ -37,7 +38,9 @@ export interface ITemplate {
     css: CSS[];
     getTitle: (args: FeatChoices) => string;
     getNpmLockFile: (args: FeatChoices) => string;
-    operation?: {
+    operation?: (args: FeatChoices & {
+        projectName: string;
+    }) => {
         action: 'copy' | 'move';
         from: string;
         to: string;

@@ -16,6 +16,7 @@ const EluxConfigSchema = {
                 clientPublicPath: { type: 'string' },
                 clientGlobalVar: { type: 'object' },
                 serverGlobalVar: { type: 'object' },
+                defineConstants: { type: 'object' },
                 onCompiled: { instanceof: 'Function' },
                 sourceMap: { type: 'string' },
                 cache: {
@@ -137,6 +138,7 @@ function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, ssrN
             clientPublicPath: '/client/',
             clientGlobalVar: {},
             serverGlobalVar: {},
+            defineConstants: {},
             sourceMap: 'eval-cheap-module-source-map',
             webpackConfigTransform: (config) => config,
             onCompiled: () => undefined,
@@ -149,7 +151,7 @@ function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, ssrN
     const eluxConfig = cli_utils_1.deepExtend(defaultBaseConfig, baseEluxConfig);
     const envConfig = cli_utils_1.deepExtend(eluxConfig.all, eluxConfig[nodeEnv === 'development' ? 'dev' : 'prod']);
     const { srcPath, publicPath, type, moduleFederation, devServerConfigTransform, cssProcessors, cssModulesOptions } = eluxConfig;
-    const { serverPort, cache, eslint, stylelint, clientMinimize, serverMinimize, urlLoaderLimitSize, resolveAlias, clientPublicPath, clientGlobalVar, serverGlobalVar, sourceMap, onCompiled, webpackConfigTransform, apiProxy, } = envConfig;
+    const { serverPort, cache, eslint, stylelint, clientMinimize, serverMinimize, urlLoaderLimitSize, resolveAlias, clientPublicPath, clientGlobalVar, serverGlobalVar, defineConstants, sourceMap, onCompiled, webpackConfigTransform, apiProxy, } = envConfig;
     const useSSR = type === 'react ssr' || type === 'vue ssr';
     const UIType = type.split(' ')[0];
     const distPath = path_1.default.resolve(rootPath, eluxConfig.distPath, envName);
@@ -173,6 +175,7 @@ function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, ssrN
         UIType,
         limitSize: urlLoaderLimitSize,
         globalVar: { client: clientGlobalVar, server: serverGlobalVar },
+        defineConstants,
         apiProxy,
         useSSR,
         serverPort: _serverPort || serverPort,

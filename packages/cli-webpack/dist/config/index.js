@@ -16,7 +16,7 @@ async function dev(rootPath, baseEluxConfig, envName, envPath, packageJSON, port
         .split('.', 2)
         .join('.');
     const config = gen_1.default(rootPath, baseEluxConfig, envName, envPath, 'development', ssrNodeVersion, port);
-    const { devServerConfig, clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, projectType, serverPort, nodeEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar }, useSSR, onCompiled, }, } = config;
+    const { devServerConfig, clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, projectType, serverPort, nodeEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar, defineConstants }, useSSR, onCompiled, }, } = config;
     const protAvailable = await cli_utils_1.checkPort(serverPort);
     if (!protAvailable) {
         cli_utils_1.err(cli_utils_1.chalk.red(`\n\n[error] The port: ${serverPort} is occupied. DevServer startup failed!\n\n`));
@@ -24,6 +24,7 @@ async function dev(rootPath, baseEluxConfig, envName, envPath, packageJSON, port
     }
     const envInfo = {
         clientPublicPath,
+        defineConstants,
         clientGlobalVar,
     };
     if (useSSR) {

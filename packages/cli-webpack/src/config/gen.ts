@@ -7,6 +7,7 @@ interface EnvConfig {
   clientPublicPath: string;
   clientGlobalVar: Record<string, any>;
   serverGlobalVar: Record<string, any>;
+  defineConstants: Record<string, string>;
   onCompiled: () => void;
   sourceMap: string;
   cache: boolean | Record<string, any>;
@@ -46,6 +47,7 @@ const EluxConfigSchema: any = {
         clientPublicPath: {type: 'string'},
         clientGlobalVar: {type: 'object'},
         serverGlobalVar: {type: 'object'},
+        defineConstants: {type: 'object'},
         onCompiled: {instanceof: 'Function'},
         sourceMap: {type: 'string'},
         cache: {
@@ -201,6 +203,7 @@ function moduleExports(
       clientPublicPath: '/client/',
       clientGlobalVar: {},
       serverGlobalVar: {},
+      defineConstants: {},
       sourceMap: 'eval-cheap-module-source-map',
       webpackConfigTransform: (config) => config,
       onCompiled: () => undefined,
@@ -227,6 +230,7 @@ function moduleExports(
     clientPublicPath,
     clientGlobalVar,
     serverGlobalVar,
+    defineConstants,
     sourceMap,
     onCompiled,
     webpackConfigTransform,
@@ -257,6 +261,7 @@ function moduleExports(
     UIType,
     limitSize: urlLoaderLimitSize,
     globalVar: {client: clientGlobalVar, server: serverGlobalVar},
+    defineConstants,
     apiProxy,
     useSSR,
     serverPort: _serverPort || serverPort,

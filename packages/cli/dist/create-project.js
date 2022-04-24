@@ -76,12 +76,12 @@ function askTemplateSource(templateResources) {
                 {
                     name: '输入模版文件Url...',
                     value: 'inputUrl',
-                    short: '=> url格式如:http://xxx/xxx.zip',
+                    short: '=> zip文件url,如 http://xxx/xxx.zip',
                 },
                 {
                     name: '输入本地模版目录...',
                     value: 'inputPath',
-                    short: '=> 相对或绝对路径如:../xxx/xxx',
+                    short: '=> 相对或绝对路径',
                 },
             ],
         },

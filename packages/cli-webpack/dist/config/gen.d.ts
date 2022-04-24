@@ -3,6 +3,7 @@ interface EnvConfig {
     clientPublicPath: string;
     clientGlobalVar: Record<string, any>;
     serverGlobalVar: Record<string, any>;
+    defineConstants: Record<string, string>;
     onCompiled: () => void;
     sourceMap: string;
     cache: boolean | Record<string, any>;

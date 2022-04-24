@@ -33,10 +33,11 @@ function build({
       cb();
     }
   });
-  const templateData = template.data ? template.data({...featChoices, projectName}) : {...featChoices, projectName};
+  const tplArgs = {...featChoices, projectName};
+  const templateData = template.data ? template.data(tplArgs) : tplArgs;
   const tempDir = path.join(templateDir, './$');
-
-  (template.operation || []).forEach((item) => {
+  const operations = template.operation ? template.operation(tplArgs) : [];
+  operations.forEach((item) => {
     if (item.from.includes('..') || item.to.includes('..')) {
       return;
     }
@@ -148,7 +149,7 @@ function useLockFile(lockFileDir: string, projectDir: string, templateDir: strin
         .prompt({
           type: 'confirm',
           name: 'retry',
-          message: 'Lock文件拉取失败，该文件非必需文件，是否重试或跳过?',
+          message: 'Lock文件拉取失败，该文件非必需，是否重试?',
           default: true,
         })
         .then(({retry}) => {

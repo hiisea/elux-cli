@@ -44,6 +44,7 @@ interface ConfigOptions {
         client?: any;
         server?: any;
     };
+    defineConstants: Record<string, string>;
     apiProxy: {
         [key: string]: any;
     };
@@ -59,7 +60,7 @@ interface ConfigOptions {
     serverMinimize: boolean;
     analyzerPort?: number;
 }
-declare function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath, publicPath, clientPublicPath, envPath, cssProcessors, cssModulesOptions, enableEslintPlugin, enableStylelintPlugin, clientMinimize, serverMinimize, analyzerPort, UIType, limitSize, globalVar, apiProxy, useSSR, serverPort, ssrNodeVersion, resolveAlias, moduleFederation, }: ConfigOptions): {
+declare function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath, publicPath, clientPublicPath, envPath, cssProcessors, cssModulesOptions, enableEslintPlugin, enableStylelintPlugin, clientMinimize, serverMinimize, analyzerPort, UIType, limitSize, globalVar, defineConstants, apiProxy, useSSR, serverPort, ssrNodeVersion, resolveAlias, moduleFederation, }: ConfigOptions): {
     clientWebpackConfig: WebpackConfig;
     serverWebpackConfig: WebpackConfig;
     devServerConfig: DevServerConfig;

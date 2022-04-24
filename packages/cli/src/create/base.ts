@@ -22,6 +22,7 @@ export enum Platform {
   ssr = 'ssr',
   taro = 'taro',
   micro = 'micro',
+  rn = 'rn',
 }
 export enum Framework {
   react = 'react',
@@ -37,7 +38,7 @@ export interface ITemplate {
   css: CSS[];
   getTitle: (args: FeatChoices) => string;
   getNpmLockFile: (args: FeatChoices) => string;
-  operation?: {action: 'copy' | 'move'; from: string; to: string}[];
+  operation?: (args: FeatChoices & {projectName: string}) => {action: 'copy' | 'move'; from: string; to: string}[];
   data?: (args: FeatChoices & {projectName: string}) => {[key: string]: string};
   rename?: (params: any, fpath: string) => string;
   beforeRender?: (params: any, fpath: string, content: string) => string;

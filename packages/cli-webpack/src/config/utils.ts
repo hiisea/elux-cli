@@ -191,6 +191,7 @@ interface ConfigOptions {
   cssModulesOptions: Record<string, any>;
   limitSize: number;
   globalVar: {client?: any; server?: any};
+  defineConstants: Record<string, string>;
   apiProxy: {[key: string]: any};
   useSSR: boolean;
   UIType: 'react' | 'vue';
@@ -225,6 +226,7 @@ function moduleExports({
   UIType,
   limitSize,
   globalVar,
+  defineConstants,
   apiProxy,
   useSSR,
   serverPort,
@@ -446,6 +448,7 @@ function moduleExports({
       enableStylelintPlugin && new StylelintPlugin({files: `src/**/*.{${cssExtensions.join(',')}}`, failOnWarning: true}),
       new webpack.DefinePlugin({
         'process.env.PROJ_ENV': JSON.stringify(globalVar.client || {}),
+        ...defineConstants,
         ...(isVue ? {__VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false} : {}),
       }),
       new HtmlWebpackPlugin({
@@ -583,6 +586,7 @@ function moduleExports({
           SsrPlugin.server,
           new webpack.DefinePlugin({
             'process.env.PROJ_ENV': JSON.stringify(globalVar.server || {}),
+            ...defineConstants,
             ...(isVue ? {__VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false} : {}),
           }),
           analyzerPort && new BundleAnalyzerPlugin({reportTitle: 'server', generateStatsFile: true, analyzerPort: analyzerPort + 1}),

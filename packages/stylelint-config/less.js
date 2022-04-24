@@ -24,6 +24,12 @@ module.exports = {
       files: ['*.vue', '**/*.vue'],
       customSyntax: 'postcss-html',
       rules: {
+        'selector-type-no-unknown': [
+          true,
+          {
+            ignoreTypes: ['page'],
+          },
+        ],
         'selector-pseudo-class-no-unknown': [
           true,
           {
