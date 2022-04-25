@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/hiisea/elux/compare/@elux/cli-webpack@2.0.0...@elux/cli-webpack@2.1.0) (2022-04-25)
+
+
+### Bug Fixes
+
+* 导出getCssScopedName ([8e518cf](https://github.com/hiisea/elux/commit/8e518cfeb543315768187e801ac9472ec2d7c78b))
+
+
+### Features
+
+* 优化交互体验 ([772fcf2](https://github.com/hiisea/elux/commit/772fcf21966a1d5bff6463921889fb2a7a03d8c6))
+
+
+
+
+
 # [2.0.0](https://github.com/hiisea/elux/compare/@elux/cli-webpack@1.2.0...@elux/cli-webpack@2.0.0) (2022-04-11)
 
 
