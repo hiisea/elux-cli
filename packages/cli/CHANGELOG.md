@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.1](https://github.com/hiisea/elux/compare/@elux/cli@2.1.0...@elux/cli@2.1.1) (2022-04-26)
+
+
+### Bug Fixes
+
+* node版本最低需求更改为v16 ([e122a20](https://github.com/hiisea/elux/commit/e122a2094594e77bc28b86256fd370424ee2ba05))
+
+
+
+
+
 # [2.1.0](https://github.com/hiisea/elux/compare/@elux/cli@2.0.1...@elux/cli@2.1.0) (2022-04-25)
 
 
