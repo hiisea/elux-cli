@@ -1,6 +1,6 @@
 {
   "name": "@elux/cli",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Command line interface for rapid elux project.",
   "repository": "https://github.com/hiisea/elux/tree/master/packages/cli",
   "author": "hiisea <hiisea@qq.com>",

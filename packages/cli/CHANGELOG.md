@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.2](https://github.com/hiisea/elux/compare/@elux/cli@2.1.1...@elux/cli@2.1.2) (2022-04-26)
+
+
+### Bug Fixes
+
+* decompress增加参数strip ([2ed4645](https://github.com/hiisea/elux/commit/2ed46458c03cbcdbde7854d29bb2146ac6a1de4a))
+
+
+
+
+
 ## [2.1.1](https://github.com/hiisea/elux/compare/@elux/cli@2.1.0...@elux/cli@2.1.1) (2022-04-26)
 
 
