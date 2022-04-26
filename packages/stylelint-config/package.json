@@ -1,6 +1,6 @@
 {
   "name": "@elux/stylelint-config",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "index.js",
   "files": [
     "less.js",
@@ -25,8 +25,8 @@
   "dependencies": {
     "stylelint": "^14.0.0",
     "stylelint-config-prettier": "^9.0.3",
-    "stylelint-config-rational-order": "^0.1.2",
     "stylelint-config-standard": "^23.0.0",
+    "stylelint-config-recess-order": "^3.0.0",
     "stylelint-declaration-block-no-ignored-properties": "^2.4.0",
     "stylelint-order": "^5.0.0",
     "stylelint-prettier": "^1.2.0",
