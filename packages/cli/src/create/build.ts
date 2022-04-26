@@ -148,15 +148,15 @@ function useLockFile(lockFileDir: string, projectDir: string, templateDir: strin
       inquirer
         .prompt({
           type: 'confirm',
-          name: 'retry',
-          message: 'Lock文件拉取失败，该文件非必需，是否重试?',
+          name: 'skip',
+          message: 'npm-lock文件拉取失败，该文件非必需，是否跳过该文件?',
           default: true,
         })
-        .then(({retry}) => {
-          if (retry) {
-            setTimeout(() => useLockFile(lockFileDir, projectDir, templateDir), 0);
-          } else {
+        .then(({skip}) => {
+          if (skip) {
             beforeInstall(projectDir);
+          } else {
+            setTimeout(() => useLockFile(lockFileDir, projectDir, templateDir), 0);
           }
         });
     }
