@@ -11,6 +11,7 @@ export function loadRepository(url: string, targetDir: string, removeTarget: boo
 
   return download(url, targetDir, {
     extract: true,
+    strip: 1,
     headers: {
       //accept: 'application/zip',
       'user-agent': 'Chrome/99.0',

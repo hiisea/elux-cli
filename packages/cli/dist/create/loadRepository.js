@@ -12,6 +12,7 @@ function loadRepository(url, targetDir, removeTarget) {
     const spinner = cli_utils_1.ora('Loading...').start();
     return cli_utils_1.download(url, targetDir, {
         extract: true,
+        strip: 1,
         headers: {
             'user-agent': 'Chrome/99.0',
         },

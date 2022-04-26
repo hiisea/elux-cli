@@ -76,7 +76,7 @@ function askTemplateSource(templateResources) {
                 {
                     name: '输入模版文件Url...',
                     value: 'inputUrl',
-                    short: '=> zip文件url,如 http://xxx/xxx.zip',
+                    short: '=> 如:http://xxx/xxx.zip',
                 },
                 {
                     name: '输入本地模版目录...',
@@ -129,7 +129,7 @@ async function askProxy(systemProxy) {
                 if (!input) {
                     return true;
                 }
-                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('格式如 http://127.0.0.1:1080');
+                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('格式如:http://127.0.0.1:1087');
             },
         });
     }
@@ -150,7 +150,7 @@ async function askProxy(systemProxy) {
                 {
                     name: '输入代理地址',
                     value: 'inputProxy',
-                    short: '格式如 http://127.0.0.1:1080',
+                    short: '例如:http://127.0.0.1:1087',
                 },
             ],
         }, {
@@ -161,7 +161,7 @@ async function askProxy(systemProxy) {
                 if (!input) {
                     return true;
                 }
-                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('格式如 http://127.0.0.1:1080');
+                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('格式如:http://127.0.0.1:1087');
             },
             when(answers) {
                 return answers.proxy === 'inputProxy';

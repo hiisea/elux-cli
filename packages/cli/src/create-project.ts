@@ -74,7 +74,7 @@ function askTemplateSource(templateResources: TemplateResources[]): Promise<{rep
           {
             name: '输入模版文件Url...',
             value: 'inputUrl',
-            short: '=> zip文件url,如 http://xxx/xxx.zip',
+            short: '=> 如:http://xxx/xxx.zip',
           },
           {
             name: '输入本地模版目录...',
@@ -126,7 +126,7 @@ async function askProxy(systemProxy: string): Promise<string> {
         if (!input) {
           return true;
         }
-        return testHttpUrl(input) || chalk.red('格式如 http://127.0.0.1:1080');
+        return testHttpUrl(input) || chalk.red('格式如:http://127.0.0.1:1087');
       },
     });
   } else {
@@ -147,7 +147,7 @@ async function askProxy(systemProxy: string): Promise<string> {
           {
             name: '输入代理地址',
             value: 'inputProxy',
-            short: '格式如 http://127.0.0.1:1080',
+            short: '例如:http://127.0.0.1:1087',
           },
         ],
       },
@@ -159,7 +159,7 @@ async function askProxy(systemProxy: string): Promise<string> {
           if (!input) {
             return true;
           }
-          return testHttpUrl(input) || chalk.red('格式如 http://127.0.0.1:1080');
+          return testHttpUrl(input) || chalk.red('格式如:http://127.0.0.1:1087');
         },
         when(answers: {proxy: string}) {
           return answers.proxy === 'inputProxy';
