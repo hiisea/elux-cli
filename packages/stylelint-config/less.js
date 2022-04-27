@@ -8,6 +8,12 @@ module.exports = {
     'no-descending-specificity': null,
     'no-invalid-position-at-import-rule': null,
     'selector-class-pattern': null,
+    'selector-type-no-unknown': [
+      true,
+      {
+        ignoreTypes: ['page'],
+      },
+    ],
     'selector-pseudo-class-no-unknown': [
       true,
       {
@@ -24,12 +30,6 @@ module.exports = {
       files: ['*.vue', '**/*.vue'],
       customSyntax: 'postcss-html',
       rules: {
-        'selector-type-no-unknown': [
-          true,
-          {
-            ignoreTypes: ['page'],
-          },
-        ],
         'selector-pseudo-class-no-unknown': [
           true,
           {

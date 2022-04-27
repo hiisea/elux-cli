@@ -1,6 +1,6 @@
 {
   "name": "@elux/stylelint-config",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "index.js",
   "files": [
     "less.js",
@@ -17,6 +17,7 @@
     "node": ">=14.0.0"
   },
   "scripts": {
+    "pub": "npm publish --registry=https://registry.npmjs.org/",
     "eslint": "cross-env NODE_ENV=production eslint --fix --cache **/*.{js,ts}"
   },
   "peerDependencies": {
