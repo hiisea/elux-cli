@@ -35,6 +35,12 @@
       "url": "https://github.com/hiisea/elux-project-templates-simple/archive/refs/heads/v2.zip",
       "summary": "一个简单的增删改查示例",
       "count": 32
+    },
+    {
+      "title": "简单示例模板(备用源)",
+      "url": "https://eluxjs.com/download/tpl-simple-v2.zip",
+      "summary": "一个简单的增删改查示例",
+      "count": 32
     }
   ],
   "optionalDependencies": {

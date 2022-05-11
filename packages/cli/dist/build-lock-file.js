@@ -1,0 +1,30 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+const path_1 = __importDefault(require("path"));
+const cli_utils_1 = require("@elux/cli-utils");
+module.exports = async function moduleExports(rootPath, dir) {
+    const projectDir = path_1.default.resolve(rootPath, dir);
+    const lockDir = path_1.default.resolve(rootPath, dir + '-lock');
+    process.chdir(path_1.default.resolve(projectDir));
+    cli_utils_1.log(projectDir);
+    cli_utils_1.log('清除相关文件...');
+    cli_utils_1.fs.removeSync(lockDir);
+    cli_utils_1.fs.removeSync(path_1.default.join(projectDir, 'yarn.lock'));
+    cli_utils_1.fs.removeSync(path_1.default.join(projectDir, 'package-lock.json'));
+    cli_utils_1.fs.removeSync(path_1.default.join(projectDir, 'node_modules'));
+    cli_utils_1.log('yarn install...');
+    let subProcess = cli_utils_1.execa('yarn', ['install']);
+    subProcess.stdin.pipe(process.stdin);
+    subProcess.stdout.pipe(process.stdout);
+    subProcess.stderr.pipe(process.stderr);
+    await subProcess;
+    cli_utils_1.log('清除相关文件...');
+    cli_utils_1.fs.moveSync(path_1.default.join(projectDir, 'yarn.lock'), path_1.default.join(lockDir, 'yarn.lock'));
+    cli_utils_1.fs.removeSync(path_1.default.join(projectDir, 'node_modules'));
+    cli_utils_1.log('npm install...');
+    subProcess = cli_utils_1.execa('npm', ['install', '--legacy-peer-deps']);
+    await subProcess;
+    cli_utils_1.fs.moveSync(path_1.default.join(projectDir, 'package-lock.json'), path_1.default.resolve(lockDir, 'package-lock.json'));
+};

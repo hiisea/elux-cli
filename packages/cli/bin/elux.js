@@ -96,6 +96,14 @@ program
     require(moduleName).pack(...args);
   });
 
+program
+  .command('lock-file <dir>')
+  .description('Build npm lock-file')
+  .action((dir) => {
+    const args = [process.cwd(), dir];
+    require('../dist/build-lock-file')(...args);
+  });
+
 // output help information on unknown commands
 program.on('command:*', ([cmd]) => {
   program.outputHelp();
