@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/hiisea/elux/compare/@elux/cli-utils@2.1.0...@elux/cli-utils@2.2.0) (2022-05-18)
+
+
+### Features
+
+* 加入archiver ([3996cd4](https://github.com/hiisea/elux/commit/3996cd403969bab9ca514f2fc7be93cde3eaade3))
+
+
+
+
+
 # [2.1.0](https://github.com/hiisea/elux/compare/@elux/cli-utils@2.0.0...@elux/cli-utils@2.1.0) (2022-04-25)
 
 
