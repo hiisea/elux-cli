@@ -76,7 +76,7 @@ function askTemplateSource(templateResources) {
                 {
                     name: '输入模版文件Url...',
                     value: 'inputUrl',
-                    short: '=> 如:http://xxx/xxx.zip',
+                    short: '=> 如:http://xxx/xxx',
                 },
                 {
                     name: '输入本地模版目录...',
@@ -175,7 +175,7 @@ async function askProxy(systemProxy) {
 async function getTemplates(args) {
     cli_utils_1.log('');
     const templateSource = await askTemplateSource(args.templateResources);
-    const repository = templateSource.repository.trim();
+    const repository = templateSource.repository.trim().replace(/\/+$/, '');
     const summary = templateSource.summary.trim();
     if (!repository) {
         cli_utils_1.log(cli_utils_1.chalk.green('Please reselect...'));
@@ -183,7 +183,7 @@ async function getTemplates(args) {
         return;
     }
     cli_utils_1.clearConsole(cli_utils_1.chalk.green.underline('【 ' + (summary || repository) + ' 】'));
-    let templateDir = repository;
+    let templateDir;
     if (repository.startsWith('http://') || repository.startsWith('https://')) {
         const globalProxy = cli_utils_1.getProxy() || '';
         cli_utils_1.log(cli_utils_1.chalk.cyan('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
@@ -191,13 +191,16 @@ async function getTemplates(args) {
         global['GLOBAL_AGENT'].HTTP_PROXY = proxy || '';
         templateDir = path_1.default.join(os_1.default.tmpdir(), 'elux-cli-tpl');
         try {
-            await loadRepository_1.loadRepository(repository, templateDir, true);
+            await loadRepository_1.loadRepository(repository + '/src.zip', templateDir, true);
         }
         catch (error) {
             cli_utils_1.log(cli_utils_1.chalk.green('Please reselect...'));
             setTimeout(() => getTemplates(args), 0);
             return;
         }
+    }
+    else {
+        templateDir = path_1.default.join(repository, 'src');
     }
     const { projectName, projectDir, options } = args;
     let templates;
@@ -215,7 +218,7 @@ async function getTemplates(args) {
         return pre + cur.platform.length * cur.framework.length * cur.css.length;
     }, 0);
     const title = args.title + `\ntotally [${cli_utils_1.chalk.red(pics + 'P')}] templates are pulled from ${cli_utils_1.chalk.blue.underline(repository)}\n`;
-    const creator = new create_1.default(projectName, projectDir, templateDir, options, templates, title);
+    const creator = new create_1.default(projectName, projectDir, repository, templateDir, options, templates, title);
     creator.create();
 }
 function parseTemplates(floder, curVerison) {

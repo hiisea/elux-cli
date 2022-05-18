@@ -7,6 +7,7 @@ class Creator {
   constructor(
     private projectName: string,
     private projectDir: string,
+    private repository: string,
     private templateDir: string,
     private options: CommandOptions,
     private templates: ITemplate[],
@@ -200,7 +201,14 @@ class Creator {
     const template = await this.askTemplate(templates, featChoices);
     const ensure = await this.askEnsure();
     if (ensure) {
-      build({projectName: this.projectName, projectDir: this.projectDir, templateDir: this.templateDir, featChoices, template});
+      build({
+        projectName: this.projectName,
+        projectDir: this.projectDir,
+        repository: this.repository,
+        templateDir: this.templateDir,
+        featChoices,
+        template,
+      });
     } else {
       this.create();
     }

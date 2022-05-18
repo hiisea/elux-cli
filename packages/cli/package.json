@@ -26,19 +26,19 @@
   "templateResources": [
     {
       "title": "简单示例模板(Gitee源)",
-      "url": "https://gitee.com/hiisea/elux-project-templates-simple/raw/v2/tpl.zip",
+      "url": "https://gitee.com/hiisea/elux-project-templates-simple/raw/v2",
       "summary": "一个简单的增删改查示例",
       "count": 32
     },
     {
       "title": "简单示例模板(Github源)",
-      "url": "https://github.com/hiisea/elux-project-templates-simple/archive/refs/heads/v2.zip",
+      "url": "https://raw.githubusercontent.com/hiisea/elux-project-templates-simple/v2/dist/online",
       "summary": "一个简单的增删改查示例",
       "count": 32
     },
     {
       "title": "简单示例模板(备用源)",
-      "url": "https://eluxjs.com/download/tpl-simple-v2.zip",
+      "url": "https://eluxjs.com/download/tpl-simple-v2",
       "summary": "一个简单的增删改查示例",
       "count": 32
     }

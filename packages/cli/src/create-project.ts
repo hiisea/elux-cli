@@ -74,7 +74,7 @@ function askTemplateSource(templateResources: TemplateResources[]): Promise<{rep
           {
             name: '输入模版文件Url...',
             value: 'inputUrl',
-            short: '=> 如:http://xxx/xxx.zip',
+            short: '=> 如:http://xxx/xxx',
           },
           {
             name: '输入本地模版目录...',
@@ -181,7 +181,7 @@ async function getTemplates(args: {
 }): Promise<void> {
   log('');
   const templateSource = await askTemplateSource(args.templateResources);
-  const repository = templateSource.repository.trim();
+  const repository = templateSource.repository.trim().replace(/\/+$/, '');
   const summary = templateSource.summary.trim();
   if (!repository) {
     log(chalk.green('Please reselect...'));
@@ -189,7 +189,7 @@ async function getTemplates(args: {
     return;
   }
   clearConsole(chalk.green.underline('【 ' + (summary || repository) + ' 】'));
-  let templateDir: string = repository;
+  let templateDir: string;
   if (repository.startsWith('http://') || repository.startsWith('https://')) {
     const globalProxy = getProxy() || '';
     log(chalk.cyan('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
@@ -197,12 +197,14 @@ async function getTemplates(args: {
     global['GLOBAL_AGENT'].HTTP_PROXY = proxy || '';
     templateDir = path.join(os.tmpdir(), 'elux-cli-tpl');
     try {
-      await loadRepository(repository, templateDir, true);
+      await loadRepository(repository + '/src.zip', templateDir, true);
     } catch (error: any) {
       log(chalk.green('Please reselect...'));
       setTimeout(() => getTemplates(args), 0);
       return;
     }
+  } else {
+    templateDir = path.join(repository, 'src');
   }
   //templateDir = 'C:\\my\\cli\\src';
   const {projectName, projectDir, options} = args;
@@ -220,7 +222,7 @@ async function getTemplates(args: {
     return pre + cur.platform.length * cur.framework.length * cur.css.length;
   }, 0);
   const title = args.title + `\ntotally [${chalk.red(pics + 'P')}] templates are pulled from ${chalk.blue.underline(repository)}\n`;
-  const creator = new Creator(projectName, projectDir, templateDir, options, templates, title);
+  const creator = new Creator(projectName, projectDir, repository, templateDir, options, templates, title);
   creator.create();
 }
 function parseTemplates(floder: string, curVerison: string): ITemplate[] {

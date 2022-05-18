@@ -13,12 +13,14 @@ let logSuccessInfo: () => void = () => undefined;
 function build({
   projectName,
   projectDir,
+  repository,
   templateDir,
   template,
   featChoices,
 }: {
   projectName: string;
   projectDir: string;
+  repository: string;
   templateDir: string;
   template: ITemplate;
   featChoices: FeatChoices;
@@ -109,19 +111,19 @@ function build({
   fs.removeSync(tempDir);
   mfs.commit([filter], (error) => {
     if (!error) {
-      const lockFileDir = template.getNpmLockFile(featChoices);
-      useLockFile(lockFileDir, projectDir, templateDir);
+      const lockFileName = template.getNpmLockFile(tplArgs);
+      useLockFile(lockFileName, projectDir, repository, templateDir);
     } else {
       throw error;
     }
   });
 }
 
-async function buildLockFile(lockFileDir: string, projectDir: string, templateDir: string) {
-  if (lockFileDir.startsWith('http://') || lockFileDir.startsWith('https://')) {
-    await loadRepository(lockFileDir, projectDir, false);
+async function buildLockFile(lockFileName: string, projectDir: string, repository: string, templateDir: string) {
+  if (repository.startsWith('http://') || repository.startsWith('https://')) {
+    await loadRepository(`${repository}/${lockFileName}.zip`, projectDir, false);
   } else {
-    const dir = path.join(templateDir, lockFileDir);
+    const dir = path.join(repository, lockFileName);
     log(chalk.blue.underline('Pulling from ' + dir));
     try {
       fs.copySync(dir, projectDir);
@@ -134,14 +136,14 @@ async function buildLockFile(lockFileDir: string, projectDir: string, templateDi
   }
 }
 
-function useLockFile(lockFileDir: string, projectDir: string, templateDir: string) {
-  if (!lockFileDir) {
+function useLockFile(lockFileName: string, projectDir: string, repository: string, templateDir: string) {
+  if (!lockFileName) {
     beforeInstall(projectDir);
     return;
   }
   log(chalk.cyan('\n..拉取 yarn.lock, package-lock.json（该文件用于锁定各依赖安装版本,确保安装顺利）'));
 
-  buildLockFile(lockFileDir, projectDir, templateDir).then(
+  buildLockFile(lockFileName, projectDir, repository, templateDir).then(
     () => beforeInstall(projectDir),
     () => {
       log('');
@@ -156,7 +158,7 @@ function useLockFile(lockFileDir: string, projectDir: string, templateDir: strin
           if (skip) {
             beforeInstall(projectDir);
           } else {
-            setTimeout(() => useLockFile(lockFileDir, projectDir, templateDir), 0);
+            setTimeout(() => useLockFile(lockFileName, projectDir, repository, templateDir), 0);
           }
         });
     }

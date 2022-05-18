@@ -7,9 +7,10 @@ const cli_utils_1 = require("@elux/cli-utils");
 const base_1 = require("./base");
 const build_1 = __importDefault(require("./build"));
 class Creator {
-    constructor(projectName, projectDir, templateDir, options, templates, title) {
+    constructor(projectName, projectDir, repository, templateDir, options, templates, title) {
         this.projectName = projectName;
         this.projectDir = projectDir;
+        this.repository = repository;
         this.templateDir = templateDir;
         this.options = options;
         this.templates = templates;
@@ -201,7 +202,14 @@ class Creator {
         const template = await this.askTemplate(templates, featChoices);
         const ensure = await this.askEnsure();
         if (ensure) {
-            build_1.default({ projectName: this.projectName, projectDir: this.projectDir, templateDir: this.templateDir, featChoices, template });
+            build_1.default({
+                projectName: this.projectName,
+                projectDir: this.projectDir,
+                repository: this.repository,
+                templateDir: this.templateDir,
+                featChoices,
+                template,
+            });
         }
         else {
             this.create();

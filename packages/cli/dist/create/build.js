@@ -30,7 +30,7 @@ const cli_utils_1 = require("@elux/cli-utils");
 const loadRepository_1 = require("./loadRepository");
 let logInstallInfo = () => undefined;
 let logSuccessInfo = () => undefined;
-function build({ projectName, projectDir, templateDir, template, featChoices, }) {
+function build({ projectName, projectDir, repository, templateDir, template, featChoices, }) {
     cli_utils_1.log(cli_utils_1.chalk.red('\n🚀 Generating files...\n'));
     const excludeFiles = {};
     const filter = util_1.createTransform(function (file, enc, cb) {
@@ -113,20 +113,20 @@ function build({ projectName, projectDir, templateDir, template, featChoices, })
     cli_utils_1.fs.removeSync(tempDir);
     mfs.commit([filter], (error) => {
         if (!error) {
-            const lockFileDir = template.getNpmLockFile(featChoices);
-            useLockFile(lockFileDir, projectDir, templateDir);
+            const lockFileName = template.getNpmLockFile(tplArgs);
+            useLockFile(lockFileName, projectDir, repository, templateDir);
         }
         else {
             throw error;
         }
     });
 }
-async function buildLockFile(lockFileDir, projectDir, templateDir) {
-    if (lockFileDir.startsWith('http://') || lockFileDir.startsWith('https://')) {
-        await loadRepository_1.loadRepository(lockFileDir, projectDir, false);
+async function buildLockFile(lockFileName, projectDir, repository, templateDir) {
+    if (repository.startsWith('http://') || repository.startsWith('https://')) {
+        await loadRepository_1.loadRepository(`${repository}/${lockFileName}.zip`, projectDir, false);
     }
     else {
-        const dir = path_1.default.join(templateDir, lockFileDir);
+        const dir = path_1.default.join(repository, lockFileName);
         cli_utils_1.log(cli_utils_1.chalk.blue.underline('Pulling from ' + dir));
         try {
             cli_utils_1.fs.copySync(dir, projectDir);
@@ -139,13 +139,13 @@ async function buildLockFile(lockFileDir, projectDir, templateDir) {
         }
     }
 }
-function useLockFile(lockFileDir, projectDir, templateDir) {
-    if (!lockFileDir) {
+function useLockFile(lockFileName, projectDir, repository, templateDir) {
+    if (!lockFileName) {
         beforeInstall(projectDir);
         return;
     }
     cli_utils_1.log(cli_utils_1.chalk.cyan('\n..拉取 yarn.lock, package-lock.json（该文件用于锁定各依赖安装版本,确保安装顺利）'));
-    buildLockFile(lockFileDir, projectDir, templateDir).then(() => beforeInstall(projectDir), () => {
+    buildLockFile(lockFileName, projectDir, repository, templateDir).then(() => beforeInstall(projectDir), () => {
         cli_utils_1.log('');
         inquirer_1.default
             .prompt({
@@ -159,7 +159,7 @@ function useLockFile(lockFileDir, projectDir, templateDir) {
                 beforeInstall(projectDir);
             }
             else {
-                setTimeout(() => useLockFile(lockFileDir, projectDir, templateDir), 0);
+                setTimeout(() => useLockFile(lockFileName, projectDir, repository, templateDir), 0);
             }
         });
     });
