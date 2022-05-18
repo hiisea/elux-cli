@@ -53,7 +53,7 @@
     "@types/mem-fs-editor": "^7.0.1"
   },
   "dependencies": {
-    "@elux/cli-utils": "^2.1.0",
+    "@elux/cli-utils": "^2.2.0",
     "commander": "^7.0.0",
     "inquirer": "^8.2.0",
     "leven": "^3.1.0",

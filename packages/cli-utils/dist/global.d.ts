@@ -13,3 +13,4 @@ declare module 'download' {
   export default main;
 }
 declare module 'global-agent';
+declare module 'archiver';

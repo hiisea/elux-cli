@@ -21,6 +21,7 @@ import getProxy from 'get-proxy';
 import {execSync} from 'child_process';
 import {Listr} from 'listr2';
 import {validate as schemaValidate} from 'schema-utils';
+import archiver from 'archiver';
 
 bootstrap();
 
@@ -245,6 +246,7 @@ export = {
   isEmptyObject,
   platform,
   readDirSync,
+  archiver,
   checkNodeVersion,
   loadPackageFields,
   loadPackageVesrion,

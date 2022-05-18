@@ -78,6 +78,7 @@ declare const _default: {
         isLinux: boolean;
     };
     readDirSync: typeof readDirSync;
+    archiver: any;
     checkNodeVersion: typeof checkNodeVersion;
     loadPackageFields: typeof loadPackageFields;
     loadPackageVesrion: typeof loadPackageVesrion;

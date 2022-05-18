@@ -36,6 +36,7 @@
     "schema-utils": "^3.0.0",
     "semver": "^7.3.5",
     "strip-ansi": "^6.0.0",
+    "archiver": "^5.3.1",
     "tunnel": "^0.0.6"
   },
   "gitHead": "c2d8bb9ed8d10102413bdf655c7326e94f4a4464"

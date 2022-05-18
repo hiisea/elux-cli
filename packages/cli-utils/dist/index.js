@@ -20,6 +20,7 @@ const get_proxy_1 = __importDefault(require("get-proxy"));
 const child_process_1 = require("child_process");
 const listr2_1 = require("listr2");
 const schema_utils_1 = require("schema-utils");
+const archiver_1 = __importDefault(require("archiver"));
 global_agent_1.bootstrap();
 function getLocalIP() {
     let result = 'localhost';
@@ -190,6 +191,7 @@ module.exports = {
     isEmptyObject,
     platform,
     readDirSync,
+    archiver: archiver_1.default,
     checkNodeVersion,
     loadPackageFields,
     loadPackageVesrion,
