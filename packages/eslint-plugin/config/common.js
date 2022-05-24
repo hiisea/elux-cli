@@ -18,6 +18,16 @@ module.exports = {
   rules: {
     'tsdoc/syntax': 'warn',
     'import/no-extraneous-dependencies': 'warn',
+    'import/order': 'error',
+    'sort-imports': [
+      'warn',
+      {
+        ignoreCase: true,
+        ignoreDeclarationSort: true,
+        ignoreMemberSort: false,
+        allowSeparatedGroups: false,
+      },
+    ],
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   },

@@ -21,9 +21,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+const path_1 = __importDefault(require("path"));
 const memFs = __importStar(require("mem-fs"));
 const editor = __importStar(require("mem-fs-editor"));
-const path_1 = __importDefault(require("path"));
 const inquirer_1 = __importDefault(require("inquirer"));
 const util_1 = require("mem-fs-editor/lib/util");
 const cli_utils_1 = require("@elux/cli-utils");
@@ -141,11 +141,11 @@ async function buildLockFile(lockFileName, projectDir, repository, templateDir) 
 }
 function useLockFile(lockFileName, projectDir, repository, templateDir) {
     if (!lockFileName) {
-        beforeInstall(projectDir);
+        onGenComplete(projectDir);
         return;
     }
     cli_utils_1.log(cli_utils_1.chalk.cyan('\n..拉取 yarn.lock, package-lock.json（该文件用于锁定各依赖安装版本,确保安装顺利）'));
-    buildLockFile(lockFileName, projectDir, repository, templateDir).then(() => beforeInstall(projectDir), () => {
+    buildLockFile(lockFileName, projectDir, repository, templateDir).then(() => onGenComplete(projectDir), () => {
         cli_utils_1.log('');
         inquirer_1.default
             .prompt({
@@ -156,7 +156,7 @@ function useLockFile(lockFileName, projectDir, repository, templateDir) {
         })
             .then(({ skip }) => {
             if (skip) {
-                beforeInstall(projectDir);
+                onGenComplete(projectDir);
             }
             else {
                 setTimeout(() => useLockFile(lockFileName, projectDir, repository, templateDir), 0);
@@ -164,8 +164,9 @@ function useLockFile(lockFileName, projectDir, repository, templateDir) {
         });
     });
 }
-function beforeInstall(projectDir) {
+function onGenComplete(projectDir) {
     const cdPath = path_1.default.relative(process.cwd(), projectDir);
+    process.chdir(path_1.default.resolve(projectDir));
     logInstallInfo = function () {
         cli_utils_1.log('');
         cli_utils_1.log('- 进入项目 ' + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
@@ -180,7 +181,25 @@ function beforeInstall(projectDir) {
         cli_utils_1.log(cli_utils_1.chalk.green('- 运行程序 ') + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或查看readme.txt)'));
         cli_utils_1.log('');
     };
-    cli_utils_1.clearConsole(cli_utils_1.chalk.magenta('🎉 项目创建成功!!! 接下来...\n'));
+    cli_utils_1.log('');
+    cli_utils_1.log(cli_utils_1.chalk.cyan('🦋 正在执行ESLint...'));
+    const eslintPath = require.resolve('eslint');
+    const eslintCmd = path_1.default.join(eslintPath.substring(0, eslintPath.lastIndexOf('node_modules')), 'node_modules/.bin/eslint');
+    const subProcess = cli_utils_1.execa(eslintCmd, ['--fix', '--cache', '**/*.{js,ts,tsx,vue}']);
+    subProcess.stdin.pipe(process.stdin);
+    subProcess.stdout.pipe(process.stdout);
+    subProcess.stderr.pipe(process.stderr);
+    subProcess.then(() => {
+        cli_utils_1.clearConsole(cli_utils_1.chalk.green('\n🎉 项目创建成功!!! 接下来...'));
+        cli_utils_1.log(cli_utils_1.chalk.yellow('   ✔ ESLint执行成功!'));
+        beforeInstall(projectDir);
+    }, () => {
+        cli_utils_1.clearConsole(cli_utils_1.chalk.green('\n🎉 项目创建成功!!! 接下来...'));
+        cli_utils_1.log(cli_utils_1.chalk.red('   ✖ ESLint执行失败，请稍后自行运行!'));
+        beforeInstall(projectDir);
+    });
+}
+function beforeInstall(projectDir) {
     logInstallInfo();
     cli_utils_1.log('');
     const { yarnVersion, npmVersion, cnpmVersion } = cli_utils_1.platform;
@@ -225,7 +244,6 @@ function beforeInstall(projectDir) {
 function installNpm(installExec, projectDir) {
     cli_utils_1.log(`  正在安装依赖，请稍后...`);
     const spinner = cli_utils_1.ora('...').start();
-    process.chdir(path_1.default.resolve(projectDir));
     const subProcess = cli_utils_1.execa(installExec[0], installExec[1]);
     subProcess.stdin.pipe(process.stdin);
     subProcess.stdout.pipe(process.stdout);
@@ -236,7 +254,7 @@ function installNpm(installExec, projectDir) {
         logSuccessInfo();
     }, () => {
         spinner.stop();
-        cli_utils_1.log(cli_utils_1.chalk.red('\n✖ 项目依赖安装失败，请稍后自行安装！\n\n'));
+        cli_utils_1.log(cli_utils_1.chalk.red('\n✖ 项目依赖安装失败，请稍后自行安装！'));
         logInstallInfo();
     });
 }

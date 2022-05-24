@@ -10,7 +10,7 @@
   },
   "files.eol": "\n",
   "typescript.tsdk": "node_modules/typescript/lib",
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "typescript.updateImportsOnFileMove.enabled": "never",
   "editor.codeActionsOnSave": {
     "source.organizeImports": false,

@@ -1,6 +1,6 @@
+import path from 'path';
 import * as memFs from 'mem-fs';
 import * as editor from 'mem-fs-editor';
-import path from 'path';
 import inquirer from 'inquirer';
 import {createTransform, isBinary} from 'mem-fs-editor/lib/util';
 import {fs, log, platform, clearConsole, chalk, slash, semver, execa, ora} from '@elux/cli-utils';
@@ -138,13 +138,13 @@ async function buildLockFile(lockFileName: string, projectDir: string, repositor
 
 function useLockFile(lockFileName: string, projectDir: string, repository: string, templateDir: string) {
   if (!lockFileName) {
-    beforeInstall(projectDir);
+    onGenComplete(projectDir);
     return;
   }
   log(chalk.cyan('\n..拉取 yarn.lock, package-lock.json（该文件用于锁定各依赖安装版本,确保安装顺利）'));
 
   buildLockFile(lockFileName, projectDir, repository, templateDir).then(
-    () => beforeInstall(projectDir),
+    () => onGenComplete(projectDir),
     () => {
       log('');
       inquirer
@@ -156,7 +156,7 @@ function useLockFile(lockFileName: string, projectDir: string, repository: strin
         })
         .then(({skip}) => {
           if (skip) {
-            beforeInstall(projectDir);
+            onGenComplete(projectDir);
           } else {
             setTimeout(() => useLockFile(lockFileName, projectDir, repository, templateDir), 0);
           }
@@ -165,8 +165,9 @@ function useLockFile(lockFileName: string, projectDir: string, repository: strin
   );
 }
 
-function beforeInstall(projectDir: string) {
+function onGenComplete(projectDir: string) {
   const cdPath = path.relative(process.cwd(), projectDir);
+  process.chdir(path.resolve(projectDir));
   logInstallInfo = function () {
     log('');
     log('- 进入项目 ' + chalk.cyan(`cd ${cdPath}`));
@@ -181,7 +182,29 @@ function beforeInstall(projectDir: string) {
     log(chalk.green('- 运行程序 ') + chalk.cyan('yarn start') + chalk.yellow(' (或查看readme.txt)'));
     log('');
   };
-  clearConsole(chalk.magenta('🎉 项目创建成功!!! 接下来...\n'));
+  log('');
+  log(chalk.cyan('🦋 正在执行ESLint...'));
+  const eslintPath = require.resolve('eslint');
+  const eslintCmd = path.join(eslintPath.substring(0, eslintPath.lastIndexOf('node_modules')), 'node_modules/.bin/eslint');
+  const subProcess = execa(eslintCmd, ['--fix', '--cache', '**/*.{js,ts,tsx,vue}']);
+  subProcess.stdin!.pipe(process.stdin);
+  subProcess.stdout!.pipe(process.stdout);
+  subProcess.stderr!.pipe(process.stderr);
+  subProcess.then(
+    () => {
+      clearConsole(chalk.green('\n🎉 项目创建成功!!! 接下来...'));
+      log(chalk.yellow('   ✔ ESLint执行成功!'));
+      beforeInstall(projectDir);
+    },
+    () => {
+      clearConsole(chalk.green('\n🎉 项目创建成功!!! 接下来...'));
+      log(chalk.red('   ✖ ESLint执行失败，请稍后自行运行!'));
+      beforeInstall(projectDir);
+    }
+  );
+}
+
+function beforeInstall(projectDir: string) {
   logInstallInfo();
   log('');
   const {yarnVersion, npmVersion, cnpmVersion} = platform;
@@ -228,7 +251,7 @@ function beforeInstall(projectDir: string) {
 function installNpm(installExec: [string, string[]], projectDir: string) {
   log(`  正在安装依赖，请稍后...`);
   const spinner = ora('...').start();
-  process.chdir(path.resolve(projectDir));
+
   const subProcess = execa(installExec[0], installExec[1]);
   subProcess.stdin!.pipe(process.stdin);
   subProcess.stdout!.pipe(process.stdout);
@@ -241,7 +264,7 @@ function installNpm(installExec: [string, string[]], projectDir: string) {
     },
     () => {
       spinner.stop();
-      log(chalk.red('\n✖ 项目依赖安装失败，请稍后自行安装！\n\n'));
+      log(chalk.red('\n✖ 项目依赖安装失败，请稍后自行安装！'));
       logInstallInfo();
     }
   );
