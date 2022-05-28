@@ -62,7 +62,7 @@ export = function (rootPath: string, baseEluxConfig: Record<string, any>, option
         shell: process.platform === 'win32',
       });
     } else {
-      log(chalk.red(`\n\n[error] The port: ${port} is occupied. MockServer startup failed!\n\n`));
+      log(chalk.redBright(`\n\n[error] The port: ${port} is occupied. MockServer startup failed!\n\n`));
     }
   });
 };

@@ -19,7 +19,7 @@ async function dev(rootPath, baseEluxConfig, envName, envPath, packageJSON, port
     const { devServerConfig, clientWebpackConfig, serverWebpackConfig, projectConfig: { cache, sourceMap, projectType, serverPort, nodeEnv, envConfig: { clientPublicPath, clientGlobalVar, serverGlobalVar, defineConstants }, useSSR, onCompiled, }, } = config;
     const protAvailable = await cli_utils_1.checkPort(serverPort);
     if (!protAvailable) {
-        cli_utils_1.err(cli_utils_1.chalk.red(`\n\n[error] The port: ${serverPort} is occupied. DevServer startup failed!\n\n`));
+        cli_utils_1.err(cli_utils_1.chalk.redBright(`\n\n[error] The port: ${serverPort} is occupied. DevServer startup failed!\n\n`));
         process.exit(1);
     }
     const envInfo = {
@@ -30,8 +30,8 @@ async function dev(rootPath, baseEluxConfig, envName, envPath, packageJSON, port
     if (useSSR) {
         envInfo.serverGlobalVar = serverGlobalVar;
     }
-    cli_utils_1.log(`projectType: ${cli_utils_1.chalk.magenta(projectType)} runMode: ${cli_utils_1.chalk.magenta(nodeEnv)} sourceMap: ${cli_utils_1.chalk.magenta(sourceMap)}`);
-    cli_utils_1.log(`EnvName: ${cli_utils_1.chalk.magenta(envName)} EnvPath: ${cli_utils_1.chalk.magenta(envPath)} EnvData: \n${cli_utils_1.chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
+    cli_utils_1.log(`projectType: ${cli_utils_1.chalk.magentaBright(projectType)} runMode: ${cli_utils_1.chalk.magentaBright(nodeEnv)} sourceMap: ${cli_utils_1.chalk.magentaBright(sourceMap)}`);
+    cli_utils_1.log(`EnvName: ${cli_utils_1.chalk.magentaBright(envName)} EnvPath: ${cli_utils_1.chalk.magentaBright(envPath)} EnvData: \n${cli_utils_1.chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
     let webpackCompiler;
     if (useSSR) {
         const compiler = webpack_1.default([clientWebpackConfig, serverWebpackConfig]);
@@ -73,11 +73,11 @@ async function dev(rootPath, baseEluxConfig, envName, envPath, packageJSON, port
 *                                     *
 ***************************************
 `);
-            cli_utils_1.log(`.....${cli_utils_1.chalk.magenta(useSSR ? 'Enabled Server-Side Rendering!' : 'DevServer')} running at ${cli_utils_1.chalk.magenta.underline(localUrl)}`);
-            cli_utils_1.log(`.....${cli_utils_1.chalk.magenta(useSSR ? 'Enabled Server-Side Rendering!' : 'DevServer')} running at ${cli_utils_1.chalk.magenta.underline(localIpUrl)} \n`);
-            cli_utils_1.log(`WebpackCache: ${cli_utils_1.chalk.blue(cache)}`);
+            cli_utils_1.log(`🚀...${cli_utils_1.chalk.magentaBright(useSSR ? 'Enabled Server-Side Rendering!' : 'DevServer')} running at ${cli_utils_1.chalk.magentaBright.underline(localUrl)}`);
+            cli_utils_1.log(`🚀...${cli_utils_1.chalk.magentaBright(useSSR ? 'Enabled Server-Side Rendering!' : 'DevServer')} running at ${cli_utils_1.chalk.magentaBright.underline(localIpUrl)} \n`);
+            cli_utils_1.log(`WebpackCache: ${cli_utils_1.chalk.cyan(cache)}`);
             if (cache !== 'filesystem') {
-                cli_utils_1.log(`${cli_utils_1.chalk.gray('You can set filesystem cache to speed up compilation: https://webpack.js.org/configuration/cache/')} \n`);
+                cli_utils_1.log(`${cli_utils_1.chalk.yellow('You can set filesystem cache to speed up compilation: https://webpack.js.org/configuration/cache/')} \n`);
             }
             onCompiled();
         }
@@ -102,8 +102,8 @@ function build(rootPath, baseEluxConfig, envName, envPath, packageJSON, port, an
         clientGlobalVar,
         serverGlobalVar,
     };
-    cli_utils_1.log(`projectType: ${cli_utils_1.chalk.magenta(projectType)} runMode: ${cli_utils_1.chalk.magenta(nodeEnv)} sourceMap: ${cli_utils_1.chalk.magenta(sourceMap)}`);
-    cli_utils_1.log(`EnvName: ${cli_utils_1.chalk.magenta(envName)} EnvPath: ${cli_utils_1.chalk.magenta(envPath)} EnvData: \n${cli_utils_1.chalk.blue(JSON.stringify(envInfo, null, 4))} \n`);
+    cli_utils_1.log(`projectType: ${cli_utils_1.chalk.magentaBright(projectType)} runMode: ${cli_utils_1.chalk.magentaBright(nodeEnv)} sourceMap: ${cli_utils_1.chalk.magentaBright(sourceMap)}`);
+    cli_utils_1.log(`EnvName: ${cli_utils_1.chalk.magentaBright(envName)} EnvPath: ${cli_utils_1.chalk.magentaBright(envPath)} EnvData: \n${cli_utils_1.chalk.cyan(JSON.stringify(envInfo, null, 4))} \n`);
     cli_utils_1.fs.ensureDirSync(distPath);
     cli_utils_1.fs.emptyDirSync(distPath);
     cli_utils_1.fs.copySync(publicPath, distPath, { dereference: true });
@@ -126,7 +126,7 @@ function build(rootPath, baseEluxConfig, envName, envPath, packageJSON, port, an
             chunks: false,
             chunkModules: false,
         })}\n\n`);
-        cli_utils_1.log(`WebpackCache: ${cli_utils_1.chalk.blue(cache)}`);
+        cli_utils_1.log(`WebpackCache: ${cli_utils_1.chalk.cyan(cache)}`);
         if (useSSR) {
             ['imgs', 'media', 'fonts'].forEach((dir) => {
                 cli_utils_1.fs.removeSync(path_1.default.join(distPath, 'server', dir));

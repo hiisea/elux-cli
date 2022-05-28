@@ -6,7 +6,7 @@ export function loadRepository(url: string, targetDir: string, removeTarget: boo
   }
   const proxyUrl = global['GLOBAL_AGENT'].HTTP_PROXY;
   log(chalk.yellow('using proxy -> ' + (proxyUrl || 'none')));
-  log(chalk.blue.underline('Pulling from ' + url));
+  log(chalk.cyan.underline('Pulling from ' + url));
   const spinner = ora('Loading...').start();
 
   return download(url, targetDir, {
@@ -21,7 +21,7 @@ export function loadRepository(url: string, targetDir: string, removeTarget: boo
       spinner.succeed(`${chalk.green('Pull successful!!!')}\n`);
     },
     (e) => {
-      spinner.fail(chalk.red('Pull failed!!!'));
+      spinner.fail(chalk.redBright('Pull failed!!!'));
       log(chalk.yellow(e.toString()));
       throw e;
     }

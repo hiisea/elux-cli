@@ -35,7 +35,7 @@ export async function dev(
   } = config;
   const protAvailable = await checkPort(serverPort);
   if (!protAvailable) {
-    err(chalk.red(`\n\n[error] The port: ${serverPort} is occupied. DevServer startup failed!\n\n`));
+    err(chalk.redBright(`\n\n[error] The port: ${serverPort} is occupied. DevServer startup failed!\n\n`));
     process.exit(1);
   }
   const envInfo: any = {
@@ -46,8 +46,10 @@ export async function dev(
   if (useSSR) {
     envInfo.serverGlobalVar = serverGlobalVar;
   }
-  log(`projectType: ${chalk.magenta(projectType)} runMode: ${chalk.magenta(nodeEnv)} sourceMap: ${chalk.magenta(sourceMap)}`);
-  log(`EnvName: ${chalk.magenta(envName)} EnvPath: ${chalk.magenta(envPath)} EnvData: \n${chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
+  log(`projectType: ${chalk.magentaBright(projectType)} runMode: ${chalk.magentaBright(nodeEnv)} sourceMap: ${chalk.magentaBright(sourceMap)}`);
+  log(
+    `EnvName: ${chalk.magentaBright(envName)} EnvPath: ${chalk.magentaBright(envPath)} EnvData: \n${chalk.gray(JSON.stringify(envInfo, null, 4))} \n`
+  );
 
   let webpackCompiler: MultiCompiler | Compiler;
   if (useSSR) {
@@ -94,11 +96,17 @@ export async function dev(
 *                                     *
 ***************************************
 `);
-      log(`.....${chalk.magenta(useSSR ? 'Enabled Server-Side Rendering!' : 'DevServer')} running at ${chalk.magenta.underline(localUrl)}`);
-      log(`.....${chalk.magenta(useSSR ? 'Enabled Server-Side Rendering!' : 'DevServer')} running at ${chalk.magenta.underline(localIpUrl)} \n`);
-      log(`WebpackCache: ${chalk.blue(cache)}`);
+      log(
+        `🚀...${chalk.magentaBright(useSSR ? 'Enabled Server-Side Rendering!' : 'DevServer')} running at ${chalk.magentaBright.underline(localUrl)}`
+      );
+      log(
+        `🚀...${chalk.magentaBright(useSSR ? 'Enabled Server-Side Rendering!' : 'DevServer')} running at ${chalk.magentaBright.underline(
+          localIpUrl
+        )} \n`
+      );
+      log(`WebpackCache: ${chalk.cyan(cache)}`);
       if (cache !== 'filesystem') {
-        log(`${chalk.gray('You can set filesystem cache to speed up compilation: https://webpack.js.org/configuration/cache/')} \n`);
+        log(`${chalk.yellow('You can set filesystem cache to speed up compilation: https://webpack.js.org/configuration/cache/')} \n`);
       }
       onCompiled();
     }
@@ -157,8 +165,10 @@ export function build(
     clientGlobalVar,
     serverGlobalVar,
   };
-  log(`projectType: ${chalk.magenta(projectType)} runMode: ${chalk.magenta(nodeEnv)} sourceMap: ${chalk.magenta(sourceMap)}`);
-  log(`EnvName: ${chalk.magenta(envName)} EnvPath: ${chalk.magenta(envPath)} EnvData: \n${chalk.blue(JSON.stringify(envInfo, null, 4))} \n`);
+  log(`projectType: ${chalk.magentaBright(projectType)} runMode: ${chalk.magentaBright(nodeEnv)} sourceMap: ${chalk.magentaBright(sourceMap)}`);
+  log(
+    `EnvName: ${chalk.magentaBright(envName)} EnvPath: ${chalk.magentaBright(envPath)} EnvData: \n${chalk.cyan(JSON.stringify(envInfo, null, 4))} \n`
+  );
 
   fs.ensureDirSync(distPath);
   fs.emptyDirSync(distPath);
@@ -191,7 +201,7 @@ export function build(
         chunkModules: false,
       })}\n\n`
     );
-    log(`WebpackCache: ${chalk.blue(cache)}`);
+    log(`WebpackCache: ${chalk.cyan(cache)}`);
     if (useSSR) {
       ['imgs', 'media', 'fonts'].forEach((dir) => {
         fs.removeSync(path.join(distPath, 'server', dir));

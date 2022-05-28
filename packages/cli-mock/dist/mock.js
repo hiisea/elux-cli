@@ -28,8 +28,8 @@ server.on('error', (error) => {
     }
 });
 server.on('listening', () => {
-    cli_utils_1.log(`\n.....${cli_utils_1.chalk.blue('MockServer')} running at ${cli_utils_1.chalk.blue.underline(`http://localhost:${port}/`)}`);
-    cli_utils_1.log(`.....${cli_utils_1.chalk.blue('MockServer')} running at ${cli_utils_1.chalk.blue.underline(`http://${cli_utils_1.localIP}:${port}/`)}\n`);
+    cli_utils_1.log(`\n.....${cli_utils_1.chalk.cyan('MockServer')} running at ${cli_utils_1.chalk.cyan.underline(`http://localhost:${port}/`)}`);
+    cli_utils_1.log(`.....${cli_utils_1.chalk.cyan('MockServer')} running at ${cli_utils_1.chalk.cyan.underline(`http://${cli_utils_1.localIP}:${port}/`)}\n`);
 });
 ['SIGINT', 'SIGTERM'].forEach((signal) => {
     process.on(signal, () => {

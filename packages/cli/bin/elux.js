@@ -107,7 +107,7 @@ program
 // output help information on unknown commands
 program.on('command:*', ([cmd]) => {
   program.outputHelp();
-  log(`  ` + chalk.red(`Unknown command ${chalk.yellow(cmd)}.`));
+  log(`  ` + chalk.redBright(`Unknown command ${chalk.yellow(cmd)}.`));
   log('');
   suggestCommands(cmd);
   process.exitCode = 1;
@@ -137,7 +137,7 @@ function suggestCommands(unknownCommand) {
   });
 
   if (suggestion) {
-    log(`  ` + chalk.red(`Did you mean ${chalk.yellow(suggestion)}?`));
+    log(`  ` + chalk.redBright(`Did you mean ${chalk.yellow(suggestion)}?`));
   }
 }
 

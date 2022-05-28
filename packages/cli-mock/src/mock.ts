@@ -26,8 +26,8 @@ server.on('error', (error: any) => {
   }
 });
 server.on('listening', () => {
-  log(`\n.....${chalk.blue('MockServer')} running at ${chalk.blue.underline(`http://localhost:${port}/`)}`);
-  log(`.....${chalk.blue('MockServer')} running at ${chalk.blue.underline(`http://${localIP}:${port}/`)}\n`);
+  log(`\n.....${chalk.cyan('MockServer')} running at ${chalk.cyan.underline(`http://localhost:${port}/`)}`);
+  log(`.....${chalk.cyan('MockServer')} running at ${chalk.cyan.underline(`http://${localIP}:${port}/`)}\n`);
 });
 ['SIGINT', 'SIGTERM'].forEach((signal) => {
   process.on(signal, () => {

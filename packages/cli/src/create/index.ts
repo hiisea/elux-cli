@@ -35,31 +35,31 @@ class Creator {
     };
     if (data[Platform.csr].length > 0) {
       choices.push({
-        name: `CSR: 基于浏览器渲染的应用 [${chalk.red(getPics(data[Platform.csr]) + 'P')}]`,
+        name: `CSR: 基于浏览器渲染的应用 [${chalk.redBright(getPics(data[Platform.csr]) + 'P')}]`,
         value: Platform.csr,
       });
     }
     if (data[Platform.ssr].length > 0) {
       choices.push({
-        name: `SSR: 基于服务器渲染 + 浏览器渲染的同构应用 [${chalk.red(getPics(data[Platform.ssr]) + 'P')}]`,
+        name: `SSR: 基于服务器渲染 + 浏览器渲染的同构应用 [${chalk.redBright(getPics(data[Platform.ssr]) + 'P')}]`,
         value: Platform.ssr,
       });
     }
     if (data[Platform.micro].length > 0) {
       choices.push({
-        name: `Micro: 基于Webpack5的微前端 + 微模块方案 [${chalk.red(getPics(data[Platform.micro]) + 'P')}]`,
+        name: `Micro: 基于Webpack5的微前端 + 微模块方案 [${chalk.redBright(getPics(data[Platform.micro]) + 'P')}]`,
         value: Platform.micro,
       });
     }
     if (data[Platform.taro].length > 0) {
       choices.push({
-        name: `Taro: 基于Taro的跨平台应用（各类小程序） [${chalk.red(getPics(data[Platform.taro]) + 'P')}]`,
+        name: `Taro: 基于Taro的跨平台应用（各类小程序） [${chalk.redBright(getPics(data[Platform.taro]) + 'P')}]`,
         value: Platform.taro,
       });
     }
     if (data[Platform.rn].length > 0) {
       choices.push({
-        name: `RN: 基于ReactNative的原生APP（开发中...） [${chalk.red(getPics(data[Platform.rn]) + 'P')}]`,
+        name: `RN: 基于ReactNative的原生APP（开发中...） [${chalk.redBright(getPics(data[Platform.rn]) + 'P')}]`,
         value: Platform.rn,
       });
     }
@@ -94,13 +94,13 @@ class Creator {
     };
     if (data[Framework.react].length > 0) {
       choices.push({
-        name: `React [${chalk.red(getPics(data[Framework.react]) + 'P')}]`,
+        name: `React [${chalk.redBright(getPics(data[Framework.react]) + 'P')}]`,
         value: Framework.react,
       });
     }
     if (data[Framework.vue].length > 0) {
       choices.push({
-        name: `Vue3 [${chalk.red(getPics(data[Framework.vue]) + 'P')}]`,
+        name: `Vue3 [${chalk.redBright(getPics(data[Framework.vue]) + 'P')}]`,
         value: Framework.vue,
       });
     }
@@ -128,13 +128,13 @@ class Creator {
     const choices: any[] = [];
     if (data[CSS.less].length > 0) {
       choices.push({
-        name: `Less [${chalk.red(data[CSS.less].length + 'P')}]`,
+        name: `Less [${chalk.redBright(data[CSS.less].length + 'P')}]`,
         value: CSS.less,
       });
     }
     if (data[CSS.sass].length > 0) {
       choices.push({
-        name: `Sass [${chalk.red(data[CSS.sass].length + 'P')}]`,
+        name: `Sass [${chalk.redBright(data[CSS.sass].length + 'P')}]`,
         value: CSS.sass,
       });
     }

@@ -8,7 +8,7 @@ function loadRepository(url, targetDir, removeTarget) {
     }
     const proxyUrl = global['GLOBAL_AGENT'].HTTP_PROXY;
     cli_utils_1.log(cli_utils_1.chalk.yellow('using proxy -> ' + (proxyUrl || 'none')));
-    cli_utils_1.log(cli_utils_1.chalk.blue.underline('Pulling from ' + url));
+    cli_utils_1.log(cli_utils_1.chalk.cyan.underline('Pulling from ' + url));
     const spinner = cli_utils_1.ora('Loading...').start();
     return cli_utils_1.download(url, targetDir, {
         extract: true,
@@ -19,7 +19,7 @@ function loadRepository(url, targetDir, removeTarget) {
     }).then(() => {
         spinner.succeed(`${cli_utils_1.chalk.green('Pull successful!!!')}\n`);
     }, (e) => {
-        spinner.fail(cli_utils_1.chalk.red('Pull failed!!!'));
+        spinner.fail(cli_utils_1.chalk.redBright('Pull failed!!!'));
         cli_utils_1.log(cli_utils_1.chalk.yellow(e.toString()));
         throw e;
     });

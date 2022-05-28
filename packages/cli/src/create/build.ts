@@ -25,7 +25,8 @@ function build({
   template: ITemplate;
   featChoices: FeatChoices;
 }): void {
-  log(chalk.yellow('\n🚀 Generating files...\n'));
+  log('');
+  log(chalk.yellow('🚀 Generating files...\n'));
   const excludeFiles: {[key: string]: boolean} = {};
   const filter = createTransform(function (this: {push: (file: any) => void}, file: {path: string}, enc: string, cb: (e?: Error) => void) {
     if (excludeFiles[file.path]) {
@@ -74,7 +75,7 @@ function build({
     try {
       code = processTpl.call(this, {...args, contents: code}) as string;
     } catch (error) {
-      chalk.red(rpath);
+      chalk.redBright(rpath);
       throw error;
     }
     if (template.afterRender) {
@@ -124,12 +125,12 @@ async function buildLockFile(lockFileName: string, projectDir: string, repositor
     await loadRepository(`${repository}/${lockFileName}.zip`, projectDir, false);
   } else {
     const dir = path.join(repository, lockFileName);
-    log(chalk.blue.underline('Pulling from ' + dir));
+    log(chalk.cyan.underline('Pulling from ' + dir));
     try {
       fs.copySync(dir, projectDir);
       log(`${chalk.green('Pull successful!!!')}\n`);
     } catch (e: any) {
-      log(chalk.red('Pull failed!!!'));
+      log(chalk.redBright('Pull failed!!!'));
       log(chalk.yellow(e.toString()));
       throw e;
     }
@@ -141,7 +142,7 @@ function useLockFile(lockFileName: string, projectDir: string, repository: strin
     onGenComplete(projectDir, framework);
     return;
   }
-  log(chalk.cyan('\n..拉取 yarn.lock, package-lock.json（该文件用于锁定各依赖安装版本,确保安装顺利）'));
+  log('\n..拉取 yarn.lock, package-lock.json（该文件用于锁定各依赖安装版本,确保安装顺利）');
 
   buildLockFile(lockFileName, projectDir, repository, templateDir, framework).then(
     () => onGenComplete(projectDir, framework),
@@ -172,14 +173,14 @@ function onGenComplete(projectDir: string, framework: string) {
     log('');
     log('- 进入项目 ' + chalk.cyan(`cd ${cdPath}`));
     log('- 安装依赖 ' + chalk.cyan('yarn install') + chalk.yellow(' (或"npm install --legacy-peer-deps",npm版本需>=7.0)'));
-    log('- 运行程序 ' + chalk.cyan('yarn start') + chalk.yellow(' (或查看readme.txt)'));
+    log('- 运行程序 ' + chalk.cyan('yarn start') + chalk.yellow(' (或查看readme)'));
     log('');
   };
   logSuccessInfo = function () {
     log('');
-    log(chalk.black.bold('✨ 准备好啦！开始工作吧！\n'));
-    log(chalk.green('- 进入目录 ') + chalk.cyan(`cd ${cdPath}`));
-    log(chalk.green('- 运行程序 ') + chalk.cyan('yarn start') + chalk.yellow(' (或查看readme.txt)'));
+    log(chalk.bold('✨ 准备好啦！开始工作吧！\n'));
+    log('- 进入目录 ' + chalk.cyan(`cd ${cdPath}`));
+    log('- 运行程序 ' + chalk.cyan('yarn start') + chalk.yellow(' (或查看readme)'));
     log('');
   };
   log('');
@@ -194,13 +195,15 @@ function onGenComplete(projectDir: string, framework: string) {
   subProcess.stderr!.pipe(process.stderr);
   subProcess.then(
     () => {
-      clearConsole(chalk.green('\n🎉 项目创建成功!!! 接下来...'));
+      log('');
+      clearConsole(chalk.green('🎉 项目创建成功!!! 接下来...'));
       log(chalk.yellow('   ✔ ESLint执行成功!'));
       beforeInstall(projectDir);
     },
     () => {
-      clearConsole(chalk.green('\n🎉 项目创建成功!!! 接下来...'));
-      log(chalk.red('   ✖ ESLint执行失败，请稍后自行运行!'));
+      log('');
+      clearConsole(chalk.green('🎉 项目创建成功!!! 接下来...'));
+      log(chalk.redBright('   ✖ ESLint执行失败，请稍后自行运行!'));
       beforeInstall(projectDir);
     }
   );
@@ -219,7 +222,7 @@ function beforeInstall(projectDir: string) {
   }
   if (npmVersion) {
     choices.push({
-      name: 'npm install' + (semver.lt(npmVersion, '7.0.0') ? chalk.red('(当前版本<7.0.0,不可用!)') : ''),
+      name: 'npm install' + (semver.lt(npmVersion, '7.0.0') ? chalk.redBright('(当前版本<7.0.0,不可用!)') : ''),
       value: semver.lt(npmVersion, '7.0.0') ? '' : 'npm',
     });
   }
@@ -261,12 +264,14 @@ function installNpm(installExec: [string, string[]], projectDir: string) {
   subProcess.then(
     () => {
       spinner.stop();
-      log(chalk.green('\n✔ 项目依赖安装成功！'));
+      log('');
+      log(chalk.green('✔ 项目依赖安装成功！'));
       logSuccessInfo();
     },
     () => {
       spinner.stop();
-      log(chalk.red('\n✖ 项目依赖安装失败，请稍后自行安装！'));
+      log('');
+      log(chalk.redBright('✖ 项目依赖安装失败，请稍后自行安装！'));
       logInstallInfo();
     }
   );

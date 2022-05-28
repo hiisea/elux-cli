@@ -110,7 +110,7 @@ const platform = {
 };
 function checkNodeVersion(wanted, id) {
     if (!semver_1.default.satisfies(process.version, wanted, { includePrerelease: true })) {
-        warn(chalk_1.default.red('You are using Node ' + process.version + ', but this version of ' + id + ' requires Node ' + wanted + '.\nPlease upgrade your Node version.'));
+        warn(chalk_1.default.redBright('You are using Node ' + process.version + ', but this version of ' + id + ' requires Node ' + wanted + '.\nPlease upgrade your Node version.'));
         process.exit(1);
     }
 }

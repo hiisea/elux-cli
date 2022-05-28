@@ -31,7 +31,8 @@ const loadRepository_1 = require("./loadRepository");
 let logInstallInfo = () => undefined;
 let logSuccessInfo = () => undefined;
 function build({ projectName, projectDir, repository, templateDir, template, featChoices, }) {
-    cli_utils_1.log(cli_utils_1.chalk.yellow('\n🚀 Generating files...\n'));
+    cli_utils_1.log('');
+    cli_utils_1.log(cli_utils_1.chalk.yellow('🚀 Generating files...\n'));
     const excludeFiles = {};
     const filter = util_1.createTransform(function (file, enc, cb) {
         if (excludeFiles[file.path]) {
@@ -81,7 +82,7 @@ function build({ projectName, projectDir, repository, templateDir, template, fea
             code = processTpl.call(this, { ...args, contents: code });
         }
         catch (error) {
-            cli_utils_1.chalk.red(rpath);
+            cli_utils_1.chalk.redBright(rpath);
             throw error;
         }
         if (template.afterRender) {
@@ -127,13 +128,13 @@ async function buildLockFile(lockFileName, projectDir, repository, templateDir, 
     }
     else {
         const dir = path_1.default.join(repository, lockFileName);
-        cli_utils_1.log(cli_utils_1.chalk.blue.underline('Pulling from ' + dir));
+        cli_utils_1.log(cli_utils_1.chalk.cyan.underline('Pulling from ' + dir));
         try {
             cli_utils_1.fs.copySync(dir, projectDir);
             cli_utils_1.log(`${cli_utils_1.chalk.green('Pull successful!!!')}\n`);
         }
         catch (e) {
-            cli_utils_1.log(cli_utils_1.chalk.red('Pull failed!!!'));
+            cli_utils_1.log(cli_utils_1.chalk.redBright('Pull failed!!!'));
             cli_utils_1.log(cli_utils_1.chalk.yellow(e.toString()));
             throw e;
         }
@@ -144,7 +145,7 @@ function useLockFile(lockFileName, projectDir, repository, templateDir, framewor
         onGenComplete(projectDir, framework);
         return;
     }
-    cli_utils_1.log(cli_utils_1.chalk.cyan('\n..拉取 yarn.lock, package-lock.json（该文件用于锁定各依赖安装版本,确保安装顺利）'));
+    cli_utils_1.log('\n..拉取 yarn.lock, package-lock.json（该文件用于锁定各依赖安装版本,确保安装顺利）');
     buildLockFile(lockFileName, projectDir, repository, templateDir, framework).then(() => onGenComplete(projectDir, framework), () => {
         cli_utils_1.log('');
         inquirer_1.default
@@ -171,14 +172,14 @@ function onGenComplete(projectDir, framework) {
         cli_utils_1.log('');
         cli_utils_1.log('- 进入项目 ' + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
         cli_utils_1.log('- 安装依赖 ' + cli_utils_1.chalk.cyan('yarn install') + cli_utils_1.chalk.yellow(' (或"npm install --legacy-peer-deps",npm版本需>=7.0)'));
-        cli_utils_1.log('- 运行程序 ' + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或查看readme.txt)'));
+        cli_utils_1.log('- 运行程序 ' + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或查看readme)'));
         cli_utils_1.log('');
     };
     logSuccessInfo = function () {
         cli_utils_1.log('');
-        cli_utils_1.log(cli_utils_1.chalk.black.bold('✨ 准备好啦！开始工作吧！\n'));
-        cli_utils_1.log(cli_utils_1.chalk.green('- 进入目录 ') + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
-        cli_utils_1.log(cli_utils_1.chalk.green('- 运行程序 ') + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或查看readme.txt)'));
+        cli_utils_1.log(cli_utils_1.chalk.bold('✨ 准备好啦！开始工作吧！\n'));
+        cli_utils_1.log('- 进入目录 ' + cli_utils_1.chalk.cyan(`cd ${cdPath}`));
+        cli_utils_1.log('- 运行程序 ' + cli_utils_1.chalk.cyan('yarn start') + cli_utils_1.chalk.yellow(' (或查看readme)'));
         cli_utils_1.log('');
     };
     cli_utils_1.log('');
@@ -192,12 +193,14 @@ function onGenComplete(projectDir, framework) {
     subProcess.stdout.pipe(process.stdout);
     subProcess.stderr.pipe(process.stderr);
     subProcess.then(() => {
-        cli_utils_1.clearConsole(cli_utils_1.chalk.green('\n🎉 项目创建成功!!! 接下来...'));
+        cli_utils_1.log('');
+        cli_utils_1.clearConsole(cli_utils_1.chalk.green('🎉 项目创建成功!!! 接下来...'));
         cli_utils_1.log(cli_utils_1.chalk.yellow('   ✔ ESLint执行成功!'));
         beforeInstall(projectDir);
     }, () => {
-        cli_utils_1.clearConsole(cli_utils_1.chalk.green('\n🎉 项目创建成功!!! 接下来...'));
-        cli_utils_1.log(cli_utils_1.chalk.red('   ✖ ESLint执行失败，请稍后自行运行!'));
+        cli_utils_1.log('');
+        cli_utils_1.clearConsole(cli_utils_1.chalk.green('🎉 项目创建成功!!! 接下来...'));
+        cli_utils_1.log(cli_utils_1.chalk.redBright('   ✖ ESLint执行失败，请稍后自行运行!'));
         beforeInstall(projectDir);
     });
 }
@@ -214,7 +217,7 @@ function beforeInstall(projectDir) {
     }
     if (npmVersion) {
         choices.push({
-            name: 'npm install' + (cli_utils_1.semver.lt(npmVersion, '7.0.0') ? cli_utils_1.chalk.red('(当前版本<7.0.0,不可用!)') : ''),
+            name: 'npm install' + (cli_utils_1.semver.lt(npmVersion, '7.0.0') ? cli_utils_1.chalk.redBright('(当前版本<7.0.0,不可用!)') : ''),
             value: cli_utils_1.semver.lt(npmVersion, '7.0.0') ? '' : 'npm',
         });
     }
@@ -252,11 +255,13 @@ function installNpm(installExec, projectDir) {
     subProcess.stderr.pipe(process.stderr);
     subProcess.then(() => {
         spinner.stop();
-        cli_utils_1.log(cli_utils_1.chalk.green('\n✔ 项目依赖安装成功！'));
+        cli_utils_1.log('');
+        cli_utils_1.log(cli_utils_1.chalk.green('✔ 项目依赖安装成功！'));
         logSuccessInfo();
     }, () => {
         spinner.stop();
-        cli_utils_1.log(cli_utils_1.chalk.red('\n✖ 项目依赖安装失败，请稍后自行安装！'));
+        cli_utils_1.log('');
+        cli_utils_1.log(cli_utils_1.chalk.redBright('✖ 项目依赖安装失败，请稍后自行安装！'));
         logInstallInfo();
     });
 }

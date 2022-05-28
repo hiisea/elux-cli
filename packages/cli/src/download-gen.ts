@@ -99,7 +99,7 @@ async function execTask(task: Task, ctx: {title: string}, metaData: MetaData): P
 async function execEntryTasks(entryTasks: Task[], metaData: MetaData) {
   const n = entryTasks.length;
   while (entryTasks.length) {
-    log(`本任务共${chalk.blue(n)}条生成，还剩${chalk.blue(entryTasks.length)}条...`);
+    log(`本任务共${chalk.cyan(n)}条生成，还剩${chalk.cyan(entryTasks.length)}条...`);
     const tasks = entryTasks.splice(0, 10);
     const listr = new Listr<any>(
       tasks.map((item) => {
@@ -129,7 +129,7 @@ async function execEntries(metaData: MetaData, envName: string) {
   const entries = config.entries;
   const n = entries.length;
   while (entries.length) {
-    log(`共${chalk.red(n)}个任务，正在执行第${chalk.red(n - entries.length + 1)}个`);
+    log(`共${chalk.cyan(n)}个任务，正在执行第${chalk.cyan(n - entries.length + 1)}个`);
     const entry = entries.shift();
     await execEntryTasks(entry!(envName), metaData);
   }
@@ -153,7 +153,7 @@ export = async function moduleExports(rootPath: string, eluxConfig: EluxConfig, 
       chalk.yellow(`跳过${Object.keys(metaData.skipItems).length}条`) +
       chalk.green(')') +
       '，' +
-      chalk.red(`失败${Object.keys(metaData.errorItems).length}条`) +
+      chalk.redBright(`失败${Object.keys(metaData.errorItems).length}条`) +
       '\n'
   );
   if (config.onComplete) {

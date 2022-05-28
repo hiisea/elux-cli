@@ -131,7 +131,7 @@ const platform = {
 function checkNodeVersion(wanted: string, id: string): void {
   if (!semver.satisfies(process.version, wanted, {includePrerelease: true})) {
     warn(
-      chalk.red(
+      chalk.redBright(
         'You are using Node ' + process.version + ', but this version of ' + id + ' requires Node ' + wanted + '.\nPlease upgrade your Node version.'
       )
     );

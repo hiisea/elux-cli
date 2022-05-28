@@ -7,6 +7,8 @@ import Creator from './create';
 import {CommandOptions, ITemplate, TemplateResources} from './create/base';
 import {loadRepository} from './create/loadRepository';
 
+// green yellow redBright magentaBright cyan gray white
+
 function parseProjectName(input: string) {
   const cwd = process.cwd();
   const projectDir = path.resolve(cwd, input);
@@ -27,9 +29,9 @@ function askProjectName(): Promise<{projectNameInput: string; override?: boolean
         const {projectName} = parseProjectName(input);
         const result = validateProjectName(projectName);
         if (!result.validForNewPackages) {
-          const errors: string[] = [chalk.red(`Invalid project name: ${projectName}`)];
+          const errors: string[] = [chalk.redBright(`Invalid project name: ${projectName}`)];
           [...(result.errors || []), ...(result.warnings || [])].forEach((error) => {
-            errors.push(chalk.red(`   ${error}`));
+            errors.push(chalk.yellow(`   ${error}`));
           });
           return errors.join('\n');
         }
@@ -70,7 +72,7 @@ function askTemplateSource(templateResources: TemplateResources[]): Promise<{rep
         pageSize: 8,
         loop: false,
         choices: [
-          ...templateResources.map((item) => ({name: `${item.title} [${chalk.red(item.count + 'P')}]`, value: item})),
+          ...templateResources.map((item) => ({name: `${item.title} [${chalk.redBright(item.count + 'P')}]`, value: item})),
           {
             name: '输入模版文件Url...',
             value: 'inputUrl',
@@ -126,7 +128,7 @@ async function askProxy(systemProxy: string): Promise<string> {
         if (!input) {
           return true;
         }
-        return testHttpUrl(input) || chalk.red('格式如:http://127.0.0.1:1087');
+        return testHttpUrl(input) || chalk.redBright('格式如:http://127.0.0.1:1087');
       },
     });
   } else {
@@ -159,7 +161,7 @@ async function askProxy(systemProxy: string): Promise<string> {
           if (!input) {
             return true;
           }
-          return testHttpUrl(input) || chalk.red('格式如:http://127.0.0.1:1087');
+          return testHttpUrl(input) || chalk.redBright('格式如:http://127.0.0.1:1087');
         },
         when(answers: {proxy: string}) {
           return answers.proxy === 'inputProxy';
@@ -188,11 +190,11 @@ async function getTemplates(args: {
     setTimeout(() => getTemplates(args), 0);
     return;
   }
-  clearConsole(chalk.green.underline('【 ' + (summary || repository) + ' 】'));
+  clearConsole(chalk.magentaBright.underline('【 ' + (summary || repository) + ' 】'));
   let templateDir: string;
   if (repository.startsWith('http://') || repository.startsWith('https://')) {
     const globalProxy = getProxy() || '';
-    log(chalk.cyan('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
+    log(chalk.yellow('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
     const proxy = await askProxy(globalProxy);
     global['GLOBAL_AGENT'].HTTP_PROXY = proxy || '';
     templateDir = path.join(os.tmpdir(), 'elux-cli-tpl');
@@ -212,7 +214,7 @@ async function getTemplates(args: {
   try {
     templates = parseTemplates(templateDir, options.packageJson.version);
   } catch (error: any) {
-    log(chalk.red('\n✖ 模版解析失败！'));
+    log(chalk.redBright('\n✖ 模版解析失败！'));
     log(chalk.yellow(error.toString()));
     log(chalk.green('Please reselect...'));
     setTimeout(() => getTemplates(args), 0);
@@ -221,7 +223,7 @@ async function getTemplates(args: {
   const pics = templates.reduce((pre, cur) => {
     return pre + cur.platform.length * cur.framework.length * cur.css.length;
   }, 0);
-  const title = args.title + `\ntotally [${chalk.red(pics + 'P')}] templates are pulled from ${chalk.blue.underline(repository)}\n`;
+  const title = args.title + `\ntotally [${chalk.redBright(pics + 'P')}] templates are pulled from ${chalk.cyan.underline(repository)}\n`;
   const creator = new Creator(projectName, projectDir, repository, templateDir, options, templates, title);
   creator.create();
 }
@@ -265,7 +267,7 @@ async function main(options: CommandOptions): Promise<void> {
   spinner.stop();
   let title = '@elux/cli: ' + chalk.cyan(curVerison);
   if (semver.lt(curVerison, latestVesrion)) {
-    title += `,${chalk.magenta('可升级最新版本:' + latestVesrion)}`;
+    title += `,${chalk.magentaBright('可升级最新版本:' + latestVesrion)}`;
   }
   getProjectName({title, templateResources, options});
 }

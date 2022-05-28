@@ -61,7 +61,8 @@ module.exports = async function moduleExports(_entryFilePath, echo) {
             else {
                 const newSource = source.replace(arr[0], `${arr[1]}${demoteForProdOnly}, ${json}${arr[3]}`);
                 fs_1.default.writeFileSync(entryFilePath, newSource);
-                cli_utils_1.log(cli_utils_1.chalk.green(`\n✔ ${entryFilePath} has been patched!\n`));
+                cli_utils_1.log('');
+                cli_utils_1.log(cli_utils_1.chalk.green(`✔ ${entryFilePath} has been patched!\n`));
             }
         }
     }

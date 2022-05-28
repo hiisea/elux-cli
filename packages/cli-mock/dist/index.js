@@ -57,7 +57,7 @@ module.exports = function (rootPath, baseEluxConfig, options) {
             });
         }
         else {
-            cli_utils_1.log(cli_utils_1.chalk.red(`\n\n[error] The port: ${port} is occupied. MockServer startup failed!\n\n`));
+            cli_utils_1.log(cli_utils_1.chalk.redBright(`\n\n[error] The port: ${port} is occupied. MockServer startup failed!\n\n`));
         }
     });
 };

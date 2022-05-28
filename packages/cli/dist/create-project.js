@@ -28,9 +28,9 @@ function askProjectName() {
                 const { projectName } = parseProjectName(input);
                 const result = validate_npm_package_name_1.default(projectName);
                 if (!result.validForNewPackages) {
-                    const errors = [cli_utils_1.chalk.red(`Invalid project name: ${projectName}`)];
+                    const errors = [cli_utils_1.chalk.redBright(`Invalid project name: ${projectName}`)];
                     [...(result.errors || []), ...(result.warnings || [])].forEach((error) => {
-                        errors.push(cli_utils_1.chalk.red(`   ${error}`));
+                        errors.push(cli_utils_1.chalk.yellow(`   ${error}`));
                     });
                     return errors.join('\n');
                 }
@@ -72,7 +72,7 @@ function askTemplateSource(templateResources) {
             pageSize: 8,
             loop: false,
             choices: [
-                ...templateResources.map((item) => ({ name: `${item.title} [${cli_utils_1.chalk.red(item.count + 'P')}]`, value: item })),
+                ...templateResources.map((item) => ({ name: `${item.title} [${cli_utils_1.chalk.redBright(item.count + 'P')}]`, value: item })),
                 {
                     name: '输入模版文件Url...',
                     value: 'inputUrl',
@@ -129,7 +129,7 @@ async function askProxy(systemProxy) {
                 if (!input) {
                     return true;
                 }
-                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('格式如:http://127.0.0.1:1087');
+                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.redBright('格式如:http://127.0.0.1:1087');
             },
         });
     }
@@ -161,7 +161,7 @@ async function askProxy(systemProxy) {
                 if (!input) {
                     return true;
                 }
-                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.red('格式如:http://127.0.0.1:1087');
+                return cli_utils_1.testHttpUrl(input) || cli_utils_1.chalk.redBright('格式如:http://127.0.0.1:1087');
             },
             when(answers) {
                 return answers.proxy === 'inputProxy';
@@ -182,11 +182,11 @@ async function getTemplates(args) {
         setTimeout(() => getTemplates(args), 0);
         return;
     }
-    cli_utils_1.clearConsole(cli_utils_1.chalk.green.underline('【 ' + (summary || repository) + ' 】'));
+    cli_utils_1.clearConsole(cli_utils_1.chalk.magentaBright.underline('【 ' + (summary || repository) + ' 】'));
     let templateDir;
     if (repository.startsWith('http://') || repository.startsWith('https://')) {
         const globalProxy = cli_utils_1.getProxy() || '';
-        cli_utils_1.log(cli_utils_1.chalk.cyan('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
+        cli_utils_1.log(cli_utils_1.chalk.yellow('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
         const proxy = await askProxy(globalProxy);
         global['GLOBAL_AGENT'].HTTP_PROXY = proxy || '';
         templateDir = path_1.default.join(os_1.default.tmpdir(), 'elux-cli-tpl');
@@ -208,7 +208,7 @@ async function getTemplates(args) {
         templates = parseTemplates(templateDir, options.packageJson.version);
     }
     catch (error) {
-        cli_utils_1.log(cli_utils_1.chalk.red('\n✖ 模版解析失败！'));
+        cli_utils_1.log(cli_utils_1.chalk.redBright('\n✖ 模版解析失败！'));
         cli_utils_1.log(cli_utils_1.chalk.yellow(error.toString()));
         cli_utils_1.log(cli_utils_1.chalk.green('Please reselect...'));
         setTimeout(() => getTemplates(args), 0);
@@ -217,7 +217,7 @@ async function getTemplates(args) {
     const pics = templates.reduce((pre, cur) => {
         return pre + cur.platform.length * cur.framework.length * cur.css.length;
     }, 0);
-    const title = args.title + `\ntotally [${cli_utils_1.chalk.red(pics + 'P')}] templates are pulled from ${cli_utils_1.chalk.blue.underline(repository)}\n`;
+    const title = args.title + `\ntotally [${cli_utils_1.chalk.redBright(pics + 'P')}] templates are pulled from ${cli_utils_1.chalk.cyan.underline(repository)}\n`;
     const creator = new create_1.default(projectName, projectDir, repository, templateDir, options, templates, title);
     creator.create();
 }
@@ -260,7 +260,7 @@ async function main(options) {
     spinner.stop();
     let title = '@elux/cli: ' + cli_utils_1.chalk.cyan(curVerison);
     if (cli_utils_1.semver.lt(curVerison, latestVesrion)) {
-        title += `,${cli_utils_1.chalk.magenta('可升级最新版本:' + latestVesrion)}`;
+        title += `,${cli_utils_1.chalk.magentaBright('可升级最新版本:' + latestVesrion)}`;
     }
     getProjectName({ title, templateResources, options });
 }

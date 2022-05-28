@@ -37,31 +37,31 @@ class Creator {
         };
         if (data[base_1.Platform.csr].length > 0) {
             choices.push({
-                name: `CSR: 基于浏览器渲染的应用 [${cli_utils_1.chalk.red(getPics(data[base_1.Platform.csr]) + 'P')}]`,
+                name: `CSR: 基于浏览器渲染的应用 [${cli_utils_1.chalk.redBright(getPics(data[base_1.Platform.csr]) + 'P')}]`,
                 value: base_1.Platform.csr,
             });
         }
         if (data[base_1.Platform.ssr].length > 0) {
             choices.push({
-                name: `SSR: 基于服务器渲染 + 浏览器渲染的同构应用 [${cli_utils_1.chalk.red(getPics(data[base_1.Platform.ssr]) + 'P')}]`,
+                name: `SSR: 基于服务器渲染 + 浏览器渲染的同构应用 [${cli_utils_1.chalk.redBright(getPics(data[base_1.Platform.ssr]) + 'P')}]`,
                 value: base_1.Platform.ssr,
             });
         }
         if (data[base_1.Platform.micro].length > 0) {
             choices.push({
-                name: `Micro: 基于Webpack5的微前端 + 微模块方案 [${cli_utils_1.chalk.red(getPics(data[base_1.Platform.micro]) + 'P')}]`,
+                name: `Micro: 基于Webpack5的微前端 + 微模块方案 [${cli_utils_1.chalk.redBright(getPics(data[base_1.Platform.micro]) + 'P')}]`,
                 value: base_1.Platform.micro,
             });
         }
         if (data[base_1.Platform.taro].length > 0) {
             choices.push({
-                name: `Taro: 基于Taro的跨平台应用（各类小程序） [${cli_utils_1.chalk.red(getPics(data[base_1.Platform.taro]) + 'P')}]`,
+                name: `Taro: 基于Taro的跨平台应用（各类小程序） [${cli_utils_1.chalk.redBright(getPics(data[base_1.Platform.taro]) + 'P')}]`,
                 value: base_1.Platform.taro,
             });
         }
         if (data[base_1.Platform.rn].length > 0) {
             choices.push({
-                name: `RN: 基于ReactNative的原生APP（开发中...） [${cli_utils_1.chalk.red(getPics(data[base_1.Platform.rn]) + 'P')}]`,
+                name: `RN: 基于ReactNative的原生APP（开发中...） [${cli_utils_1.chalk.redBright(getPics(data[base_1.Platform.rn]) + 'P')}]`,
                 value: base_1.Platform.rn,
             });
         }
@@ -96,13 +96,13 @@ class Creator {
         };
         if (data[base_1.Framework.react].length > 0) {
             choices.push({
-                name: `React [${cli_utils_1.chalk.red(getPics(data[base_1.Framework.react]) + 'P')}]`,
+                name: `React [${cli_utils_1.chalk.redBright(getPics(data[base_1.Framework.react]) + 'P')}]`,
                 value: base_1.Framework.react,
             });
         }
         if (data[base_1.Framework.vue].length > 0) {
             choices.push({
-                name: `Vue3 [${cli_utils_1.chalk.red(getPics(data[base_1.Framework.vue]) + 'P')}]`,
+                name: `Vue3 [${cli_utils_1.chalk.redBright(getPics(data[base_1.Framework.vue]) + 'P')}]`,
                 value: base_1.Framework.vue,
             });
         }
@@ -130,13 +130,13 @@ class Creator {
         const choices = [];
         if (data[base_1.CSS.less].length > 0) {
             choices.push({
-                name: `Less [${cli_utils_1.chalk.red(data[base_1.CSS.less].length + 'P')}]`,
+                name: `Less [${cli_utils_1.chalk.redBright(data[base_1.CSS.less].length + 'P')}]`,
                 value: base_1.CSS.less,
             });
         }
         if (data[base_1.CSS.sass].length > 0) {
             choices.push({
-                name: `Sass [${cli_utils_1.chalk.red(data[base_1.CSS.sass].length + 'P')}]`,
+                name: `Sass [${cli_utils_1.chalk.redBright(data[base_1.CSS.sass].length + 'P')}]`,
                 value: base_1.CSS.sass,
             });
         }
