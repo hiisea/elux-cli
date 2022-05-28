@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.1](https://github.com/hiisea/elux/compare/@elux/cli@2.3.0...@elux/cli@2.3.1) (2022-05-28)
+
+**Note:** Version bump only for package @elux/cli
+
+
+
+
+
 # [2.3.0](https://github.com/hiisea/elux/compare/@elux/cli@2.2.1...@elux/cli@2.3.0) (2022-05-24)
 
 
