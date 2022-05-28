@@ -52,7 +52,7 @@
     "@commitlint/cli": "~12.1.1",
     "@commitlint/config-conventional": "~12.1.1",
     "@elux/babel-preset": "~1.0.2",
-    "@elux/eslint-plugin": "~1.1.1",
+    "@elux/eslint-plugin": "~1.2.1",
     "@elux/stylelint-config": "~1.1.1",
     "husky": "~4.3.8",
     "commitizen": "~4.2.3",

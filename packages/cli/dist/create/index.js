@@ -2,8 +2,8 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-const inquirer_1 = __importDefault(require("inquirer"));
 const cli_utils_1 = require("@elux/cli-utils");
+const inquirer_1 = __importDefault(require("inquirer"));
 const base_1 = require("./base");
 const build_1 = __importDefault(require("./build"));
 class Creator {

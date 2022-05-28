@@ -1,24 +1,22 @@
-import {Express} from 'express';
 import fs from 'fs';
 import path from 'path';
-import webpack from 'webpack';
 import {err, getCssScopedName} from '@elux/cli-utils';
+import {Express} from 'express';
+import webpack from 'webpack';
 import getSsrInjectPlugin from '../plugin/ssr-inject';
-
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const EslintWebpackPlugin = require('eslint-webpack-plugin');
-const StylelintPlugin = require('stylelint-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const openInEditor = require('launch-editor-middleware');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const StylelintPlugin = require('stylelint-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 //const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const openInEditor = require('launch-editor-middleware');
-
 // const ModuleFederationPlugin = webpack.container.ModuleFederationPlugin;
-const ModuleFederationPlugin = require('../../libs/ModuleFederationPlugin');
 const ContainerReferencePlugin = require('../../libs/ContainerReferencePlugin');
+const ModuleFederationPlugin = require('../../libs/ModuleFederationPlugin');
 
 interface WebpackLoader {
   loader?: string;

@@ -1,6 +1,6 @@
+import {chalk, clearConsole} from '@elux/cli-utils';
 import inquirer from 'inquirer';
-import {clearConsole, chalk} from '@elux/cli-utils';
-import {CommandOptions, FeatChoices, Platform, ITemplate, Framework, CSS} from './base';
+import {CSS, CommandOptions, FeatChoices, Framework, ITemplate, Platform} from './base';
 import build from './build';
 
 class Creator {

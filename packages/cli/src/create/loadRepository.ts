@@ -1,4 +1,4 @@
-import {fs, log, chalk, ora, download} from '@elux/cli-utils';
+import {chalk, download, fs, log, ora} from '@elux/cli-utils';
 
 export function loadRepository(url: string, targetDir: string, removeTarget: boolean): Promise<void> {
   if (removeTarget && fs.existsSync(targetDir)) {

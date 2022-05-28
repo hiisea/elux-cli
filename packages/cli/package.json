@@ -19,7 +19,7 @@
     "dist/"
   ],
   "scripts": {
-    "eslint": "cross-env NODE_ENV=production eslint --fix --cache **/*.{js,ts}",
+    "eslint": "cross-env NODE_ENV=production eslint --fix --cache \"**/*.{js,ts}\"",
     "prebuild": "rimraf ./dist && copyfiles -f ./src/*.d.ts ./dist",
     "build": "tsc --build ./src"
   },
@@ -43,18 +43,14 @@
       "count": 32
     }
   ],
-  "optionalDependencies": {
-    "@elux/cli-mock": "^2.0.0",
-    "@elux/cli-webpack": "^2.1.0"
-  },
   "devDependencies": {
     "@types/ejs": "^3.0.6",
     "@types/inquirer": "^7.3.1",
     "@types/mem-fs-editor": "^7.0.1"
   },
   "dependencies": {
-    "@elux/cli-utils": "^2.2.0",
-    "@elux/eslint-plugin": "^1.1.1",
+    "@elux/cli-utils": "^2.2.1",
+    "@elux/eslint-plugin": "^1.2.1",
     "commander": "^7.0.0",
     "inquirer": "^8.2.0",
     "leven": "^3.1.0",

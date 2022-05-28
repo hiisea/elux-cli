@@ -1,11 +1,11 @@
-import path from 'path';
 import os from 'os';
-import validateProjectName from 'validate-npm-package-name';
-import {log, chalk, fs, semver, ora, readDirSync, getProxy, testHttpUrl, clearConsole, loadPackageVesrion, loadPackageFields} from '@elux/cli-utils';
+import path from 'path';
+import {chalk, clearConsole, fs, getProxy, loadPackageFields, loadPackageVesrion, log, ora, readDirSync, semver, testHttpUrl} from '@elux/cli-utils';
 import inquirer from 'inquirer';
-import {CommandOptions, TemplateResources, ITemplate} from './create/base';
-import {loadRepository} from './create/loadRepository';
+import validateProjectName from 'validate-npm-package-name';
 import Creator from './create';
+import {CommandOptions, ITemplate, TemplateResources} from './create/base';
+import {loadRepository} from './create/loadRepository';
 
 function parseProjectName(input: string) {
   const cwd = process.cwd();

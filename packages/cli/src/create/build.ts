@@ -1,9 +1,9 @@
 import path from 'path';
+import {chalk, clearConsole, execa, fs, log, ora, platform, semver, slash} from '@elux/cli-utils';
+import inquirer from 'inquirer';
 import * as memFs from 'mem-fs';
 import * as editor from 'mem-fs-editor';
-import inquirer from 'inquirer';
 import {createTransform, isBinary} from 'mem-fs-editor/lib/util';
-import {fs, log, platform, clearConsole, chalk, slash, semver, execa, ora} from '@elux/cli-utils';
 import {FeatChoices, ITemplate} from './base';
 import {loadRepository} from './loadRepository';
 
@@ -112,14 +112,14 @@ function build({
   mfs.commit([filter], (error) => {
     if (!error) {
       const lockFileName = template.getNpmLockFile(tplArgs);
-      useLockFile(lockFileName, projectDir, repository, templateDir);
+      useLockFile(lockFileName, projectDir, repository, templateDir, featChoices.framework!);
     } else {
       throw error;
     }
   });
 }
 
-async function buildLockFile(lockFileName: string, projectDir: string, repository: string, templateDir: string) {
+async function buildLockFile(lockFileName: string, projectDir: string, repository: string, templateDir: string, framework: string) {
   if (repository.startsWith('http://') || repository.startsWith('https://')) {
     await loadRepository(`${repository}/${lockFileName}.zip`, projectDir, false);
   } else {
@@ -136,15 +136,15 @@ async function buildLockFile(lockFileName: string, projectDir: string, repositor
   }
 }
 
-function useLockFile(lockFileName: string, projectDir: string, repository: string, templateDir: string) {
+function useLockFile(lockFileName: string, projectDir: string, repository: string, templateDir: string, framework: string) {
   if (!lockFileName) {
-    onGenComplete(projectDir);
+    onGenComplete(projectDir, framework);
     return;
   }
   log(chalk.cyan('\n..拉取 yarn.lock, package-lock.json（该文件用于锁定各依赖安装版本,确保安装顺利）'));
 
-  buildLockFile(lockFileName, projectDir, repository, templateDir).then(
-    () => onGenComplete(projectDir),
+  buildLockFile(lockFileName, projectDir, repository, templateDir, framework).then(
+    () => onGenComplete(projectDir, framework),
     () => {
       log('');
       inquirer
@@ -156,16 +156,16 @@ function useLockFile(lockFileName: string, projectDir: string, repository: strin
         })
         .then(({skip}) => {
           if (skip) {
-            onGenComplete(projectDir);
+            onGenComplete(projectDir, framework);
           } else {
-            setTimeout(() => useLockFile(lockFileName, projectDir, repository, templateDir), 0);
+            setTimeout(() => useLockFile(lockFileName, projectDir, repository, templateDir, framework), 0);
           }
         });
     }
   );
 }
 
-function onGenComplete(projectDir: string) {
+function onGenComplete(projectDir: string, framework: string) {
   const cdPath = path.relative(process.cwd(), projectDir);
   process.chdir(path.resolve(projectDir));
   logInstallInfo = function () {
@@ -185,8 +185,22 @@ function onGenComplete(projectDir: string) {
   log('');
   log(chalk.cyan('🦋 正在执行ESLint...'));
   const eslintPath = require.resolve('eslint');
-  const eslintCmd = path.join(eslintPath.substring(0, eslintPath.lastIndexOf('node_modules')), 'node_modules/.bin/eslint');
-  const subProcess = execa(eslintCmd, ['--fix', '--cache', '**/*.{js,ts,tsx,vue}']);
+  const nodePath = path.join(eslintPath.substring(0, eslintPath.lastIndexOf('node_modules')), 'node_modules');
+  const eslintCmd = path.join(nodePath, '.bin/eslint');
+  const configPath = path.join(nodePath, `@elux/eslint-plugin/config/${framework}.js`);
+  const subProcess = execa(eslintCmd, [
+    '--config',
+    configPath,
+    '--no-eslintrc',
+    '--ignore-pattern',
+    '.eslintrc.js',
+    '--env',
+    'browser',
+    '--env',
+    'node',
+    '--fix',
+    '"**/*.{js,ts,tsx,vue}"',
+  ]);
   subProcess.stdin!.pipe(process.stdin);
   subProcess.stdout!.pipe(process.stdout);
   subProcess.stderr!.pipe(process.stderr);

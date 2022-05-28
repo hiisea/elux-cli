@@ -1,4 +1,4 @@
-import type { WebpackLoader, WebpackConfig, DevServerConfig } from './utils';
+import type { DevServerConfig, WebpackConfig, WebpackLoader } from './utils';
 interface EnvConfig {
     clientPublicPath: string;
     clientGlobalVar: Record<string, any>;

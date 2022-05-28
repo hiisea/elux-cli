@@ -1,5 +1,5 @@
 import path from 'path';
-import {log, fs, execa} from '@elux/cli-utils';
+import {execa, fs, log} from '@elux/cli-utils';
 
 export = async function moduleExports(rootPath: string, dir: string): Promise<void> {
   const projectDir = path.resolve(rootPath, dir);

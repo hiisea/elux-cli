@@ -1,6 +1,6 @@
-import path from 'path';
 import {spawn} from 'child_process';
-import {checkPort, deepExtend, chalk, log, schemaValidate} from '@elux/cli-utils';
+import path from 'path';
+import {chalk, checkPort, deepExtend, log, schemaValidate} from '@elux/cli-utils';
 
 interface MockServerPreset {
   port: number;

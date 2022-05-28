@@ -5,10 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.pack = exports.build = exports.dev = void 0;
 const path_1 = __importDefault(require("path"));
-const webpack_dev_server_1 = __importDefault(require("webpack-dev-server"));
+const cli_utils_1 = require("@elux/cli-utils");
 const terser_webpack_plugin_1 = __importDefault(require("terser-webpack-plugin"));
 const webpack_1 = __importDefault(require("webpack"));
-const cli_utils_1 = require("@elux/cli-utils");
+const webpack_dev_server_1 = __importDefault(require("webpack-dev-server"));
 const gen_1 = __importDefault(require("./gen"));
 async function dev(rootPath, baseEluxConfig, envName, envPath, packageJSON, port) {
     const ssrNodeVersion = (packageJSON.ssrnode || process.version)

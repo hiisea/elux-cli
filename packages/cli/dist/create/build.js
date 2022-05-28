@@ -22,11 +22,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const path_1 = __importDefault(require("path"));
+const cli_utils_1 = require("@elux/cli-utils");
+const inquirer_1 = __importDefault(require("inquirer"));
 const memFs = __importStar(require("mem-fs"));
 const editor = __importStar(require("mem-fs-editor"));
-const inquirer_1 = __importDefault(require("inquirer"));
 const util_1 = require("mem-fs-editor/lib/util");
-const cli_utils_1 = require("@elux/cli-utils");
 const loadRepository_1 = require("./loadRepository");
 let logInstallInfo = () => undefined;
 let logSuccessInfo = () => undefined;
@@ -114,14 +114,14 @@ function build({ projectName, projectDir, repository, templateDir, template, fea
     mfs.commit([filter], (error) => {
         if (!error) {
             const lockFileName = template.getNpmLockFile(tplArgs);
-            useLockFile(lockFileName, projectDir, repository, templateDir);
+            useLockFile(lockFileName, projectDir, repository, templateDir, featChoices.framework);
         }
         else {
             throw error;
         }
     });
 }
-async function buildLockFile(lockFileName, projectDir, repository, templateDir) {
+async function buildLockFile(lockFileName, projectDir, repository, templateDir, framework) {
     if (repository.startsWith('http://') || repository.startsWith('https://')) {
         await loadRepository_1.loadRepository(`${repository}/${lockFileName}.zip`, projectDir, false);
     }
@@ -139,13 +139,13 @@ async function buildLockFile(lockFileName, projectDir, repository, templateDir) 
         }
     }
 }
-function useLockFile(lockFileName, projectDir, repository, templateDir) {
+function useLockFile(lockFileName, projectDir, repository, templateDir, framework) {
     if (!lockFileName) {
-        onGenComplete(projectDir);
+        onGenComplete(projectDir, framework);
         return;
     }
     cli_utils_1.log(cli_utils_1.chalk.cyan('\n..拉取 yarn.lock, package-lock.json（该文件用于锁定各依赖安装版本,确保安装顺利）'));
-    buildLockFile(lockFileName, projectDir, repository, templateDir).then(() => onGenComplete(projectDir), () => {
+    buildLockFile(lockFileName, projectDir, repository, templateDir, framework).then(() => onGenComplete(projectDir, framework), () => {
         cli_utils_1.log('');
         inquirer_1.default
             .prompt({
@@ -156,15 +156,15 @@ function useLockFile(lockFileName, projectDir, repository, templateDir) {
         })
             .then(({ skip }) => {
             if (skip) {
-                onGenComplete(projectDir);
+                onGenComplete(projectDir, framework);
             }
             else {
-                setTimeout(() => useLockFile(lockFileName, projectDir, repository, templateDir), 0);
+                setTimeout(() => useLockFile(lockFileName, projectDir, repository, templateDir, framework), 0);
             }
         });
     });
 }
-function onGenComplete(projectDir) {
+function onGenComplete(projectDir, framework) {
     const cdPath = path_1.default.relative(process.cwd(), projectDir);
     process.chdir(path_1.default.resolve(projectDir));
     logInstallInfo = function () {
@@ -184,8 +184,22 @@ function onGenComplete(projectDir) {
     cli_utils_1.log('');
     cli_utils_1.log(cli_utils_1.chalk.cyan('🦋 正在执行ESLint...'));
     const eslintPath = require.resolve('eslint');
-    const eslintCmd = path_1.default.join(eslintPath.substring(0, eslintPath.lastIndexOf('node_modules')), 'node_modules/.bin/eslint');
-    const subProcess = cli_utils_1.execa(eslintCmd, ['--fix', '--cache', '**/*.{js,ts,tsx,vue}']);
+    const nodePath = path_1.default.join(eslintPath.substring(0, eslintPath.lastIndexOf('node_modules')), 'node_modules');
+    const eslintCmd = path_1.default.join(nodePath, '.bin/eslint');
+    const configPath = path_1.default.join(nodePath, `@elux/eslint-plugin/config/${framework}.js`);
+    const subProcess = cli_utils_1.execa(eslintCmd, [
+        '--config',
+        configPath,
+        '--no-eslintrc',
+        '--ignore-pattern',
+        '.eslintrc.js',
+        '--env',
+        'browser',
+        '--env',
+        'node',
+        '--fix',
+        '"**/*.{js,ts,tsx,vue}"',
+    ]);
     subProcess.stdin.pipe(process.stdin);
     subProcess.stdout.pipe(process.stdout);
     subProcess.stderr.pipe(process.stderr);

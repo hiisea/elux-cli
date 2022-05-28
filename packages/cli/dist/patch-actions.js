@@ -2,10 +2,10 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-const typescript_json_schema_1 = require("typescript-json-schema");
+const path_1 = __importDefault(require("path"));
 const cli_utils_1 = require("@elux/cli-utils");
+const typescript_json_schema_1 = require("typescript-json-schema");
 module.exports = async function moduleExports(_entryFilePath, echo) {
     const { stdout } = await cli_utils_1.execa('tsc', ['--project', './src', '--showConfig']);
     const rootPath = process.cwd();

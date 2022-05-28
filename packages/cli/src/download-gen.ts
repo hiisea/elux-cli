@@ -1,5 +1,5 @@
 import path from 'path';
-import {log, chalk, Listr, fs, got, schemaValidate} from '@elux/cli-utils';
+import {Listr, chalk, fs, got, log, schemaValidate} from '@elux/cli-utils';
 
 interface Task {
   url: string;

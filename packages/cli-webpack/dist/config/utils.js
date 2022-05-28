@@ -4,20 +4,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const webpack_1 = __importDefault(require("webpack"));
 const cli_utils_1 = require("@elux/cli-utils");
+const webpack_1 = __importDefault(require("webpack"));
 const ssr_inject_1 = __importDefault(require("../plugin/ssr-inject"));
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const EslintWebpackPlugin = require('eslint-webpack-plugin');
-const StylelintPlugin = require('stylelint-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const openInEditor = require('launch-editor-middleware');
-const ModuleFederationPlugin = require('../../libs/ModuleFederationPlugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const StylelintPlugin = require('stylelint-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const ContainerReferencePlugin = require('../../libs/ContainerReferencePlugin');
+const ModuleFederationPlugin = require('../../libs/ModuleFederationPlugin');
 function oneOfCssLoader(isProdModel, srcPath, isVue, isServer, cssModulesOptions, cssType, options) {
     let cssProcessors = null;
     if (cssType === 'less') {

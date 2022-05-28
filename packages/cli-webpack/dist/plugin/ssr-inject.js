@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
-const unionfs_1 = require("unionfs");
+const cli_utils_1 = require("@elux/cli-utils");
 const fs_monkey_1 = require("fs-monkey");
 const schema_utils_1 = require("schema-utils");
-const cli_utils_1 = require("@elux/cli-utils");
+const unionfs_1 = require("unionfs");
 const schema = {
     type: 'object',
     properties: {

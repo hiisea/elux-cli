@@ -1,27 +1,27 @@
 /* eslint-disable no-console */
-import chalk from 'chalk';
-import semver from 'semver';
-import minimist from 'minimist';
-import path from 'path';
-import fs from 'fs-extra';
-import execa from 'execa';
-import ora from 'ora';
-import readline from 'readline';
-import deepExtend from 'deep-extend';
+import {execSync} from 'child_process';
+import net from 'net';
 import {networkInterfaces} from 'os';
+import path from 'path';
+import readline from 'readline';
+import archiver from 'archiver';
+import chalk from 'chalk';
+import deepExtend from 'deep-extend';
 // import {URL} from 'url';
 // import {Agent as HttpAgent} from 'http';
 // import {Agent as HttpsAgent} from 'https';
 // import tunnel from 'tunnel';
-import net from 'net';
-import got from 'got';
 import download from 'download';
-import {bootstrap} from 'global-agent';
+import execa from 'execa';
+import fs from 'fs-extra';
 import getProxy from 'get-proxy';
-import {execSync} from 'child_process';
+import {bootstrap} from 'global-agent';
+import got from 'got';
 import {Listr} from 'listr2';
+import minimist from 'minimist';
+import ora from 'ora';
 import {validate as schemaValidate} from 'schema-utils';
-import archiver from 'archiver';
+import semver from 'semver';
 
 bootstrap();
 

@@ -1,9 +1,9 @@
 import fs from 'fs';
-import {Compiler} from 'webpack';
-import {ufs} from 'unionfs';
+import {slash} from '@elux/cli-utils';
 import {patchRequire} from 'fs-monkey';
 import {validate} from 'schema-utils';
-import {slash} from '@elux/cli-utils';
+import {ufs} from 'unionfs';
+import {Compiler} from 'webpack';
 
 const schema: any = {
   type: 'object',

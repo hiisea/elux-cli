@@ -1,7 +1,6 @@
 /* eslint-disable no-fallthrough */
 import http from 'http';
-
-import {chalk, localIP, log, err} from '@elux/cli-utils';
+import {chalk, err, localIP, log} from '@elux/cli-utils';
 
 const port = process.env.PORT;
 const src = process.env.SRC;

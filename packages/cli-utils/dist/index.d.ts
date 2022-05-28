@@ -1,10 +1,10 @@
 /// <reference types="node" />
 import chalk from 'chalk';
-import minimist from 'minimist';
-import fs from 'fs-extra';
 import execa from 'execa';
-import ora from 'ora';
+import fs from 'fs-extra';
 import { Listr } from 'listr2';
+import minimist from 'minimist';
+import ora from 'ora';
 import { validate as schemaValidate } from 'schema-utils';
 declare function slash(path: string): string;
 declare function log(message: string): void;

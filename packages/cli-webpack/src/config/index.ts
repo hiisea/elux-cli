@@ -1,8 +1,8 @@
 import path from 'path';
-import WebpackDevServer from 'webpack-dev-server';
+import {chalk, checkPort, err, fs, localIP, log} from '@elux/cli-utils';
 import TerserPlugin from 'terser-webpack-plugin';
 import webpack, {Compiler, MultiCompiler} from 'webpack';
-import {fs, chalk, localIP, log, err, checkPort} from '@elux/cli-utils';
+import WebpackDevServer from 'webpack-dev-server';
 import genConfig from './gen';
 
 export async function dev(

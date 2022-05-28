@@ -18,11 +18,21 @@ module.exports = {
   rules: {
     'tsdoc/syntax': 'warn',
     'import/no-extraneous-dependencies': 'warn',
-    'import/order': 'error',
+    'import/order': [
+      'error',
+      {
+        groups: ['builtin', 'external', 'unknown', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+        'newlines-between': 'never',
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+      },
+    ],
     'sort-imports': [
       'warn',
       {
-        ignoreCase: true,
+        ignoreCase: false,
         ignoreDeclarationSort: true,
         ignoreMemberSort: false,
         allowSeparatedGroups: false,

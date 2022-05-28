@@ -1,7 +1,7 @@
-import path from 'path';
 import fs from 'fs';
-import {getProgramFromFiles, generateSchema} from 'typescript-json-schema';
-import {chalk, log, execa} from '@elux/cli-utils';
+import path from 'path';
+import {chalk, execa, log} from '@elux/cli-utils';
+import {generateSchema, getProgramFromFiles} from 'typescript-json-schema';
 
 export = async function moduleExports(_entryFilePath?: string, echo?: boolean): Promise<void> {
   const {stdout} = await execa('tsc', ['--project', './src', '--showConfig']);

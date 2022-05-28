@@ -2,13 +2,13 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-const path_1 = __importDefault(require("path"));
 const os_1 = __importDefault(require("os"));
-const validate_npm_package_name_1 = __importDefault(require("validate-npm-package-name"));
+const path_1 = __importDefault(require("path"));
 const cli_utils_1 = require("@elux/cli-utils");
 const inquirer_1 = __importDefault(require("inquirer"));
-const loadRepository_1 = require("./create/loadRepository");
+const validate_npm_package_name_1 = __importDefault(require("validate-npm-package-name"));
 const create_1 = __importDefault(require("./create"));
+const loadRepository_1 = require("./create/loadRepository");
 function parseProjectName(input) {
     const cwd = process.cwd();
     const projectDir = path_1.default.resolve(cwd, input);

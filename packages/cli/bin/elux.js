@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-const path = require('path');
 const fs = require('fs');
-const leven = require('leven');
+const path = require('path');
 const {chalk, log, checkNodeVersion, deepExtend} = require('@elux/cli-utils');
+const program = require('commander');
+const leven = require('leven');
 const packageJson = require('../package.json');
 const projectPackageJson = fs.existsSync(path.join(process.cwd(), 'package.json')) ? require(path.join(process.cwd(), 'package.json')) : {};
 checkNodeVersion(packageJson.engines.node, '@elux/cli');
 
-const program = require('commander');
 program.version(`@elux/cli ${require('../package').version}`).usage('<command> [options]');
 
 program
