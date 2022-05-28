@@ -2,7 +2,7 @@
 module.exports = {
     root: true,
     ignorePatterns: ['.eslintrc.js'],
-    extends: [require.resolve('./common')],
+    extends: ['plugin:@elux/common'],
     env: {
         es6: true,
         browser: true,
