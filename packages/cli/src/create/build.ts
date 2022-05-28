@@ -199,7 +199,9 @@ function onGenComplete(projectDir: string, framework: string) {
     '--env',
     'node',
     '--fix',
-    '"**/*.{js,ts,tsx,vue}"',
+    '--ext',
+    '.js,.ts,.jsx,.tsx,.vue',
+    './',
   ]);
   subProcess.stdin!.pipe(process.stdin);
   subProcess.stdout!.pipe(process.stdout);
