@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.4.0](https://github.com/hiisea/elux/compare/@elux/cli@2.3.3...@elux/cli@2.4.0) (2022-05-28)
+
+
+### Bug Fixes
+
+* eslint继承错误 ([a5261e1](https://github.com/hiisea/elux/commit/a5261e1ace4772f281b3933162757d503d96a57a))
+
+
+
+
+
 ## [2.3.3](https://github.com/hiisea/elux/compare/@elux/cli@2.3.2...@elux/cli@2.3.3) (2022-05-28)
 
 **Note:** Version bump only for package @elux/cli
