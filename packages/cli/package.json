@@ -1,6 +1,6 @@
 {
   "name": "@elux/cli",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Command line interface for rapid elux project.",
   "repository": "https://github.com/hiisea/elux/tree/master/packages/cli",
   "author": "hiisea <hiisea@qq.com>",
@@ -49,7 +49,7 @@
     "@types/mem-fs-editor": "^7.0.1"
   },
   "dependencies": {
-    "@elux/cli-utils": "^2.2.1",
+    "@elux/cli-utils": "^2.2.2",
     "@elux/eslint-plugin": "^1.2.1",
     "commander": "^7.0.0",
     "inquirer": "^8.2.0",
