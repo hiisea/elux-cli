@@ -31,7 +31,7 @@ const loadRepository_1 = require("./loadRepository");
 let logInstallInfo = () => undefined;
 let logSuccessInfo = () => undefined;
 function build({ projectName, projectDir, repository, templateDir, template, featChoices, }) {
-    cli_utils_1.log(cli_utils_1.chalk.red('\n🚀 Generating files...\n'));
+    cli_utils_1.log(cli_utils_1.chalk.yellow('\n🚀 Generating files...\n'));
     const excludeFiles = {};
     const filter = util_1.createTransform(function (file, enc, cb) {
         if (excludeFiles[file.path]) {
@@ -186,22 +186,8 @@ function onGenComplete(projectDir, framework) {
     const eslintPath = require.resolve('eslint');
     const nodePath = path_1.default.join(eslintPath.substring(0, eslintPath.lastIndexOf('node_modules')), 'node_modules');
     const eslintCmd = path_1.default.join(nodePath, '.bin/eslint');
-    const configPath = path_1.default.join(nodePath, `@elux/eslint-plugin/config/${framework}.js`);
-    const subProcess = cli_utils_1.execa(eslintCmd, [
-        '--config',
-        configPath,
-        '--no-eslintrc',
-        '--ignore-pattern',
-        '.eslintrc.js',
-        '--env',
-        'browser',
-        '--env',
-        'node',
-        '--fix',
-        '--ext',
-        '.js,.ts,.jsx,.tsx,.vue',
-        './',
-    ]);
+    const configPath = path_1.default.join(__dirname, `../format.js`);
+    const subProcess = cli_utils_1.execa(eslintCmd, ['--config', configPath, '--no-eslintrc', '--fix', '--ext', '.js,.ts,.jsx,.tsx,.vue', './']);
     subProcess.stdin.pipe(process.stdin);
     subProcess.stdout.pipe(process.stdout);
     subProcess.stderr.pipe(process.stderr);
