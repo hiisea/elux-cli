@@ -30,8 +30,8 @@ export = async function moduleExports(_entryFilePath?: string, echo?: boolean): 
   const arr = source.match(/(getApi<[\w, ]+>\s*\()([^)]*?)(\))/m);
   const typeName = 'PatchActions';
   if (arr) {
-    const demoteForProdOnly = arr[2].substr(0, arr[2].indexOf(',')).trim() || 'true';
-    const actionStr = arr[2].substr(arr[2].indexOf(',') + 1).trim();
+    const demoteForProdOnly = arr[2].substring(0, arr[2].indexOf(',')).trim() || 'true';
+    const actionStr = arr[2].substring(arr[2].indexOf(',') + 1).trim();
     let actions2 = {};
     if (actionStr) {
       actions2 = {};
