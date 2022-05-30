@@ -497,9 +497,14 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
             if (e.code === 'ELIX.ROUTE_REDIRECT') {
                 res.redirect(e.detail);
             }
+            else if (e.code === 'ELIX.ROUTE_RETURN') {
+                const { status = 200, body = '' } = e.detail;
+                res.status(status).end(body);
+            }
             else {
-                cli_utils_1.err(e.toString());
-                res.status(500).end(e.toString());
+                const message = `[${e.code}]${e.message}（${e.toString()}）`;
+                cli_utils_1.err(message);
+                res.status(500).end(message);
             }
         };
         devServerConfig.historyApiFallback = false;

@@ -145,7 +145,7 @@ function useLockFile(lockFileName, projectDir, repository, templateDir, framewor
         onGenComplete(projectDir, framework);
         return;
     }
-    cli_utils_1.log('\n..拉取 yarn.lock, package-lock.json（该文件用于锁定各依赖安装版本,确保安装顺利）');
+    cli_utils_1.log('\n正在拉取（' + cli_utils_1.chalk.green('yarn.lock,package-lock.json') + '）用于锁定各依赖安装版本,确保安装顺利');
     buildLockFile(lockFileName, projectDir, repository, templateDir, framework).then(() => onGenComplete(projectDir, framework), () => {
         cli_utils_1.log('');
         inquirer_1.default

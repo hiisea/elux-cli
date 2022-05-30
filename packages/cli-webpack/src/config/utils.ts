@@ -619,9 +619,13 @@ function moduleExports({
     const errorHandler = (e: any, res: any) => {
       if (e.code === 'ELIX.ROUTE_REDIRECT') {
         res.redirect(e.detail);
+      } else if (e.code === 'ELIX.ROUTE_RETURN') {
+        const {status = 200, body = ''} = e.detail;
+        res.status(status).end(body);
       } else {
-        err(e.toString());
-        res.status(500).end(e.toString());
+        const message = `[${e.code}]${e.message}（${e.toString()}）`;
+        err(message);
+        res.status(500).end(message);
       }
     };
     devServerConfig.historyApiFallback = false;

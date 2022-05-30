@@ -28,19 +28,19 @@
       "title": "简单示例模板(Gitee源)",
       "url": "https://gitee.com/hiisea/elux-project-templates-simple-fork/raw/v2/dist/online",
       "summary": "一个简单的增删改查示例",
-      "count": 32
+      "count": 48
     },
     {
       "title": "简单示例模板(Github源)",
       "url": "https://raw.githubusercontent.com/hiisea/elux-project-templates-simple/v2/dist/online",
       "summary": "一个简单的增删改查示例",
-      "count": 32
+      "count": 48
     },
     {
       "title": "简单示例模板(备用源)",
       "url": "http://download.eluxjs.com/tpl-simple-v2",
       "summary": "一个简单的增删改查示例",
-      "count": 32
+      "count": 48
     }
   ],
   "devDependencies": {
@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@elux/cli-utils": "^2.2.2",
+    "@elux/cli-mock": "^2.0.2",
     "@elux/eslint-plugin": "^1.2.1",
     "commander": "^7.0.0",
     "inquirer": "^8.2.0",
