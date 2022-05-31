@@ -9,7 +9,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=15.0.0"
+    "node": ">=16.0.0"
   },
   "main": "dist/index.js",
   "files": [
@@ -30,14 +30,13 @@
     "fs-extra": "^9.1.0",
     "get-proxy": "^2.1.0",
     "global-agent": "^3.0.0",
-    "got": "^11.0.0",
     "listr2": "^3.13.5",
     "minimist": "^1.2.5",
     "ora": "^5.4.1",
+    "got": "^11.0.0",
     "schema-utils": "^3.0.0",
     "semver": "^7.3.5",
-    "strip-ansi": "^6.0.0",
-    "tunnel": "^0.0.6"
+    "strip-ansi": "^6.0.0"
   },
   "gitHead": "c2d8bb9ed8d10102413bdf655c7326e94f4a4464"
 }

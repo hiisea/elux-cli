@@ -1,5 +1,5 @@
 import path from 'path';
-import {Listr, chalk, fs, got, log, schemaValidate} from '@elux/cli-utils';
+import {Listr, chalk, fse, got, schemaValidate} from '@elux/cli-utils';
 
 interface Task {
   url: string;
@@ -83,7 +83,7 @@ async function execTask(task: Task, ctx: {title: string}, metaData: MetaData): P
   const timeout = task.timeout || config.timeout || 10000;
   const override = task.override ?? config.override ?? false;
   const replace = task.replace || config.replace;
-  if (!override && fs.existsSync(dist)) {
+  if (!override && fse.existsSync(dist)) {
     skipItems[url + '|' + dist] = 'exists';
     ctx.title = '[s]' + ctx.title;
     return Promise.resolve();
@@ -92,14 +92,14 @@ async function execTask(task: Task, ctx: {title: string}, metaData: MetaData): P
   if (replace) {
     body = replace(body);
   }
-  fs.ensureDirSync(path.dirname(dist));
-  return fs.writeFile(dist, body);
+  fse.ensureDirSync(path.dirname(dist));
+  return fse.writeFile(dist, body);
 }
 
 async function execEntryTasks(entryTasks: Task[], metaData: MetaData) {
   const n = entryTasks.length;
   while (entryTasks.length) {
-    log(`本任务共${chalk.cyan(n)}条生成，还剩${chalk.cyan(entryTasks.length)}条...`);
+    console.log(`本任务共${chalk.cyan(n)}条生成，还剩${chalk.cyan(entryTasks.length)}条...`);
     const tasks = entryTasks.splice(0, 10);
     const listr = new Listr<any>(
       tasks.map((item) => {
@@ -129,7 +129,7 @@ async function execEntries(metaData: MetaData, envName: string) {
   const entries = config.entries;
   const n = entries.length;
   while (entries.length) {
-    log(`共${chalk.cyan(n)}个任务，正在执行第${chalk.cyan(n - entries.length + 1)}个`);
+    console.log(`共${chalk.cyan(n)}个任务，正在执行第${chalk.cyan(n - entries.length + 1)}个`);
     const entry = entries.shift();
     await execEntryTasks(entry!(envName), metaData);
   }
@@ -147,7 +147,7 @@ export = async function moduleExports(rootPath: string, eluxConfig: EluxConfig, 
     successItems: 0,
   };
   await execEntries(metaData, envName);
-  log(
+  console.log(
     '执行完成！' +
       chalk.green(`成功${metaData.successItems}条(`) +
       chalk.yellow(`跳过${Object.keys(metaData.skipItems).length}条`) +

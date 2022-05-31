@@ -1,13 +1,11 @@
 import os from 'os';
 import path from 'path';
-import {chalk, clearConsole, fs, getProxy, loadPackageFields, loadPackageVesrion, log, ora, readDirSync, semver, testHttpUrl} from '@elux/cli-utils';
+import {chalk, clearConsole, fse, getProxy, loadPackageFields, loadPackageVesrion, ora, readDirSync, semver, testHttpUrl} from '@elux/cli-utils';
 import inquirer from 'inquirer';
 import validateProjectName from 'validate-npm-package-name';
 import Creator from './create';
 import {CommandOptions, ITemplate, TemplateResources} from './create/base';
 import {loadRepository} from './create/loadRepository';
-
-// green yellow redBright magentaBright cyan gray white
 
 function parseProjectName(input: string) {
   const cwd = process.cwd();
@@ -45,7 +43,7 @@ function askProjectName(): Promise<{projectNameInput: string; override?: boolean
       default: false,
       when: ({projectNameInput}) => {
         const {projectDir} = parseProjectName(projectNameInput);
-        return fs.existsSync(projectDir);
+        return fse.existsSync(projectDir);
       },
     },
   ]);
@@ -181,12 +179,12 @@ async function getTemplates(args: {
   templateResources: TemplateResources[];
   options: CommandOptions;
 }): Promise<void> {
-  log('');
+  console.log('');
   const templateSource = await askTemplateSource(args.templateResources);
   const repository = templateSource.repository.trim().replace(/\/+$/, '');
   const summary = templateSource.summary.trim();
   if (!repository) {
-    log(chalk.green('Please reselect...'));
+    console.log(chalk.green('Please reselect...'));
     setTimeout(() => getTemplates(args), 0);
     return;
   }
@@ -194,14 +192,14 @@ async function getTemplates(args: {
   let templateDir: string;
   if (repository.startsWith('http://') || repository.startsWith('https://')) {
     const globalProxy = getProxy() || '';
-    log(chalk.yellow('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
+    console.log(chalk.yellow('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
     const proxy = await askProxy(globalProxy);
     global['GLOBAL_AGENT'].HTTP_PROXY = proxy || '';
     templateDir = path.join(os.tmpdir(), 'elux-cli-tpl');
     try {
       await loadRepository(repository + '/src.zip', templateDir, true);
     } catch (error: any) {
-      log(chalk.green('Please reselect...'));
+      console.log(chalk.green('Please reselect...'));
       setTimeout(() => getTemplates(args), 0);
       return;
     }
@@ -214,9 +212,9 @@ async function getTemplates(args: {
   try {
     templates = parseTemplates(templateDir, options.packageJson.version);
   } catch (error: any) {
-    log(chalk.redBright('\n✖ 模版解析失败！'));
-    log(chalk.yellow(error.toString()));
-    log(chalk.green('Please reselect...'));
+    console.log(chalk.redBright('\n✖ 模版解析失败！'));
+    console.log(chalk.yellow(error.toString()));
+    console.log(chalk.green('Please reselect...'));
     setTimeout(() => getTemplates(args), 0);
     return;
   }
@@ -228,7 +226,7 @@ async function getTemplates(args: {
   creator.create();
 }
 function parseTemplates(floder: string, curVerison: string): ITemplate[] {
-  const baseFuns = fs.readFileSync(path.join(floder, './base.conf.js')).toString();
+  const baseFuns = fse.readFileSync(path.join(floder, './base.conf.js')).toString();
   const versionMatch = baseFuns
     .split('\n', 1)[0]
     .replace(/(^\/\*)|(\*\/$)|(^\/\/)/g, '')
@@ -240,7 +238,7 @@ function parseTemplates(floder: string, curVerison: string): ITemplate[] {
   readDirSync(floder).forEach((file) => {
     if (file.isFile && file.name.endsWith('.conf.js') && !file.name.endsWith('base.conf.js')) {
       const tplPath = path.join(floder, file.name);
-      const tplScript = fs.readFileSync(tplPath).toString();
+      const tplScript = fse.readFileSync(tplPath).toString();
       const tplFun = new Function(baseFuns + '\n' + tplScript);
       const tpl = tplFun() as ITemplate;
       templates.push(tpl);
@@ -262,12 +260,12 @@ async function main(options: CommandOptions): Promise<void> {
     templateResources = Array.isArray(data) ? data : [data];
   } catch (error) {
     spinner.warn(chalk.yellow('获取最新数据失败,使用本地缓存...'));
-    log('');
+    console.log('');
   }
   spinner.stop();
   let title = '@elux/cli: ' + chalk.cyan(curVerison);
   if (semver.lt(curVerison, latestVesrion)) {
-    title += `,${chalk.magentaBright('可升级最新版本:' + latestVesrion)}`;
+    title += `, 最新: ${chalk.bgMagentaBright(latestVesrion)}`;
   }
   getProjectName({title, templateResources, options});
 }

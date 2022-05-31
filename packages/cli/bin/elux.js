@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const {chalk, log, checkNodeVersion, deepExtend} = require('@elux/cli-utils');
+const {chalk, checkNodeVersion, deepExtend} = require('@elux/cli-utils');
 const program = require('commander');
 const leven = require('leven');
 const packageJson = require('../package.json');
 const projectPackageJson = fs.existsSync(path.join(process.cwd(), 'package.json')) ? require(path.join(process.cwd(), 'package.json')) : {};
 checkNodeVersion(packageJson.engines.node, '@elux/cli');
+
+const node_path = path.join(process.cwd(), 'node_modules');
+
+process.env.ELUX_UTILS = require.resolve('@elux/cli-utils');
 
 program.version(`@elux/cli ${require('../package').version}`).usage('<command> [options]');
 
@@ -24,10 +28,11 @@ program
   .option('-p, --port <value>', 'Normalize a port into a number. Default is to load from elux.config.js')
   .action((env, options) => {
     const moduleName = `@elux/cli-${options.compiler || 'webpack'}`;
+    const webpackBundle = require(path.join(node_path, moduleName));
     env = env || 'local';
     const {config, envPath} = getConfig(process.cwd(), env);
     const args = [process.cwd(), config, env, envPath, projectPackageJson, options.port];
-    require(moduleName).dev(...args);
+    webpackBundle.dev(...args);
   });
 
 program
@@ -38,6 +43,7 @@ program
   .option('-a, --analyzer [value]', 'Enable webpack-bundle-analyzer and Set the server port. Default is 8888')
   .action((env, options) => {
     const moduleName = `@elux/cli-${options.compiler || 'webpack'}`;
+    const webpackBundle = require(path.join(node_path, moduleName));
     env = env || 'local';
     const {config, envPath} = getConfig(process.cwd(), env);
     const args = [
@@ -49,7 +55,7 @@ program
       options.port,
       options.analyzer === true ? 8888 : options.analyzer && parseInt(options.analyzer),
     ];
-    require(moduleName).build(...args);
+    webpackBundle.build(...args);
   });
 
 program
@@ -59,10 +65,11 @@ program
   .option('-d, --dir <value>', 'Specify the mock dir path. Default is to load from elux.config.js')
   .option('-p, --port <value>', 'Normalize a port into a number. Default is to load from elux.config.js')
   .action((env, options) => {
+    const mockBundle = require(path.join(node_path, '@elux/cli-mock'));
     env = env || 'local';
     const {config} = getConfig(process.cwd(), env);
     const args = [process.cwd(), config, options];
-    require('@elux/cli-mock')(...args);
+    mockBundle.run(...args);
   });
 
 program
@@ -107,20 +114,20 @@ program
 // output help information on unknown commands
 program.on('command:*', ([cmd]) => {
   program.outputHelp();
-  log(`  ` + chalk.redBright(`Unknown command ${chalk.yellow(cmd)}.`));
-  log('');
+  console.log(`  ` + chalk.redBright(`Unknown command ${chalk.yellow(cmd)}.`));
+  console.log('');
   suggestCommands(cmd);
   process.exitCode = 1;
 });
 
 // add some useful info on help
 program.on('--help', () => {
-  log('');
-  log(`  Run ${chalk.cyan(`elux <command> --help`)} for detailed usage of given command.`);
-  log('');
+  console.log('');
+  console.log(`  Run ${chalk.cyan(`elux <command> --help`)} for detailed usage of given command.`);
+  console.log('');
 });
 
-program.commands.forEach((c) => c.on('--help', () => log('')));
+program.commands.forEach((c) => c.on('--help', () => console.log('')));
 
 program.parse(process.argv);
 
@@ -137,7 +144,7 @@ function suggestCommands(unknownCommand) {
   });
 
   if (suggestion) {
-    log(`  ` + chalk.redBright(`Did you mean ${chalk.yellow(suggestion)}?`));
+    console.log(`  ` + chalk.redBright(`Did you mean ${chalk.yellow(suggestion)}?`));
   }
 }
 

@@ -1,6 +1,18 @@
 import {spawn} from 'child_process';
 import path from 'path';
-import {chalk, checkPort, deepExtend, log, schemaValidate} from '@elux/cli-utils';
+import type * as Utils from '@elux/cli-utils';
+
+const {
+  chalk,
+  checkPort,
+  deepExtend,
+  schemaValidate,
+}: {
+  chalk: typeof Utils.chalk;
+  checkPort: typeof Utils.checkPort;
+  deepExtend: typeof Utils.deepExtend;
+  schemaValidate: typeof Utils.schemaValidate;
+} = require(process.env.ELUX_UTILS!);
 
 interface MockServerPreset {
   port: number;
@@ -31,7 +43,7 @@ const EluxConfigSchema: any = {
   },
 };
 
-export = function (rootPath: string, baseEluxConfig: Record<string, any>, options: {port?: number; dir?: string; watch?: boolean}): void {
+export function run(rootPath: string, baseEluxConfig: Record<string, any>, options: {port?: number; dir?: string; watch?: boolean}): void {
   schemaValidate(EluxConfigSchema, baseEluxConfig, {name: '@elux/cli-mock'});
   const defaultBaseConfig: EluxConfig = {
     mockServer: {
@@ -62,7 +74,7 @@ export = function (rootPath: string, baseEluxConfig: Record<string, any>, option
         shell: process.platform === 'win32',
       });
     } else {
-      log(chalk.redBright(`\n\n[error] The port: ${port} is occupied. MockServer startup failed!\n\n`));
+      console.log(chalk.bgRedBright(`\n\n✖ The port: ${port} is occupied. MockServer startup failed!\n\n`));
     }
   });
-};
+}

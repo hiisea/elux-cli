@@ -1,7 +1,7 @@
 {
   "npmClient": "yarn",
   "useWorkspaces": false,
-  "packages": ["packages/cli", "packages/cli-mock", "packages/cli-utils", "packages/cli-webpack"],
+  "packages": ["packages/cli", "packages/cli-mock", "packages/cli-utils", "packages/cli-webpack", "packages/cli-tools"],
   "version": "independent",
   "command": {
     "publish": {

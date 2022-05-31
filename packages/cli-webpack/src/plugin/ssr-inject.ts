@@ -1,9 +1,19 @@
 import fs from 'fs';
-import {slash} from '@elux/cli-utils';
 import {patchRequire} from 'fs-monkey';
 import {validate} from 'schema-utils';
 import {ufs} from 'unionfs';
 import {Compiler} from 'webpack';
+
+function slash(path: string): string {
+  const isExtendedLengthPath = /^\\\\\?\\/.test(path);
+  const hasNonAscii = /[^\u0000-\u0080]+/.test(path); // eslint-disable-line no-control-regex
+
+  if (isExtendedLengthPath || hasNonAscii) {
+    return path;
+  }
+
+  return path.replace(/\\/g, '/');
+}
 
 const schema: any = {
   type: 'object',

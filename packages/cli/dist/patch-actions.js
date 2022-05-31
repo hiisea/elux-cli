@@ -41,7 +41,7 @@ module.exports = async function moduleExports(_entryFilePath, echo) {
             eval('actions2 = ' + actionStr);
         }
         const files = [entryFilePath];
-        cli_utils_1.log(`Patch actions for ${entryFilePath}`);
+        console.log(`Patch actions for ${entryFilePath}`);
         const program = typescript_json_schema_1.getProgramFromFiles(files, compilerOptions);
         const defineType = typescript_json_schema_1.generateSchema(program, typeName, { ignoreErrors: false });
         const properties = defineType.properties;
@@ -52,17 +52,17 @@ module.exports = async function moduleExports(_entryFilePath, echo) {
         const json = JSON.stringify(actions);
         const json2 = JSON.stringify(actions2);
         if (json === json2) {
-            cli_utils_1.log(cli_utils_1.chalk.green('\nThere was no changes!\n'));
+            console.log(cli_utils_1.chalk.green('\nThere was no changes!\n'));
         }
         else {
             if (echo) {
-                cli_utils_1.log(`\n${cli_utils_1.chalk.green(JSON.stringify(actions, null, 4))}\n`);
+                console.log(`\n${cli_utils_1.chalk.green(JSON.stringify(actions, null, 4))}\n`);
             }
             else {
                 const newSource = source.replace(arr[0], `${arr[1]}${demoteForProdOnly}, ${json}${arr[3]}`);
                 fs_1.default.writeFileSync(entryFilePath, newSource);
-                cli_utils_1.log('');
-                cli_utils_1.log(cli_utils_1.chalk.green(`✔ ${entryFilePath} has been patched!\n`));
+                console.log('');
+                console.log(cli_utils_1.chalk.green(`✔ ${entryFilePath} has been patched!\n`));
             }
         }
     }

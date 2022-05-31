@@ -44,7 +44,7 @@ function askProjectName() {
             default: false,
             when: ({ projectNameInput }) => {
                 const { projectDir } = parseProjectName(projectNameInput);
-                return cli_utils_1.fs.existsSync(projectDir);
+                return cli_utils_1.fse.existsSync(projectDir);
             },
         },
     ]);
@@ -173,12 +173,12 @@ async function askProxy(systemProxy) {
     });
 }
 async function getTemplates(args) {
-    cli_utils_1.log('');
+    console.log('');
     const templateSource = await askTemplateSource(args.templateResources);
     const repository = templateSource.repository.trim().replace(/\/+$/, '');
     const summary = templateSource.summary.trim();
     if (!repository) {
-        cli_utils_1.log(cli_utils_1.chalk.green('Please reselect...'));
+        console.log(cli_utils_1.chalk.green('Please reselect...'));
         setTimeout(() => getTemplates(args), 0);
         return;
     }
@@ -186,7 +186,7 @@ async function getTemplates(args) {
     let templateDir;
     if (repository.startsWith('http://') || repository.startsWith('https://')) {
         const globalProxy = cli_utils_1.getProxy() || '';
-        cli_utils_1.log(cli_utils_1.chalk.yellow('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
+        console.log(cli_utils_1.chalk.yellow('\n* ' + (globalProxy ? `发现全局代理 -> ${globalProxy}` : '未发现全局代理')));
         const proxy = await askProxy(globalProxy);
         global['GLOBAL_AGENT'].HTTP_PROXY = proxy || '';
         templateDir = path_1.default.join(os_1.default.tmpdir(), 'elux-cli-tpl');
@@ -194,7 +194,7 @@ async function getTemplates(args) {
             await loadRepository_1.loadRepository(repository + '/src.zip', templateDir, true);
         }
         catch (error) {
-            cli_utils_1.log(cli_utils_1.chalk.green('Please reselect...'));
+            console.log(cli_utils_1.chalk.green('Please reselect...'));
             setTimeout(() => getTemplates(args), 0);
             return;
         }
@@ -208,9 +208,9 @@ async function getTemplates(args) {
         templates = parseTemplates(templateDir, options.packageJson.version);
     }
     catch (error) {
-        cli_utils_1.log(cli_utils_1.chalk.redBright('\n✖ 模版解析失败！'));
-        cli_utils_1.log(cli_utils_1.chalk.yellow(error.toString()));
-        cli_utils_1.log(cli_utils_1.chalk.green('Please reselect...'));
+        console.log(cli_utils_1.chalk.redBright('\n✖ 模版解析失败！'));
+        console.log(cli_utils_1.chalk.yellow(error.toString()));
+        console.log(cli_utils_1.chalk.green('Please reselect...'));
         setTimeout(() => getTemplates(args), 0);
         return;
     }
@@ -222,7 +222,7 @@ async function getTemplates(args) {
     creator.create();
 }
 function parseTemplates(floder, curVerison) {
-    const baseFuns = cli_utils_1.fs.readFileSync(path_1.default.join(floder, './base.conf.js')).toString();
+    const baseFuns = cli_utils_1.fse.readFileSync(path_1.default.join(floder, './base.conf.js')).toString();
     const versionMatch = baseFuns
         .split('\n', 1)[0]
         .replace(/(^\/\*)|(\*\/$)|(^\/\/)/g, '')
@@ -234,7 +234,7 @@ function parseTemplates(floder, curVerison) {
     cli_utils_1.readDirSync(floder).forEach((file) => {
         if (file.isFile && file.name.endsWith('.conf.js') && !file.name.endsWith('base.conf.js')) {
             const tplPath = path_1.default.join(floder, file.name);
-            const tplScript = cli_utils_1.fs.readFileSync(tplPath).toString();
+            const tplScript = cli_utils_1.fse.readFileSync(tplPath).toString();
             const tplFun = new Function(baseFuns + '\n' + tplScript);
             const tpl = tplFun();
             templates.push(tpl);
@@ -255,12 +255,12 @@ async function main(options) {
     }
     catch (error) {
         spinner.warn(cli_utils_1.chalk.yellow('获取最新数据失败,使用本地缓存...'));
-        cli_utils_1.log('');
+        console.log('');
     }
     spinner.stop();
     let title = '@elux/cli: ' + cli_utils_1.chalk.cyan(curVerison);
     if (cli_utils_1.semver.lt(curVerison, latestVesrion)) {
-        title += `,${cli_utils_1.chalk.magentaBright('可升级最新版本:' + latestVesrion)}`;
+        title += `, 最新: ${cli_utils_1.chalk.bgMagentaBright(latestVesrion)}`;
     }
     getProjectName({ title, templateResources, options });
 }

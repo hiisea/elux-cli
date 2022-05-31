@@ -1,7 +1,15 @@
 import path from 'path';
-import {deepExtend, schemaValidate} from '@elux/cli-utils';
 import genConfig from './utils';
 import type {DevServerConfig, WebpackConfig, WebpackLoader} from './utils';
+import type * as Utils from '@elux/cli-utils';
+
+const {
+  deepExtend,
+  schemaValidate,
+}: {
+  deepExtend: typeof Utils.deepExtend;
+  schemaValidate: typeof Utils.schemaValidate;
+} = require(process.env.ELUX_UTILS!);
 
 interface EnvConfig {
   clientPublicPath: string;

@@ -1,12 +1,12 @@
-import {chalk, download, fs, log, ora} from '@elux/cli-utils';
+import {chalk, download, fse, ora} from '@elux/cli-utils';
 
 export function loadRepository(url: string, targetDir: string, removeTarget: boolean): Promise<void> {
-  if (removeTarget && fs.existsSync(targetDir)) {
-    fs.removeSync(targetDir);
+  if (removeTarget && fse.existsSync(targetDir)) {
+    fse.removeSync(targetDir);
   }
   const proxyUrl = global['GLOBAL_AGENT'].HTTP_PROXY;
-  log(chalk.yellow('using proxy -> ' + (proxyUrl || 'none')));
-  log(chalk.cyan.underline('Pulling from ' + url));
+  console.log(chalk.yellow('using proxy -> ' + (proxyUrl || 'none')));
+  console.log(chalk.cyan.underline('Pulling from ' + url));
   const spinner = ora('Loading...').start();
 
   return download(url, targetDir, {
@@ -20,9 +20,9 @@ export function loadRepository(url: string, targetDir: string, removeTarget: boo
     () => {
       spinner.succeed(`${chalk.green('Pull successful!!!')}\n`);
     },
-    (e) => {
+    (e: any) => {
       spinner.fail(chalk.redBright('Pull failed!!!'));
-      log(chalk.yellow(e.toString()));
+      console.log(chalk.yellow(e.toString()));
       throw e;
     }
   );

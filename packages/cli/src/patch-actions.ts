@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import {chalk, execa, log} from '@elux/cli-utils';
+import {chalk, execa} from '@elux/cli-utils';
 import {generateSchema, getProgramFromFiles} from 'typescript-json-schema';
 
 export = async function moduleExports(_entryFilePath?: string, echo?: boolean): Promise<void> {
@@ -38,7 +38,7 @@ export = async function moduleExports(_entryFilePath?: string, echo?: boolean): 
       eval('actions2 = ' + actionStr);
     }
     const files = [entryFilePath];
-    log(`Patch actions for ${entryFilePath}`);
+    console.log(`Patch actions for ${entryFilePath}`);
     const program = getProgramFromFiles(files, compilerOptions);
     const defineType = generateSchema(program, typeName, {ignoreErrors: false});
     const properties: any = defineType!.properties!;
@@ -49,15 +49,15 @@ export = async function moduleExports(_entryFilePath?: string, echo?: boolean): 
     const json = JSON.stringify(actions);
     const json2 = JSON.stringify(actions2);
     if (json === json2) {
-      log(chalk.green('\nThere was no changes!\n'));
+      console.log(chalk.green('\nThere was no changes!\n'));
     } else {
       if (echo) {
-        log(`\n${chalk.green(JSON.stringify(actions, null, 4))}\n`);
+        console.log(`\n${chalk.green(JSON.stringify(actions, null, 4))}\n`);
       } else {
         const newSource = source.replace(arr[0], `${arr[1]}${demoteForProdOnly}, ${json}${arr[3]}`);
         fs.writeFileSync(entryFilePath, newSource);
-        log('');
-        log(chalk.green(`✔ ${entryFilePath} has been patched!\n`));
+        console.log('');
+        console.log(chalk.green(`✔ ${entryFilePath} has been patched!\n`));
       }
     }
   }

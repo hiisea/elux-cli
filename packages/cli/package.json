@@ -50,8 +50,8 @@
   },
   "dependencies": {
     "@elux/cli-utils": "^2.2.2",
-    "@elux/cli-mock": "^2.0.2",
-    "@elux/eslint-plugin": "^1.2.1",
+    "@elux/eslint-plugin": "^1.2.2",
+    "@babel/core": "^7.11.0",
     "commander": "^7.0.0",
     "inquirer": "^8.2.0",
     "leven": "^3.1.0",

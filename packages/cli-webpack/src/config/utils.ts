@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import {err, getCssScopedName} from '@elux/cli-utils';
 import {Express} from 'express';
 import webpack from 'webpack';
 import getSsrInjectPlugin from '../plugin/ssr-inject';
+import type * as Utils from '@elux/cli-utils';
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const EslintWebpackPlugin = require('eslint-webpack-plugin');
@@ -17,6 +17,12 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 // const ModuleFederationPlugin = webpack.container.ModuleFederationPlugin;
 const ContainerReferencePlugin = require('../../libs/ContainerReferencePlugin');
 const ModuleFederationPlugin = require('../../libs/ModuleFederationPlugin');
+
+const {
+  getCssScopedName,
+}: {
+  getCssScopedName: typeof Utils.getCssScopedName;
+} = require(process.env.ELUX_UTILS!);
 
 interface WebpackLoader {
   loader?: string;
@@ -624,7 +630,7 @@ function moduleExports({
         res.status(status).end(body);
       } else {
         const message = `[${e.code}]${e.message}（${e.toString()}）`;
-        err(message);
+        console.error(message);
         res.status(500).end(message);
       }
     };

@@ -1,6 +1,14 @@
 /* eslint-disable no-fallthrough */
 import http from 'http';
-import {chalk, err, localIP, log} from '@elux/cli-utils';
+import type * as Utils from '@elux/cli-utils';
+
+const {
+  chalk,
+  getLocalIP,
+}: {
+  chalk: typeof Utils.chalk;
+  getLocalIP: typeof Utils.getLocalIP;
+} = require(process.env.ELUX_UTILS!);
 
 const port = process.env.PORT;
 const src = process.env.SRC;
@@ -16,18 +24,18 @@ server.on('error', (error: any) => {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      err(`${bind} requires elevated privileges`);
+      console.error(`${bind} requires elevated privileges`);
       process.exit(1);
     case 'EADDRINUSE':
-      err(`${bind} is already in use`);
+      console.error(`${bind} is already in use`);
       process.exit(1);
     default:
       throw error;
   }
 });
 server.on('listening', () => {
-  log(`\n.....${chalk.cyan('MockServer')} running at ${chalk.cyan.underline(`http://localhost:${port}/`)}`);
-  log(`.....${chalk.cyan('MockServer')} running at ${chalk.cyan.underline(`http://${localIP}:${port}/`)}\n`);
+  console.log(`\n.....${chalk.cyan('MockServer')} running at ${chalk.cyan.underline(`http://localhost:${port}/`)}`);
+  console.log(`.....${chalk.cyan('MockServer')} running at ${chalk.cyan.underline(`http://${getLocalIP()}:${port}/`)}\n`);
 });
 ['SIGINT', 'SIGTERM'].forEach((signal) => {
   process.on(signal, () => {

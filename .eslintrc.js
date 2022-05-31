@@ -7,5 +7,8 @@ module.exports = {
     browser: false,
     node: true,
   },
+  rules: {
+    'no-console': 'off',
+  },
   ignorePatterns: tsconfig.exclude,
 };

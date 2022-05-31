@@ -1,6 +1,6 @@
 {
   "name": "@elux/eslint-plugin",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "main": "index.js",
   "description": "Common development tools",
   "repository": "https://github.com/hiisea/elux/tree/master/packages/eslint-plugin",
@@ -18,11 +18,8 @@
     "rules/"
   ],
   "scripts": {
-    "pub": "npm publish --registry=https://registry.npmjs.org/",
+    "publish:npm": "npm publish --registry=https://registry.npmjs.org/",
     "eslint": "cross-env NODE_ENV=production eslint --fix --cache **/*.{js,ts}"
-  },
-  "peerDependencies": {
-    "typescript": "^4.0.0"
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.15.8",

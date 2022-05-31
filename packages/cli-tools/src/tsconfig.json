@@ -1,0 +1,8 @@
+{
+  "extends": "@elux/babel-preset/tsconfig.node.json",
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "../dist"
+  },
+  "include": ["./"]
+}

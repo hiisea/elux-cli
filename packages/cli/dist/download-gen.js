@@ -47,7 +47,7 @@ async function execTask(task, ctx, metaData) {
     const timeout = task.timeout || config.timeout || 10000;
     const override = task.override ?? config.override ?? false;
     const replace = task.replace || config.replace;
-    if (!override && cli_utils_1.fs.existsSync(dist)) {
+    if (!override && cli_utils_1.fse.existsSync(dist)) {
         skipItems[url + '|' + dist] = 'exists';
         ctx.title = '[s]' + ctx.title;
         return Promise.resolve();
@@ -56,13 +56,13 @@ async function execTask(task, ctx, metaData) {
     if (replace) {
         body = replace(body);
     }
-    cli_utils_1.fs.ensureDirSync(path_1.default.dirname(dist));
-    return cli_utils_1.fs.writeFile(dist, body);
+    cli_utils_1.fse.ensureDirSync(path_1.default.dirname(dist));
+    return cli_utils_1.fse.writeFile(dist, body);
 }
 async function execEntryTasks(entryTasks, metaData) {
     const n = entryTasks.length;
     while (entryTasks.length) {
-        cli_utils_1.log(`本任务共${cli_utils_1.chalk.cyan(n)}条生成，还剩${cli_utils_1.chalk.cyan(entryTasks.length)}条...`);
+        console.log(`本任务共${cli_utils_1.chalk.cyan(n)}条生成，还剩${cli_utils_1.chalk.cyan(entryTasks.length)}条...`);
         const tasks = entryTasks.splice(0, 10);
         const listr = new cli_utils_1.Listr(tasks.map((item) => {
             return {
@@ -84,7 +84,7 @@ async function execEntries(metaData, envName) {
     const entries = config.entries;
     const n = entries.length;
     while (entries.length) {
-        cli_utils_1.log(`共${cli_utils_1.chalk.cyan(n)}个任务，正在执行第${cli_utils_1.chalk.cyan(n - entries.length + 1)}个`);
+        console.log(`共${cli_utils_1.chalk.cyan(n)}个任务，正在执行第${cli_utils_1.chalk.cyan(n - entries.length + 1)}个`);
         const entry = entries.shift();
         await execEntryTasks(entry(envName), metaData);
     }
@@ -102,7 +102,7 @@ module.exports = async function moduleExports(rootPath, eluxConfig, envName) {
         successItems: 0,
     };
     await execEntries(metaData, envName);
-    cli_utils_1.log('执行完成！' +
+    console.log('执行完成！' +
         cli_utils_1.chalk.green(`成功${metaData.successItems}条(`) +
         cli_utils_1.chalk.yellow(`跳过${Object.keys(metaData.skipItems).length}条`) +
         cli_utils_1.chalk.green(')') +

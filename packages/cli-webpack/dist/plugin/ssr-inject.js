@@ -4,10 +4,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = __importDefault(require("fs"));
-const cli_utils_1 = require("@elux/cli-utils");
 const fs_monkey_1 = require("fs-monkey");
 const schema_utils_1 = require("schema-utils");
 const unionfs_1 = require("unionfs");
+function slash(path) {
+    const isExtendedLengthPath = /^\\\\\?\\/.test(path);
+    const hasNonAscii = /[^\u0000-\u0080]+/.test(path);
+    if (isExtendedLengthPath || hasNonAscii) {
+        return path;
+    }
+    return path.replace(/\\/g, '/');
+}
 const schema = {
     type: 'object',
     properties: {
@@ -48,7 +55,7 @@ class Core {
             this.webpackFS.writeFileSync(this.entryFilePath, str);
             let mpath = this.entryFilePath;
             if (isWin32) {
-                mpath = cli_utils_1.slash(this.entryFilePath).replace(/^.+?:\//, '/');
+                mpath = slash(this.entryFilePath).replace(/^.+?:\//, '/');
             }
             delete require.cache[mpath];
         }
@@ -65,7 +72,7 @@ class ServerPlugin {
                 this.ssrCore.setJSCode(content.toString('utf8'));
             }
             if (isWin32) {
-                targetPath = cli_utils_1.slash(targetPath).replace(/^.+?:\//, '/');
+                targetPath = slash(targetPath).replace(/^.+?:\//, '/');
             }
             delete require.cache[targetPath];
             return true;
