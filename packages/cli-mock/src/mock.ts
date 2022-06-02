@@ -1,14 +1,6 @@
 /* eslint-disable no-fallthrough */
 import http from 'http';
-import type * as Utils from '@elux/cli-utils';
-
-const {
-  chalk,
-  getLocalIP,
-}: {
-  chalk: typeof Utils.chalk;
-  getLocalIP: typeof Utils.getLocalIP;
-} = require(process.env.ELUX_UTILS!);
+import {chalk, getLocalIP} from '@elux/cli-utils';
 
 const port = process.env.PORT;
 const src = process.env.SRC;

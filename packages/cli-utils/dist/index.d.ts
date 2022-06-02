@@ -1,30 +1,33 @@
 /// <reference types="node" />
 import _execa from 'execa';
-import _minimist from 'minimist';
+import _fse from 'fs-extra';
 import _ora from 'ora';
+export declare function getLocalIP(): string;
 export declare function getCssScopedName(srcPath: string, localName: string, mfileName: string): string;
 export declare function checkPort(port: number): Promise<Boolean>;
-export declare function testHttpUrl(url: string): boolean;
+export declare function slash(path: string): string;
 export declare function clearConsole(title: string): void;
-export declare function loadPackageFields(packageName: string, fields: string): any;
-export declare function loadPackageVesrion(packageName: string): string;
-export declare function loadPackageVesrion(packageName: string, installedVersion: string): [string, string];
-export declare function checkNodeVersion(wanted: string, id: string): void;
+export declare function testHttpUrl(url: string): boolean;
 export declare function readDirSync(floder: string): {
     name: string;
     isDirectory: boolean;
     isFile: boolean;
 }[];
 export declare function isEmptyObject(obj: any): boolean;
-export declare function slash(path: string): string;
-export declare function getLocalIP(): string;
-export declare function getCmdVersion(cmd: string): string;
 export declare const platform: {
     isWindows: boolean;
     isMacintosh: boolean;
 };
-export { Listr } from 'listr2';
-export { validate as schemaValidate } from 'schema-utils';
+export declare function loadPackageFields(packageName: string, fields: string): any;
+export declare function loadPackageVesrion(packageName: string): string;
+export declare function loadPackageVesrion(packageName: string, installedVersion: string): [string, string];
+export declare function getCmdVersion(cmd: string): string;
+export declare function getGlobalDir(): string[];
+export declare function getEluxConfig(env: string): {
+    config: Record<string, any>;
+    envPath: string;
+};
+export declare function checkVersion(bundleName: string, bundleVer: string, platformName: string, wantedVer?: string, curVer?: string): void;
 export declare const chalk: {
     bgCyan: import("chalk").Chalk;
     bgGreen: import("chalk").Chalk;
@@ -40,11 +43,14 @@ export declare const chalk: {
     white: import("chalk").Chalk;
     yellow: import("chalk").Chalk;
 };
-export declare const minimist: typeof _minimist;
+export declare const deepExtend: (...args: any[]) => any;
+export declare const fse: typeof _fse;
 export declare const ora: {
     (options?: string | _ora.Options | undefined): _ora.Ora;
     promise(action: PromiseLike<unknown>, options?: string | _ora.Options | undefined): _ora.Ora;
 };
+export declare const semver: any;
+export declare const packageNameValidate: any;
 export declare const execa: {
     (file: string, arguments?: readonly string[] | undefined, options?: _execa.Options<string> | undefined): _execa.ExecaChildProcess<string>;
     (file: string, arguments?: readonly string[] | undefined, options?: _execa.Options<null> | undefined): _execa.ExecaChildProcess<Buffer>;
@@ -63,10 +69,4 @@ export declare const execa: {
     node(scriptPath: string, options?: _execa.Options<string> | undefined): _execa.ExecaChildProcess<string>;
     node(scriptPath: string, options?: _execa.Options<null> | undefined): _execa.ExecaChildProcess<Buffer>;
 };
-export declare const got: import("got").Got;
-export declare const deepExtend: (...args: any[]) => any;
-export declare const getProxy: () => string | null;
-export * as semver from 'semver';
-export * as fse from 'fs-extra';
-export * as archiver from 'archiver';
-export * as download from 'download';
+export { validate as schemaValidate } from 'schema-utils';

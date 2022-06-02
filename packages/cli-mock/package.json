@@ -9,7 +9,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=14.0.0"
   },
   "main": "dist/index.js",
   "files": [
@@ -20,13 +20,14 @@
     "prebuild": "rimraf ./dist && copyfiles -f ./src/*.d.ts ./dist",
     "build": "tsc --build ./src"
   },
+  "peerDependencies": {
+    "@elux/cli": "^2.5.0",
+    "@elux/cli-utils": "^2.3.0"
+  },
   "dependencies": {
     "nodemon": "^2.0.0",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "^3.0.0"
-  },
-  "devDependencies": {
-    "@elux/cli-utils": "*"
   },
   "gitHead": "c2d8bb9ed8d10102413bdf655c7326e94f4a4464"
 }

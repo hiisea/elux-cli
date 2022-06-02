@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
+const cli_utils_1 = require("@elux/cli-utils");
 const webpack_1 = __importDefault(require("webpack"));
 const ssr_inject_1 = __importDefault(require("../plugin/ssr-inject"));
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
@@ -17,7 +18,6 @@ const StylelintPlugin = require('stylelint-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const ContainerReferencePlugin = require('../../libs/ContainerReferencePlugin');
 const ModuleFederationPlugin = require('../../libs/ModuleFederationPlugin');
-const { getCssScopedName, } = require(process.env.ELUX_UTILS);
 function oneOfCssLoader(isProdModel, srcPath, isVue, isServer, cssModulesOptions, cssType, options) {
     let cssProcessors = null;
     if (cssType === 'less') {
@@ -63,7 +63,7 @@ function oneOfCssLoader(isProdModel, srcPath, isVue, isServer, cssModulesOptions
             importLoaders: 2,
             modules: {
                 getLocalIdent: (context, localIdentName, localName) => {
-                    return getCssScopedName(srcPath, localName, context.resourcePath);
+                    return cli_utils_1.getCssScopedName(srcPath, localName, context.resourcePath);
                 },
                 localIdentContext: srcPath,
                 ...cssModulesOptions,

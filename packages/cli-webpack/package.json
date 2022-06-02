@@ -9,7 +9,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=14.0.0"
   },
   "main": "dist/config/index.js",
   "files": [
@@ -21,8 +21,9 @@
     "prebuild": "rimraf ./dist && copyfiles -f ./src/*.d.ts ./dist",
     "build": "tsc --build ./src"
   },
-  "devDependencies": {
-    "@elux/cli-utils": "*",
+  "peerDependencies": {
+    "@elux/cli": "^2.5.0",
+    "@elux/cli-utils": "^2.3.0",
     "express": "*",
     "fs-monkey": "*",
     "schema-utils": "*",

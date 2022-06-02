@@ -3,8 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const path_1 = __importDefault(require("path"));
+const cli_utils_1 = require("@elux/cli-utils");
 const utils_1 = __importDefault(require("./utils"));
-const { deepExtend, schemaValidate, } = require(process.env.ELUX_UTILS);
 const EluxConfigSchema = {
     type: 'object',
     additionalProperties: true,
@@ -116,7 +116,7 @@ const EluxConfigSchema = {
     },
 };
 function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, ssrNodeVersion, _serverPort, analyzerPort) {
-    schemaValidate(EluxConfigSchema, baseEluxConfig, { name: '@elux/cli-webpack' });
+    cli_utils_1.schemaValidate(EluxConfigSchema, baseEluxConfig, { name: '@elux/cli-webpack' });
     const defaultBaseConfig = {
         type: 'react',
         srcPath: './src',
@@ -148,8 +148,8 @@ function moduleExports(rootPath, baseEluxConfig, envName, envPath, nodeEnv, ssrN
             sourceMap: 'hidden-source-map',
         },
     };
-    const eluxConfig = deepExtend(defaultBaseConfig, baseEluxConfig);
-    const envConfig = deepExtend(eluxConfig.all, eluxConfig[nodeEnv === 'development' ? 'dev' : 'prod']);
+    const eluxConfig = cli_utils_1.deepExtend(defaultBaseConfig, baseEluxConfig);
+    const envConfig = cli_utils_1.deepExtend(eluxConfig.all, eluxConfig[nodeEnv === 'development' ? 'dev' : 'prod']);
     const { srcPath, publicPath, type, moduleFederation, devServerConfigTransform, cssProcessors, cssModulesOptions } = eluxConfig;
     const { serverPort, cache, eslint, stylelint, clientMinimize, serverMinimize, urlLoaderLimitSize, resolveAlias, clientPublicPath, clientGlobalVar, serverGlobalVar, defineConstants, sourceMap, onCompiled, webpackConfigTransform, apiProxy, } = envConfig;
     const useSSR = type === 'react ssr' || type === 'vue ssr';

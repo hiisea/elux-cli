@@ -1,7 +1,7 @@
 {
   "name": "@elux/cli",
   "version": "2.4.1",
-  "description": "Command line interface for rapid elux project.",
+  "description": "Command line interface for rapid elux project",
   "repository": "https://github.com/hiisea/elux/tree/master/packages/cli",
   "author": "hiisea <hiisea@qq.com>",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=14.0.0"
   },
   "bin": {
     "elux": "./bin/elux.js"
@@ -23,42 +23,9 @@
     "prebuild": "rimraf ./dist && copyfiles -f ./src/*.d.ts ./dist",
     "build": "tsc --build ./src"
   },
-  "templateResources": [
-    {
-      "title": "简单示例模板(Gitee源)",
-      "url": "https://gitee.com/hiisea/elux-project-templates-simple-fork/raw/v2/dist/online",
-      "summary": "一个简单的增删改查示例",
-      "count": 48
-    },
-    {
-      "title": "简单示例模板(Github源)",
-      "url": "https://raw.githubusercontent.com/hiisea/elux-project-templates-simple/v2/dist/online",
-      "summary": "一个简单的增删改查示例",
-      "count": 48
-    },
-    {
-      "title": "简单示例模板(备用源)",
-      "url": "http://download.eluxjs.com/tpl-simple-v2",
-      "summary": "一个简单的增删改查示例",
-      "count": 48
-    }
-  ],
-  "devDependencies": {
-    "@types/ejs": "^3.0.6",
-    "@types/inquirer": "^7.3.1",
-    "@types/mem-fs-editor": "^7.0.1"
-  },
   "dependencies": {
     "@elux/cli-utils": "^2.2.2",
-    "@elux/eslint-plugin": "^1.2.2",
-    "@babel/core": "^7.11.0",
-    "commander": "^7.0.0",
-    "inquirer": "^8.2.0",
-    "leven": "^3.1.0",
-    "mem-fs": "^2.2.1",
-    "mem-fs-editor": "^9.3.0",
-    "typescript-json-schema": "^0.52.0",
-    "validate-npm-package-name": "^3.0.0"
+    "commander": "^7.0.0"
   },
   "gitHead": "c2d8bb9ed8d10102413bdf655c7326e94f4a4464"
 }

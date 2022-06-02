@@ -1,5 +1,6 @@
-export declare function run(rootPath: string, baseEluxConfig: Record<string, any>, options: {
-    port?: number;
-    dir?: string;
-    watch?: boolean;
+export declare function run({ env, port, dir, watch }: {
+    env: string;
+    port: number;
+    watch: boolean;
+    dir: string;
 }): void;

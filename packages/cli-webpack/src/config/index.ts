@@ -1,35 +1,19 @@
 import path from 'path';
+import {chalk, checkPort, fse, getEluxConfig, getLocalIP} from '@elux/cli-utils';
 import TerserPlugin from 'terser-webpack-plugin';
 import webpack, {Compiler, MultiCompiler} from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import genConfig from './gen';
-import type * as Utils from '@elux/cli-utils';
 
-const {
-  chalk,
-  checkPort,
-  fse,
-  getLocalIP,
-}: {
-  chalk: typeof Utils.chalk;
-  checkPort: typeof Utils.checkPort;
-  fse: typeof Utils.fse;
-  getLocalIP: typeof Utils.getLocalIP;
-} = require(process.env.ELUX_UTILS!);
-
-export async function dev(
-  rootPath: string,
-  baseEluxConfig: Record<string, any>,
-  envName: string,
-  envPath: string,
-  packageJSON: Record<string, any>,
-  port?: number
-): Promise<void> {
-  const ssrNodeVersion: string = (packageJSON.ssrnode || process.version)
+export async function dev({env, port}: {env: string; port: number}): Promise<void> {
+  const packageJsonPath = path.join(process.cwd(), 'package.json');
+  const packageJson = fse.existsSync(packageJsonPath) ? require(packageJsonPath) : {};
+  const ssrNodeVersion: string = (packageJson.ssrnode || process.version)
     .replace(/[^\d.]/g, '')
     .split('.', 2)
     .join('.');
-  const config = genConfig(rootPath, baseEluxConfig, envName, envPath, 'development', ssrNodeVersion, port);
+  const {config: baseEluxConfig, envPath} = getEluxConfig(env);
+  const config = genConfig(process.cwd(), baseEluxConfig, env, envPath, 'development', ssrNodeVersion, port);
   const {
     devServerConfig,
     clientWebpackConfig,
@@ -59,7 +43,7 @@ export async function dev(
     envInfo.serverGlobalVar = serverGlobalVar;
   }
   console.log(`projectType: ${chalk.green(projectType)} runMode: ${chalk.green(nodeEnv)} sourceMap: ${chalk.green(sourceMap)}`);
-  console.log(`EnvName: ${chalk.green(envName)} EnvPath: ${chalk.green(envPath)} EnvData: \n${chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
+  console.log(`EnvName: ${chalk.green(env)} EnvPath: ${chalk.green(envPath)} EnvData: \n${chalk.gray(JSON.stringify(envInfo, null, 4))} \n`);
 
   let webpackCompiler: MultiCompiler | Compiler;
   if (useSSR) {
@@ -102,20 +86,12 @@ export async function dev(
 
 ***************************************
 *                                     *
-*           ${chalk.magentaBright.bold('Welcome to Elux')}           *
+*           ${chalk.green.bold('Welcome to Elux')}           *
 *                                     *
 ***************************************
 `);
-      console.log(
-        `🚀...${chalk.yellow.bgMagentaBright(useSSR ? 'Enabled Server-Side Rendering!' : 'DevServer')} running at ${chalk.magentaBright.underline(
-          localUrl
-        )}`
-      );
-      console.log(
-        `🚀...${chalk.yellow.bgMagentaBright(useSSR ? 'Enabled Server-Side Rendering!' : 'DevServer')} running at ${chalk.magentaBright.underline(
-          localIpUrl
-        )} \n`
-      );
+      console.log(`🚀...${chalk.yellow.bgRedBright(useSSR ? ' SSR DevServer ' : ' DevServer ')} running at ${chalk.green.underline(localUrl)}`);
+      console.log(`🚀...${chalk.yellow.bgRedBright(useSSR ? ' SSR DevServer ' : ' DevServer ')} running at ${chalk.green.underline(localIpUrl)} \n`);
       console.log(`WebpackCache: ${chalk.cyan(cache)}`);
       if (cache !== 'filesystem') {
         console.log(`${chalk.yellow('You can set filesystem cache to speed up compilation: https://webpack.js.org/configuration/cache/')} \n`);
@@ -140,20 +116,15 @@ export async function dev(
   // });
 }
 
-export function build(
-  rootPath: string,
-  baseEluxConfig: Record<string, any>,
-  envName: string,
-  envPath: string,
-  packageJSON: Record<string, any>,
-  port?: number,
-  analyzerPort?: number
-): void {
-  const ssrNodeVersion: string = (packageJSON.ssrnode || process.version)
+export function build({env, port, analyzerPort}: {env: string; port: number; analyzerPort: number}): void {
+  const packageJsonPath = path.join(process.cwd(), 'package.json');
+  const packageJson = fse.existsSync(packageJsonPath) ? require(packageJsonPath) : {};
+  const ssrNodeVersion: string = (packageJson.ssrnode || process.version)
     .replace(/[^\d.]/g, '')
     .split('.', 2)
     .join('.');
-  const config = genConfig(rootPath, baseEluxConfig, envName, envPath, 'production', ssrNodeVersion, port, analyzerPort);
+  const {config: baseEluxConfig, envPath} = getEluxConfig(env);
+  const config = genConfig(process.cwd(), baseEluxConfig, env, envPath, 'production', ssrNodeVersion, port, analyzerPort);
   const {
     clientWebpackConfig,
     serverWebpackConfig,
@@ -178,7 +149,7 @@ export function build(
     serverGlobalVar,
   };
   console.log(`projectType: ${chalk.green(projectType)} runMode: ${chalk.green(nodeEnv)} sourceMap: ${chalk.green(sourceMap)}`);
-  console.log(`EnvName: ${chalk.green(envName)} EnvPath: ${chalk.green(envPath)} EnvData: \n${chalk.cyan(JSON.stringify(envInfo, null, 4))} \n`);
+  console.log(`EnvName: ${chalk.green(env)} EnvPath: ${chalk.green(envPath)} EnvData: \n${chalk.cyan(JSON.stringify(envInfo, null, 4))} \n`);
 
   fse.ensureDirSync(distPath);
   fse.emptyDirSync(distPath);
@@ -221,7 +192,7 @@ export function build(
   });
 }
 
-export function pack(input: string, output: string, target: string, minimize: boolean): void {
+export function pack({input, output, target, minimize}: {input: string; output: string; target: string; minimize: boolean}): void {
   let outputPath;
   let ouputName;
   if (path.extname(output)) {

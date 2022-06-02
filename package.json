@@ -22,6 +22,7 @@
     "jsonlint": "prettier --write **/*.json",
     "lint": "yarn eslint && yarn stylelint && yarn jsonlint",
     "recommit": "git commit --amend --no-edit",
+    "install:test": "npm install -g @elux/cli-init --legacy-peer-deps --registry=http://localhost:4873/",
     "publish-lerna": "lerna publish",
     "publish-next": "lerna publish --npm-tag=next",
     "publish-test": "lerna publish --registry=http://localhost:4873/ --no-git-tag-version --conventional-commits=0",

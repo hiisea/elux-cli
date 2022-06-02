@@ -1,18 +1,6 @@
 import {spawn} from 'child_process';
 import path from 'path';
-import type * as Utils from '@elux/cli-utils';
-
-const {
-  chalk,
-  checkPort,
-  deepExtend,
-  schemaValidate,
-}: {
-  chalk: typeof Utils.chalk;
-  checkPort: typeof Utils.checkPort;
-  deepExtend: typeof Utils.deepExtend;
-  schemaValidate: typeof Utils.schemaValidate;
-} = require(process.env.ELUX_UTILS!);
+import {chalk, checkPort, deepExtend, getEluxConfig, schemaValidate} from '@elux/cli-utils';
 
 interface MockServerPreset {
   port: number;
@@ -43,7 +31,8 @@ const EluxConfigSchema: any = {
   },
 };
 
-export function run(rootPath: string, baseEluxConfig: Record<string, any>, options: {port?: number; dir?: string; watch?: boolean}): void {
+export function run({env, port, dir, watch}: {env: string; port: number; watch: boolean; dir: string}): void {
+  const {config: baseEluxConfig} = getEluxConfig(env);
   schemaValidate(EluxConfigSchema, baseEluxConfig, {name: '@elux/cli-mock'});
   const defaultBaseConfig: EluxConfig = {
     mockServer: {
@@ -52,8 +41,8 @@ export function run(rootPath: string, baseEluxConfig: Record<string, any>, optio
     },
   };
   const eluxConfig: EluxConfig = deepExtend(defaultBaseConfig, baseEluxConfig);
-  const port = options.port || eluxConfig.mockServer.port;
-  const dir = path.resolve(rootPath, options.dir || eluxConfig.mockServer.dir);
+  port = port || eluxConfig.mockServer.port;
+  dir = path.resolve(process.cwd(), dir || eluxConfig.mockServer.dir);
 
   checkPort(port).then((available) => {
     if (available) {
@@ -61,7 +50,7 @@ export function run(rootPath: string, baseEluxConfig: Record<string, any>, optio
       const tsconfig = path.join(dir, './tsconfig.json');
       const start = path.join(__dirname, './mock.js');
       let cmd = '';
-      if (options.watch) {
+      if (watch) {
         cmd = `nodemon -e ts,js,json -w ${src} --exec ts-node --project ${tsconfig} -r tsconfig-paths/register ${start}`;
       } else {
         cmd = `ts-node --project ${tsconfig} -r tsconfig-paths/register ${start}`;
@@ -74,7 +63,7 @@ export function run(rootPath: string, baseEluxConfig: Record<string, any>, optio
         shell: process.platform === 'win32',
       });
     } else {
-      console.log(chalk.bgRedBright(`\n\n✖ The port: ${port} is occupied. MockServer startup failed!\n\n`));
+      console.error(chalk.redBright(`\n\n✖ The port: ${port} is occupied. MockServer startup failed!\n\n`));
     }
   });
 }

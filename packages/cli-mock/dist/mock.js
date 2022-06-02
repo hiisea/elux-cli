@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const http_1 = __importDefault(require("http"));
-const { chalk, getLocalIP, } = require(process.env.ELUX_UTILS);
+const cli_utils_1 = require("@elux/cli-utils");
 const port = process.env.PORT;
 const src = process.env.SRC;
 const app = require(src);
@@ -28,8 +28,8 @@ server.on('error', (error) => {
     }
 });
 server.on('listening', () => {
-    console.log(`\n.....${chalk.cyan('MockServer')} running at ${chalk.cyan.underline(`http://localhost:${port}/`)}`);
-    console.log(`.....${chalk.cyan('MockServer')} running at ${chalk.cyan.underline(`http://${getLocalIP()}:${port}/`)}\n`);
+    console.log(`\n.....${cli_utils_1.chalk.cyan('MockServer')} running at ${cli_utils_1.chalk.cyan.underline(`http://localhost:${port}/`)}`);
+    console.log(`.....${cli_utils_1.chalk.cyan('MockServer')} running at ${cli_utils_1.chalk.cyan.underline(`http://${cli_utils_1.getLocalIP()}:${port}/`)}\n`);
 });
 ['SIGINT', 'SIGTERM'].forEach((signal) => {
     process.on(signal, () => {
