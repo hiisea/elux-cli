@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.5.0](https://github.com/hiisea/elux/compare/@elux/cli@2.4.1...@elux/cli@2.5.0) (2022-06-03)
+
+
+### Bug Fixes
+
+* 路由强制返回 ([132d133](https://github.com/hiisea/elux/commit/132d1333bd5574e044f674ef97983a1d1589f580))
+
+
+### Features
+
+* 将cli拆分为cli和cli-init ([ac69364](https://github.com/hiisea/elux/commit/ac69364c2e7dcb5a74f2fbd268a59a9bc79e8865))
+
+
+
+
+
 ## [2.4.1](https://github.com/hiisea/elux/compare/@elux/cli@2.4.0...@elux/cli@2.4.1) (2022-05-28)
 
 **Note:** Version bump only for package @elux/cli

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/hiisea/elux/compare/@elux/cli-mock@2.0.2...@elux/cli-mock@2.1.0) (2022-06-03)
+
+
+### Features
+
+* 将cli拆分为cli和cli-init ([ac69364](https://github.com/hiisea/elux/commit/ac69364c2e7dcb5a74f2fbd268a59a9bc79e8865))
+
+
+
+
+
 ## [2.0.2](https://github.com/hiisea/elux/compare/@elux/cli-mock@2.0.1...@elux/cli-mock@2.0.2) (2022-05-28)
 
 **Note:** Version bump only for package @elux/cli-mock
