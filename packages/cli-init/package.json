@@ -1,6 +1,6 @@
 {
   "name": "@elux/cli-init",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Command line interface for rapid elux project",
   "repository": "https://github.com/hiisea/elux/tree/master/packages/cli-init",
   "author": "hiisea <hiisea@qq.com>",
@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.11.0",
-    "@elux/cli-utils": "^2.3.0",
+    "@elux/cli-utils": "^2.3.1",
     "@elux/eslint-plugin": "^1.2.2",
     "download": "^8.0.0",
     "inquirer": "^8.2.0",

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.1](https://github.com/hiisea/elux/compare/@elux/cli-utils@2.3.0...@elux/cli-utils@2.3.1) (2022-06-06)
+
+
+### Bug Fixes
+
+* 黑色终端背景下有的文字颜色看不清 ([c7273b3](https://github.com/hiisea/elux/commit/c7273b3c229550dc022d3b0490888be2e9bb701e))
+
+
+
+
+
 # [2.3.0](https://github.com/hiisea/elux/compare/@elux/cli-utils@2.2.2...@elux/cli-utils@2.3.0) (2022-06-03)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@elux/cli",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Command line interface for rapid elux project",
   "repository": "https://github.com/hiisea/elux/tree/master/packages/cli",
   "author": "hiisea <hiisea@qq.com>",
@@ -24,7 +24,7 @@
     "build": "tsc --build ./src"
   },
   "dependencies": {
-    "@elux/cli-utils": "^2.3.0",
+    "@elux/cli-utils": "^2.3.1",
     "commander": "^7.0.0"
   },
   "gitHead": "c2d8bb9ed8d10102413bdf655c7326e94f4a4464"
