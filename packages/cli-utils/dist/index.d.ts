@@ -29,10 +29,6 @@ export declare function getEluxConfig(env: string): {
 };
 export declare function checkVersion(bundleName: string, bundleVer: string, platformName: string, wantedVer?: string, curVer?: string): void;
 export declare const chalk: {
-    bgCyan: import("chalk").Chalk;
-    bgGreen: import("chalk").Chalk;
-    bgMagentaBright: import("chalk").Chalk;
-    bgRedBright: import("chalk").Chalk;
     bold: import("chalk").Chalk;
     cyan: import("chalk").Chalk;
     gray: import("chalk").Chalk;
@@ -40,8 +36,8 @@ export declare const chalk: {
     magentaBright: import("chalk").Chalk;
     redBright: import("chalk").Chalk;
     underline: import("chalk").Chalk;
-    white: import("chalk").Chalk;
     yellow: import("chalk").Chalk;
+    bright: import("chalk").Chalk;
 };
 export declare const deepExtend: (...args: any[]) => any;
 export declare const fse: typeof _fse;

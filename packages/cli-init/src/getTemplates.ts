@@ -147,7 +147,7 @@ export default async function main(args: {
     setTimeout(() => main(args), 0);
     return;
   }
-  clearConsole('\n' + chalk.yellow.bgCyan('【 ' + (summary || repository) + ' 】'));
+  clearConsole('\n' + chalk.bright.bgCyan('【 ' + (summary || repository) + ' 】'));
   const templateDir = await downloadRepository(repository);
   if (!templateDir) {
     console.log(chalk.green('Please reselect...'));

@@ -90,8 +90,8 @@ export async function dev({env, port}: {env: string; port: number}): Promise<voi
 *                                     *
 ***************************************
 `);
-      console.log(`🚀...${chalk.yellow.bgRedBright(useSSR ? ' SSR DevServer ' : ' DevServer ')} running at ${chalk.green.underline(localUrl)}`);
-      console.log(`🚀...${chalk.yellow.bgRedBright(useSSR ? ' SSR DevServer ' : ' DevServer ')} running at ${chalk.green.underline(localIpUrl)} \n`);
+      console.log(`🚀...${chalk.bright.bgRedBright(useSSR ? ' SSR DevServer ' : ' DevServer ')} running at ${chalk.green.underline(localUrl)}`);
+      console.log(`🚀...${chalk.bright.bgRedBright(useSSR ? ' SSR DevServer ' : ' DevServer ')} running at ${chalk.green.underline(localIpUrl)} \n`);
       console.log(`WebpackCache: ${chalk.cyan(cache)}`);
       if (cache !== 'filesystem') {
         console.log(`${chalk.yellow('You can set filesystem cache to speed up compilation: https://webpack.js.org/configuration/cache/')} \n`);

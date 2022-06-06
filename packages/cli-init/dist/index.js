@@ -21,7 +21,7 @@ else if (cmd === '-h' || cmd === '--help') {
     console.log(cli_utils_1.chalk.green('elux-init -v, --version') + cli_utils_1.chalk.yellow(' //show local version.'));
     console.log(cli_utils_1.chalk.green('elux-init -h, --help') + cli_utils_1.chalk.yellow(' //show help info.'));
     console.log('');
-    console.log(cli_utils_1.chalk.yellow.bgCyan('- Guide: https://eluxjs.com -'));
+    console.log(cli_utils_1.chalk.bright.bgCyan('- Guide: https://eluxjs.com -'));
     console.log('');
     process.exit();
 }
@@ -41,7 +41,7 @@ catch (error) {
 spinner.stop();
 let cliVersionTips = cliPackageJson.name + '@' + cli_utils_1.chalk.cyan(curVerison);
 if (cli_utils_1.semver.lt(curVerison, latestVesrion)) {
-    cliVersionTips += `, 最新: ${cli_utils_1.chalk.bgMagentaBright(latestVesrion)}`;
+    cliVersionTips += `, 最新: ${cli_utils_1.chalk.bright.bgMagentaBright(latestVesrion)}`;
 }
 console.log(cliVersionTips);
 const title = [cliVersionTips];

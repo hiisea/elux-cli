@@ -3,7 +3,7 @@ import net from 'net';
 import {networkInterfaces} from 'os';
 import path from 'path';
 import readline from 'readline';
-import {bgCyan, bgGreen, bgMagentaBright, bgRedBright, bold, cyan, gray, green, magentaBright, redBright, underline, white, yellow} from 'chalk';
+import {bold, cyan, gray, green, magentaBright, redBright, underline, yellow, yellowBright} from 'chalk';
 import _deepExtend from 'deep-extend';
 import _execa from 'execa';
 import _fse from 'fs-extra';
@@ -137,7 +137,7 @@ export const platform = {
 };
 
 export function loadPackageFields(packageName: string, fields: string): any {
-  const str = execSync(`npm view ${packageName} ${fields} --json`, {stdio: ['pipe', 'pipe', 'ignore'], timeout: 10000})
+  const str = execSync(`npm view ${packageName} ${fields} --json`, {stdio: ['pipe', 'pipe', 'ignore'], timeout: 5000})
     .toString()
     .trim();
   return str ? JSON.parse(str) : str;
@@ -217,7 +217,7 @@ export function checkVersion(bundleName: string, bundleVer: string, platformName
       console.error(chalk.redBright(`✖ Version Mismatch!`));
       console.log(
         chalk.yellow(
-          `  ${bundleName}@${bundleVer} requires ${chalk.yellow.bgRedBright(
+          `  ${bundleName}@${bundleVer} requires ${chalk.bright.bgRedBright(
             ' ' + platformName + ' ' + wantedVer + ' '
           )}, but you are using ${platformName}@${curVer}`
         )
@@ -228,7 +228,7 @@ export function checkVersion(bundleName: string, bundleVer: string, platformName
   }
 }
 
-export const chalk = {bgCyan, bgGreen, bgMagentaBright, bgRedBright, bold, cyan, gray, green, magentaBright, redBright, underline, white, yellow};
+export const chalk = {bold, cyan, gray, green, magentaBright, redBright, underline, yellow, bright: yellowBright};
 export const deepExtend = _deepExtend;
 export const fse = _fse;
 export const ora = _ora;

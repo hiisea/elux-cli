@@ -76,8 +76,8 @@ async function dev({ env, port }) {
 *                                     *
 ***************************************
 `);
-            console.log(`🚀...${cli_utils_1.chalk.yellow.bgRedBright(useSSR ? ' SSR DevServer ' : ' DevServer ')} running at ${cli_utils_1.chalk.green.underline(localUrl)}`);
-            console.log(`🚀...${cli_utils_1.chalk.yellow.bgRedBright(useSSR ? ' SSR DevServer ' : ' DevServer ')} running at ${cli_utils_1.chalk.green.underline(localIpUrl)} \n`);
+            console.log(`🚀...${cli_utils_1.chalk.bright.bgRedBright(useSSR ? ' SSR DevServer ' : ' DevServer ')} running at ${cli_utils_1.chalk.green.underline(localUrl)}`);
+            console.log(`🚀...${cli_utils_1.chalk.bright.bgRedBright(useSSR ? ' SSR DevServer ' : ' DevServer ')} running at ${cli_utils_1.chalk.green.underline(localIpUrl)} \n`);
             console.log(`WebpackCache: ${cli_utils_1.chalk.cyan(cache)}`);
             if (cache !== 'filesystem') {
                 console.log(`${cli_utils_1.chalk.yellow('You can set filesystem cache to speed up compilation: https://webpack.js.org/configuration/cache/')} \n`);

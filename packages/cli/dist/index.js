@@ -13,14 +13,14 @@ function getBundle(bundleName) {
         bundlePath = require.resolve(bundleName);
         bundle = require(bundlePath);
         bundlePackageJson = require(path_1.default.join(bundleName, 'package.json'));
-        console.log(cli_utils_1.chalk.yellow.bgCyan(`-> Using the package ${bundleName + '@' + bundlePackageJson.version}`));
+        console.log(cli_utils_1.chalk.bright.bgCyan(`-> Using the package ${bundleName + '@' + bundlePackageJson.version}`));
         console.log('');
         cli_utils_1.checkVersion(bundleName, bundlePackageJson.version, '@elux/cli', bundlePackageJson.peerDependencies['@elux/cli'], cliPackageJson.version);
         console.log('');
         return bundle;
     }
     catch (error) {
-        console.error(cli_utils_1.chalk.redBright(`✖ ${cli_utils_1.chalk.yellow.bgRedBright(' ' + bundleName + ' ')} was not found!`));
+        console.error(cli_utils_1.chalk.redBright(`✖ ${cli_utils_1.chalk.bright.bgRedBright(' ' + bundleName + ' ')} was not found!`));
         console.log(cli_utils_1.chalk.yellow('  Please install it with npm...'));
         console.log('');
         throw error;
@@ -90,7 +90,7 @@ commander_1.default
 });
 commander_1.default.on('command:*', ([cmd]) => {
     commander_1.default.outputHelp();
-    console.log(cli_utils_1.chalk.redBright(`✖ Unknown Command: ${cli_utils_1.chalk.bgRedBright(' ' + cmd + ' ')}`));
+    console.log(cli_utils_1.chalk.redBright(`✖ Unknown Command: ${cli_utils_1.chalk.bright.bgRedBright(' ' + cmd + ' ')}`));
     if (cmd === 'init') {
         console.log(`Did you mean ${cli_utils_1.chalk.yellow('elux-init')}?`);
     }

@@ -143,7 +143,7 @@ async function main(args) {
         setTimeout(() => main(args), 0);
         return;
     }
-    (0, cli_utils_1.clearConsole)('\n' + cli_utils_1.chalk.yellow.bgCyan('【 ' + (summary || repository) + ' 】'));
+    (0, cli_utils_1.clearConsole)('\n' + cli_utils_1.chalk.bright.bgCyan('【 ' + (summary || repository) + ' 】'));
     const templateDir = await downloadRepository(repository);
     if (!templateDir) {
         console.log(cli_utils_1.chalk.green('Please reselect...'));

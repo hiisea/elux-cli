@@ -130,7 +130,7 @@ exports.platform = {
     isMacintosh: process.platform === 'darwin',
 };
 function loadPackageFields(packageName, fields) {
-    const str = child_process_1.execSync(`npm view ${packageName} ${fields} --json`, { stdio: ['pipe', 'pipe', 'ignore'], timeout: 10000 })
+    const str = child_process_1.execSync(`npm view ${packageName} ${fields} --json`, { stdio: ['pipe', 'pipe', 'ignore'], timeout: 5000 })
         .toString()
         .trim();
     return str ? JSON.parse(str) : str;
@@ -205,14 +205,14 @@ function checkVersion(bundleName, bundleVer, platformName, wantedVer, curVer) {
     if (wantedVer && curVer) {
         if (!exports.semver.satisfies(curVer, wantedVer, { includePrerelease: true })) {
             console.error(exports.chalk.redBright(`✖ Version Mismatch!`));
-            console.log(exports.chalk.yellow(`  ${bundleName}@${bundleVer} requires ${exports.chalk.yellow.bgRedBright(' ' + platformName + ' ' + wantedVer + ' ')}, but you are using ${platformName}@${curVer}`));
+            console.log(exports.chalk.yellow(`  ${bundleName}@${bundleVer} requires ${exports.chalk.bright.bgRedBright(' ' + platformName + ' ' + wantedVer + ' ')}, but you are using ${platformName}@${curVer}`));
             console.log('');
             process.exit(1);
         }
     }
 }
 exports.checkVersion = checkVersion;
-exports.chalk = { bgCyan: chalk_1.bgCyan, bgGreen: chalk_1.bgGreen, bgMagentaBright: chalk_1.bgMagentaBright, bgRedBright: chalk_1.bgRedBright, bold: chalk_1.bold, cyan: chalk_1.cyan, gray: chalk_1.gray, green: chalk_1.green, magentaBright: chalk_1.magentaBright, redBright: chalk_1.redBright, underline: chalk_1.underline, white: chalk_1.white, yellow: chalk_1.yellow };
+exports.chalk = { bold: chalk_1.bold, cyan: chalk_1.cyan, gray: chalk_1.gray, green: chalk_1.green, magentaBright: chalk_1.magentaBright, redBright: chalk_1.redBright, underline: chalk_1.underline, yellow: chalk_1.yellow, bright: chalk_1.yellowBright };
 exports.deepExtend = deep_extend_1.default;
 exports.fse = fs_extra_1.default;
 exports.ora = ora_1.default;
