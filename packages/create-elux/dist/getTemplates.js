@@ -113,7 +113,7 @@ function parseTemplate(templateDir, cliVerison) {
         const configCode = cli_utils_1.fse.readFileSync(path_1.default.join(templateDir, './config.js')).toString();
         const [, versionMatch] = configCode.split('\n', 1)[0].match(/create-elux@([^ ]+)/) || [];
         if (versionMatch && versionMatch != '*' && !cli_utils_1.semver.satisfies(cliVerison, versionMatch)) {
-            throw `您选择的模版需要安装器:create-elux@${versionMatch}，当前安装器版本为:create-elux@${cliVerison}\n请选择其它模版，或重装安装器: npm init elux@${versionMatch} 或 yarn create elux@${versionMatch}`;
+            throw `您选择的模版需要安装器:create-elux@${versionMatch}，当前安装器版本为:create-elux@${cliVerison}\n请选择其它模版，或重装安装器: npm create elux@${versionMatch} 或 yarn create elux@${versionMatch}`;
         }
         const configFun = new Function(configCode);
         return configFun();

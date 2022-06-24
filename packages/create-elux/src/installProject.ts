@@ -1,5 +1,5 @@
 import path from 'path';
-import {chalk, clearConsole, execa, getCmdVersion, semver} from '@elux/cli-utils';
+import {chalk, clearConsole, execa, fse, getCmdVersion, semver} from '@elux/cli-utils';
 import inquirer from 'inquirer';
 
 let logInstallInfo: () => void = () => undefined;
@@ -24,9 +24,11 @@ export default function main(projectDir: string): void {
   };
   console.log('');
   console.log(chalk.cyan('🦋 正在执行ESLint...'));
-  const eslintPath = require.resolve('eslint');
-  const nodePath = path.join(eslintPath.substring(0, eslintPath.lastIndexOf('node_modules')), 'node_modules');
-  const eslintCmd = path.join(nodePath, '.bin/eslint');
+  const eslintPlugin = require.resolve('@elux/eslint-plugin');
+  let eslintCmd = path.join(eslintPlugin.substring(0, eslintPlugin.lastIndexOf('node_modules')), 'node_modules/.bin/eslint');
+  if (!fse.existsSync(eslintCmd)) {
+    eslintCmd = path.join(eslintPlugin.substring(0, eslintPlugin.lastIndexOf('@elux')), '@elux/eslint-plugin/node_modules/.bin/eslint');
+  }
   const configPath = path.join(__dirname, `./format.js`);
   const subProcess = execa(eslintCmd, ['--config', configPath, '--no-eslintrc', '--fix', '--ext', '.js,.ts,.jsx,.tsx,.vue', './']);
   subProcess.stdin!.pipe(process.stdin);

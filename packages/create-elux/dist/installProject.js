@@ -27,9 +27,11 @@ function main(projectDir) {
     };
     console.log('');
     console.log(cli_utils_1.chalk.cyan('🦋 正在执行ESLint...'));
-    const eslintPath = require.resolve('eslint');
-    const nodePath = path_1.default.join(eslintPath.substring(0, eslintPath.lastIndexOf('node_modules')), 'node_modules');
-    const eslintCmd = path_1.default.join(nodePath, '.bin/eslint');
+    const eslintPlugin = require.resolve('@elux/eslint-plugin');
+    let eslintCmd = path_1.default.join(eslintPlugin.substring(0, eslintPlugin.lastIndexOf('node_modules')), 'node_modules/.bin/eslint');
+    if (!cli_utils_1.fse.existsSync(eslintCmd)) {
+        eslintCmd = path_1.default.join(eslintPlugin.substring(0, eslintPlugin.lastIndexOf('@elux')), '@elux/eslint-plugin/node_modules/.bin/eslint');
+    }
     const configPath = path_1.default.join(__dirname, `./format.js`);
     const subProcess = (0, cli_utils_1.execa)(eslintCmd, ['--config', configPath, '--no-eslintrc', '--fix', '--ext', '.js,.ts,.jsx,.tsx,.vue', './']);
     subProcess.stdin.pipe(process.stdin);

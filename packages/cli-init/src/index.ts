@@ -41,7 +41,7 @@ let cliVersionTips = cliPackageJson.name + '@' + chalk.cyan(curVerison);
 if (semver.lt(curVerison, latestVesrion)) {
   cliVersionTips += `, 最新: ${chalk.bright.bgMagentaBright(latestVesrion)}`;
 }
-cliVersionTips += chalk.bright.bgMagentaBright('\n 请注意！最新的安装命令已更改为：npm init elux 或 yarn create elux\n');
+cliVersionTips += chalk.bright.bgMagentaBright('\n最新的安装命令已更改为: npm create elux@latest 或 yarn create elux\n');
 console.log(cliVersionTips);
 const title = [cliVersionTips];
 getProjectName({title, templateResources, cliVersion: curVerison});

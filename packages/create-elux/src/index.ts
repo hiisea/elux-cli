@@ -39,7 +39,7 @@ try {
 spinner.stop();
 let cliVersionTips = cliPackageJson.name + '@' + chalk.cyan(curVerison);
 if (semver.lt(curVerison, latestVesrion)) {
-  cliVersionTips += `, 最新: ${chalk.bright.bgMagentaBright(latestVesrion)}`;
+  cliVersionTips += `, 最新: ${chalk.bright.bgMagentaBright(' ' + latestVesrion + ' ')}, 请使用: npm create elux@latest 或 yarn create elux 安装`;
 }
 console.log('');
 console.log(cliVersionTips);

@@ -41,7 +41,7 @@ catch (error) {
 spinner.stop();
 let cliVersionTips = cliPackageJson.name + '@' + cli_utils_1.chalk.cyan(curVerison);
 if (cli_utils_1.semver.lt(curVerison, latestVesrion)) {
-    cliVersionTips += `, 最新: ${cli_utils_1.chalk.bright.bgMagentaBright(latestVesrion)}`;
+    cliVersionTips += `, 最新: ${cli_utils_1.chalk.bright.bgMagentaBright(' ' + latestVesrion + ' ')}, 请使用: npm create elux@latest 或 yarn create elux 安装`;
 }
 console.log('');
 console.log(cliVersionTips);
