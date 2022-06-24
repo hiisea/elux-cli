@@ -33,7 +33,7 @@ function getBundle<T>(bundleName: string): T {
     bundlePath = require.resolve(bundleName);
     bundle = require(bundlePath);
     bundlePackageJson = require(path.join(bundleName, 'package.json'));
-    console.log(chalk.bright.bgCyan(`-> Using the package ${bundleName + '@' + bundlePackageJson.version}`));
+    console.log(chalk.bright.bgBlue(`-> Using the package ${bundleName + '@' + bundlePackageJson.version}`));
     console.log('');
     checkVersion(bundleName, bundlePackageJson.version, '@elux/cli', bundlePackageJson.peerDependencies['@elux/cli'], cliPackageJson.version);
     console.log('');

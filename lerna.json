@@ -2,6 +2,7 @@
   "npmClient": "yarn",
   "useWorkspaces": false,
   "packages": [
+    "packages/create-elux",
     "packages/cli",
     "packages/cli-init",
     "packages/cli-utils",

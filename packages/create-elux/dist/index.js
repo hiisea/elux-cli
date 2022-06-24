@@ -17,9 +17,9 @@ if (cmd === '-v' || cmd === '--version') {
 }
 else if (cmd === '-h' || cmd === '--help') {
     console.log('');
-    console.log(cli_utils_1.chalk.green('elux-init') + cli_utils_1.chalk.yellow(' //create new project.'));
-    console.log(cli_utils_1.chalk.green('elux-init -v, --version') + cli_utils_1.chalk.yellow(' //show local version.'));
-    console.log(cli_utils_1.chalk.green('elux-init -h, --help') + cli_utils_1.chalk.yellow(' //show help info.'));
+    console.log(cli_utils_1.chalk.green('create-elux') + cli_utils_1.chalk.yellow(' //create new project.'));
+    console.log(cli_utils_1.chalk.green('create-elux -v, --version') + cli_utils_1.chalk.yellow(' //show local version.'));
+    console.log(cli_utils_1.chalk.green('create-elux -h, --help') + cli_utils_1.chalk.yellow(' //show help info.'));
     console.log('');
     console.log(cli_utils_1.chalk.bright.bgBlue('- Guide: https://eluxjs.com -'));
     console.log('');
@@ -43,7 +43,7 @@ let cliVersionTips = cliPackageJson.name + '@' + cli_utils_1.chalk.cyan(curVeris
 if (cli_utils_1.semver.lt(curVerison, latestVesrion)) {
     cliVersionTips += `, 最新: ${cli_utils_1.chalk.bright.bgMagentaBright(latestVesrion)}`;
 }
-cliVersionTips += cli_utils_1.chalk.bright.bgMagentaBright('\n 请注意！最新的安装命令已更改为：npm init elux 或 yarn create elux\n');
+console.log('');
 console.log(cliVersionTips);
 const title = [cliVersionTips];
 (0, getProjectName_1.default)({ title, templateResources, cliVersion: curVerison });

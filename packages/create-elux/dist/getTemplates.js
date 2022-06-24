@@ -19,7 +19,7 @@ function askTemplateSource(templateResources) {
             pageSize: 8,
             loop: false,
             choices: [
-                ...templateResources.map((item) => ({ name: `${item.title} [${cli_utils_1.chalk.redBright(item.count + 'P')}]`, value: item })),
+                ...templateResources.map((item) => ({ name: item.title, value: item })),
                 {
                     name: '输入模版文件Url...',
                     value: 'inputUrl',
@@ -108,24 +108,15 @@ async function downloadRepository(repository) {
     }
     return templateDir;
 }
-function parseTemplates(templateDir, cliVerison) {
+function parseTemplate(templateDir, cliVerison) {
     try {
-        const baseFuns = cli_utils_1.fse.readFileSync(path_1.default.join(templateDir, './base.conf.js')).toString();
-        const [, versionMatch] = baseFuns.split('\n', 1)[0].match(/@elux\/cli-init@([^ ]+)/) || [];
+        const configCode = cli_utils_1.fse.readFileSync(path_1.default.join(templateDir, './config.js')).toString();
+        const [, versionMatch] = configCode.split('\n', 1)[0].match(/create-elux@([^ ]+)/) || [];
         if (versionMatch && versionMatch != '*' && !cli_utils_1.semver.satisfies(cliVerison, versionMatch)) {
-            throw `该模版不能使用当前@elux/cli版本安装（v${cliVerison}不满足${versionMatch}）`;
+            throw `您选择的模版需要安装器:create-elux@${versionMatch}，当前安装器版本为:create-elux@${cliVerison}\n请选择其它模版，或重装安装器: npm init elux@${versionMatch} 或 yarn create elux@${versionMatch}`;
         }
-        const templates = [];
-        (0, cli_utils_1.readDirSync)(templateDir).forEach((file) => {
-            if (file.isFile && file.name.endsWith('.conf.js') && !file.name.endsWith('base.conf.js')) {
-                const tplPath = path_1.default.join(templateDir, file.name);
-                const tplScript = cli_utils_1.fse.readFileSync(tplPath).toString();
-                const tplFun = new Function(baseFuns + '\n' + tplScript);
-                const tpl = tplFun();
-                templates.push(tpl);
-            }
-        });
-        return templates;
+        const configFun = new Function(configCode);
+        return configFun();
     }
     catch (error) {
         console.log(cli_utils_1.chalk.redBright('\n✖ 模版解析失败！'));
@@ -150,17 +141,14 @@ async function main(args) {
         setTimeout(() => main(args), 0);
         return;
     }
-    const templates = parseTemplates(templateDir, args.cliVersion);
-    if (!templates) {
+    const template = parseTemplate(templateDir, args.cliVersion);
+    if (!template) {
         console.log(cli_utils_1.chalk.green('Please reselect...'));
         setTimeout(() => main(args), 0);
         return;
     }
-    const pics = templates.reduce((pre, cur) => {
-        return pre + cur.platform.length * cur.framework.length * cur.css.length;
-    }, 0);
     const { projectName, projectDir, title } = args;
-    title.push(`totally [${cli_utils_1.chalk.redBright(pics + 'P')}] templates are pulled from ${cli_utils_1.chalk.cyan.underline(repository)}`);
-    (0, getFeats_1.default)({ title, templates, projectName, projectDir, repository, templateDir });
+    title.push(`pulled from ${cli_utils_1.chalk.cyan.underline(repository)}`);
+    (0, getFeats_1.default)({ title, template, projectName, projectDir, repository, templateDir });
 }
 exports.default = main;

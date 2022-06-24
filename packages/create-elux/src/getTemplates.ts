@@ -1,6 +1,6 @@
 import os from 'os';
 import path from 'path';
-import {chalk, clearConsole, fse, readDirSync, semver, testHttpUrl} from '@elux/cli-utils';
+import {chalk, clearConsole, fse, semver, testHttpUrl} from '@elux/cli-utils';
 import inquirer from 'inquirer';
 import getFeats from './getFeats';
 import download from './libs/download';
@@ -16,7 +16,7 @@ function askTemplateSource(templateResources: TemplateResources[]): Promise<{rep
         pageSize: 8,
         loop: false,
         choices: [
-          ...templateResources.map((item) => ({name: `${item.title} [${chalk.redBright(item.count + 'P')}]`, value: item})),
+          ...templateResources.map((item) => ({name: item.title, value: item})),
           {
             name: '输入模版文件Url...',
             value: 'inputUrl',
@@ -105,25 +105,16 @@ async function downloadRepository(repository: string): Promise<string> {
   return templateDir;
 }
 
-function parseTemplates(templateDir: string, cliVerison: string) {
+function parseTemplate(templateDir: string, cliVerison: string) {
   try {
-    const baseFuns = fse.readFileSync(path.join(templateDir, './base.conf.js')).toString();
-    const [, versionMatch] = baseFuns.split('\n', 1)[0].match(/@elux\/cli-init@([^ ]+)/) || [];
+    const configCode = fse.readFileSync(path.join(templateDir, './config.js')).toString();
+    const [, versionMatch] = configCode.split('\n', 1)[0].match(/create-elux@([^ ]+)/) || [];
 
     if (versionMatch && versionMatch != '*' && !semver.satisfies(cliVerison, versionMatch)) {
-      throw `该模版不能使用当前@elux/cli版本安装（v${cliVerison}不满足${versionMatch}）`;
+      throw `您选择的模版需要安装器:create-elux@${versionMatch}，当前安装器版本为:create-elux@${cliVerison}\n请选择其它模版，或重装安装器: npm init elux@${versionMatch} 或 yarn create elux@${versionMatch}`;
     }
-    const templates: ITemplate[] = [];
-    readDirSync(templateDir).forEach((file) => {
-      if (file.isFile && file.name.endsWith('.conf.js') && !file.name.endsWith('base.conf.js')) {
-        const tplPath = path.join(templateDir, file.name);
-        const tplScript = fse.readFileSync(tplPath).toString();
-        const tplFun = new Function(baseFuns + '\n' + tplScript);
-        const tpl = tplFun() as ITemplate;
-        templates.push(tpl);
-      }
-    });
-    return templates;
+    const configFun = new Function(configCode);
+    return configFun() as ITemplate;
   } catch (error: any) {
     console.log(chalk.redBright('\n✖ 模版解析失败！'));
     console.log(chalk.yellow(error.toString()));
@@ -154,17 +145,13 @@ export default async function main(args: {
     setTimeout(() => main(args), 0);
     return;
   }
-  const templates = parseTemplates(templateDir, args.cliVersion);
-  if (!templates) {
+  const template = parseTemplate(templateDir, args.cliVersion);
+  if (!template) {
     console.log(chalk.green('Please reselect...'));
     setTimeout(() => main(args), 0);
     return;
   }
-  const pics = templates.reduce((pre, cur) => {
-    return pre + cur.platform.length * cur.framework.length * cur.css.length;
-  }, 0);
-
   const {projectName, projectDir, title} = args;
-  title.push(`totally [${chalk.redBright(pics + 'P')}] templates are pulled from ${chalk.cyan.underline(repository)}`);
-  getFeats({title, templates, projectName, projectDir, repository, templateDir});
+  title.push(`pulled from ${chalk.cyan.underline(repository)}`);
+  getFeats({title, template, projectName, projectDir, repository, templateDir});
 }
