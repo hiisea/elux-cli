@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.3](https://github.com/hiisea/elux/compare/@elux/cli-init@2.1.2...@elux/cli-init@2.1.3) (2022-06-24)
+
+
+### Bug Fixes
+
+* 更换安装命令 ([c5009f4](https://github.com/hiisea/elux/commit/c5009f4387dbbdb07f5655b9250511e2ac10fdec))
+
+
+
+
+
 ## [2.1.2](https://github.com/hiisea/elux/compare/@elux/cli-init@2.1.1...@elux/cli-init@2.1.2) (2022-06-24)
 
 
