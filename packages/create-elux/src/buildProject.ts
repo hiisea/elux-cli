@@ -108,18 +108,23 @@ export default function main({
   fse.removeSync(tempDir);
   mfs.commit([filter], (error) => {
     if (!error) {
+      const shouldEslint: boolean = template.shouldEslint ? template.shouldEslint(tplOptions) : false;
+      if (!template.getNpmLockFile) {
+        installProject(projectDir, shouldEslint);
+        return;
+      }
       const lockFileName = template.getNpmLockFile(tplOptions);
-      buildLockFile({lockFileName, projectDir, repository});
+      buildLockFile({lockFileName, projectDir, repository, shouldEslint});
     } else {
       throw error;
     }
   });
 }
 
-async function buildLockFile(args: {lockFileName: string; projectDir: string; repository: string}) {
-  const {lockFileName, projectDir, repository} = args;
+async function buildLockFile(args: {lockFileName: string; projectDir: string; repository: string; shouldEslint: boolean}) {
+  const {lockFileName, projectDir, repository, shouldEslint} = args;
   if (!lockFileName) {
-    installProject(projectDir);
+    installProject(projectDir, shouldEslint);
     return;
   }
   console.log('\n正在拉取[' + chalk.green('yarn.lock,package-lock.json') + ']用于锁定各依赖安装版本,确保安装顺利...');
@@ -144,7 +149,7 @@ async function buildLockFile(args: {lockFileName: string; projectDir: string; re
     }
   }
   if (success) {
-    installProject(projectDir);
+    installProject(projectDir, shouldEslint);
     return;
   }
   console.log('');
@@ -157,7 +162,7 @@ async function buildLockFile(args: {lockFileName: string; projectDir: string; re
     })
     .then(({skip}) => {
       if (skip) {
-        installProject(projectDir);
+        installProject(projectDir, shouldEslint);
         return;
       } else {
         setTimeout(() => buildLockFile(args), 0);

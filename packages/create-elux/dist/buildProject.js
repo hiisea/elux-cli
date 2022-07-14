@@ -116,8 +116,13 @@ function main({ projectName, projectDir, repository, templateDir, template, tplO
     cli_utils_1.fse.removeSync(tempDir);
     mfs.commit([filter], (error) => {
         if (!error) {
+            const shouldEslint = template.shouldEslint ? template.shouldEslint(tplOptions) : false;
+            if (!template.getNpmLockFile) {
+                (0, installProject_1.default)(projectDir, shouldEslint);
+                return;
+            }
             const lockFileName = template.getNpmLockFile(tplOptions);
-            buildLockFile({ lockFileName, projectDir, repository });
+            buildLockFile({ lockFileName, projectDir, repository, shouldEslint });
         }
         else {
             throw error;
@@ -126,9 +131,9 @@ function main({ projectName, projectDir, repository, templateDir, template, tplO
 }
 exports.default = main;
 async function buildLockFile(args) {
-    const { lockFileName, projectDir, repository } = args;
+    const { lockFileName, projectDir, repository, shouldEslint } = args;
     if (!lockFileName) {
-        (0, installProject_1.default)(projectDir);
+        (0, installProject_1.default)(projectDir, shouldEslint);
         return;
     }
     console.log('\n正在拉取[' + cli_utils_1.chalk.green('yarn.lock,package-lock.json') + ']用于锁定各依赖安装版本,确保安装顺利...');
@@ -156,7 +161,7 @@ async function buildLockFile(args) {
         }
     }
     if (success) {
-        (0, installProject_1.default)(projectDir);
+        (0, installProject_1.default)(projectDir, shouldEslint);
         return;
     }
     console.log('');
@@ -169,7 +174,7 @@ async function buildLockFile(args) {
     })
         .then(({ skip }) => {
         if (skip) {
-            (0, installProject_1.default)(projectDir);
+            (0, installProject_1.default)(projectDir, shouldEslint);
             return;
         }
         else {

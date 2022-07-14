@@ -30,9 +30,14 @@
       "summary": "一个简单的增删改查示例"
     },
     {
-      "title": "简单示例模板(备用源)",
-      "url": "http://download.eluxjs.com/tpl-simple-v2-1",
-      "summary": "一个简单的增删改查示例"
+      "title": "基于Antd-React的后台管理系统(Gitee源)",
+      "url": "https://gitee.com/hiisea/elux-react-antd-admin-fork/raw/tpl-v2/template/online",
+      "summary": "基于蚂蚁金服AntDesign-React的后台管理系统"
+    },
+    {
+      "title": "基于Antd-React的后台管理系统(Github源)",
+      "url": "https://raw.githubusercontent.com/hiisea/elux-react-antd-admin/tpl-v2/template/online",
+      "summary": "基于蚂蚁金服AntDesign-React的后台管理系统"
     }
   ],
   "scripts": {

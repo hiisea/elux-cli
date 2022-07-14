@@ -23,7 +23,8 @@ export interface GetOptionsResult {
 }
 export interface ITemplate {
   getOptions: (options: TPLOptions) => GetOptionsResult | undefined;
-  getNpmLockFile: (options: TPLOptions) => string;
+  shouldEslint?: (options: TPLOptions) => boolean;
+  getNpmLockFile?: (options: TPLOptions) => string;
   getOperation?: (options: TPLOptions) => {action: 'copy' | 'move'; from: string; to: string}[];
   rename?: (params: any, fpath: string) => string;
   beforeRender?: (params: any, fpath: string, content: string) => string;

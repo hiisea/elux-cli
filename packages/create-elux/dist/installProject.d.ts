@@ -1,1 +1,1 @@
-export default function main(projectDir: string): void;
+export default function main(projectDir: string, shouldEslint: boolean): void;

@@ -8,7 +8,7 @@ const cli_utils_1 = require("@elux/cli-utils");
 const inquirer_1 = __importDefault(require("inquirer"));
 let logInstallInfo = () => undefined;
 let logSuccessInfo = () => undefined;
-function main(projectDir) {
+function main(projectDir, shouldEslint) {
     const cdPath = path_1.default.relative(process.cwd(), projectDir);
     process.chdir(path_1.default.resolve(projectDir));
     logInstallInfo = function () {
@@ -26,28 +26,53 @@ function main(projectDir) {
         console.log('');
     };
     console.log('');
-    console.log(cli_utils_1.chalk.cyan('🦋 正在执行ESLint...'));
-    const eslintPlugin = require.resolve('@elux/eslint-plugin');
-    let eslintCmd = path_1.default.join(eslintPlugin.substring(0, eslintPlugin.lastIndexOf('node_modules')), 'node_modules/.bin/eslint');
-    if (!cli_utils_1.fse.existsSync(eslintCmd)) {
-        eslintCmd = path_1.default.join(eslintPlugin.substring(0, eslintPlugin.lastIndexOf('@elux')), '@elux/eslint-plugin/node_modules/.bin/eslint');
+    if (shouldEslint) {
+        console.log(cli_utils_1.chalk.cyan('🦋 正在执行ESLint...'));
+        const babelConfig = [path_1.default.join(projectDir, 'babel.config.js'), path_1.default.join(projectDir, '.babelrc.js')];
+        if (cli_utils_1.fse.existsSync(babelConfig[0])) {
+            cli_utils_1.fse.renameSync(babelConfig[0], babelConfig[0] + '_');
+        }
+        if (cli_utils_1.fse.existsSync(babelConfig[1])) {
+            cli_utils_1.fse.renameSync(babelConfig[1], babelConfig[1] + '_');
+        }
+        const eslintPlugin = require.resolve('@elux/eslint-plugin');
+        let eslintCmd = path_1.default.join(eslintPlugin.substring(0, eslintPlugin.lastIndexOf('node_modules')), 'node_modules/.bin/eslint');
+        if (!cli_utils_1.fse.existsSync(eslintCmd)) {
+            eslintCmd = path_1.default.join(eslintPlugin.substring(0, eslintPlugin.lastIndexOf('@elux')), '@elux/eslint-plugin/node_modules/.bin/eslint');
+        }
+        const configPath = path_1.default.join(__dirname, `./format.js`);
+        const subProcess = (0, cli_utils_1.execa)(eslintCmd, ['--config', configPath, '--no-eslintrc', '--fix', '--ext', '.js,.ts,.jsx,.tsx,.vue', './']);
+        subProcess.stdin.pipe(process.stdin);
+        subProcess.stdout.pipe(process.stdout);
+        subProcess.stderr.pipe(process.stderr);
+        subProcess.then(() => {
+            if (cli_utils_1.fse.existsSync(babelConfig[0] + '_')) {
+                cli_utils_1.fse.renameSync(babelConfig[0] + '_', babelConfig[0]);
+            }
+            if (cli_utils_1.fse.existsSync(babelConfig[1] + '_')) {
+                cli_utils_1.fse.renameSync(babelConfig[1] + '_', babelConfig[1]);
+            }
+            console.log('');
+            (0, cli_utils_1.clearConsole)(cli_utils_1.chalk.green('🎉 项目创建成功!!! 接下来...'));
+            console.log(cli_utils_1.chalk.yellow('   ✔ ESLint执行成功!'));
+            beforeInstall(projectDir);
+        }, () => {
+            if (cli_utils_1.fse.existsSync(babelConfig[0] + '_')) {
+                cli_utils_1.fse.renameSync(babelConfig[0] + '_', babelConfig[0]);
+            }
+            if (cli_utils_1.fse.existsSync(babelConfig[1] + '_')) {
+                cli_utils_1.fse.renameSync(babelConfig[1] + '_', babelConfig[1]);
+            }
+            console.log('');
+            (0, cli_utils_1.clearConsole)(cli_utils_1.chalk.green('🎉 项目创建成功!!! 接下来...'));
+            console.log(cli_utils_1.chalk.redBright('   ✖ ESLint执行失败，请稍后自行运行!'));
+            beforeInstall(projectDir);
+        });
     }
-    const configPath = path_1.default.join(__dirname, `./format.js`);
-    const subProcess = (0, cli_utils_1.execa)(eslintCmd, ['--config', configPath, '--no-eslintrc', '--fix', '--ext', '.js,.ts,.jsx,.tsx,.vue', './']);
-    subProcess.stdin.pipe(process.stdin);
-    subProcess.stdout.pipe(process.stdout);
-    subProcess.stderr.pipe(process.stderr);
-    subProcess.then(() => {
-        console.log('');
+    else {
         (0, cli_utils_1.clearConsole)(cli_utils_1.chalk.green('🎉 项目创建成功!!! 接下来...'));
-        console.log(cli_utils_1.chalk.yellow('   ✔ ESLint执行成功!'));
         beforeInstall(projectDir);
-    }, () => {
-        console.log('');
-        (0, cli_utils_1.clearConsole)(cli_utils_1.chalk.green('🎉 项目创建成功!!! 接下来...'));
-        console.log(cli_utils_1.chalk.redBright('   ✖ ESLint执行失败，请稍后自行运行!'));
-        beforeInstall(projectDir);
-    });
+    }
 }
 exports.default = main;
 function beforeInstall(projectDir) {
