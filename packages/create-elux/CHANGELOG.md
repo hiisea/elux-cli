@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/hiisea/elux/compare/create-elux@2.0.2...create-elux@2.1.0) (2022-07-14)
+
+
+### Features
+
+* 增加antd-react模版源 ([11e450a](https://github.com/hiisea/elux/commit/11e450a742daa1fc18a15cb339607b728abac3c3))
+
+
+
+
+
 ## [2.0.2](https://github.com/hiisea/elux/compare/create-elux@2.0.1...create-elux@2.0.2) (2022-06-24)
 
 
