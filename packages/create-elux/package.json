@@ -32,12 +32,22 @@
     {
       "title": "基于Antd-React的后台管理系统(Gitee源)",
       "url": "https://gitee.com/hiisea/elux-react-antd-admin-fork/raw/tpl-v2/template/online",
-      "summary": "基于蚂蚁金服AntDesign-React的后台管理系统"
+      "summary": "项目说明 https://gitee.com/hiisea/elux-react-antd-admin-fork"
     },
     {
       "title": "基于Antd-React的后台管理系统(Github源)",
       "url": "https://raw.githubusercontent.com/hiisea/elux-react-antd-admin/tpl-v2/template/online",
-      "summary": "基于蚂蚁金服AntDesign-React的后台管理系统"
+      "summary": "项目说明 https://github.com/hiisea/elux-react-antd-admin"
+    },
+    {
+      "title": "基于Antd-Vue的后台管理系统(Gitee源)",
+      "url": "https://gitee.com/hiisea/elux-vue-antd-admin-fork/raw/tpl-v2/template/online",
+      "summary": "项目说明 https://gitee.com/hiisea/elux-vue-antd-admin-fork"
+    },
+    {
+      "title": "基于Antd-Vue的后台管理系统(Github源)",
+      "url": "https://raw.githubusercontent.com/hiisea/elux-vue-antd-admin/tpl-v2/template/online",
+      "summary": "项目说明 https://github.com/hiisea/elux-vue-antd-admin"
     }
   ],
   "scripts": {
