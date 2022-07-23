@@ -1,6 +1,6 @@
 {
   "name": "create-elux",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Command line interface for rapid elux project",
   "repository": "https://github.com/hiisea/elux/tree/master/packages/create-elux",
   "author": "hiisea <hiisea@qq.com>",
