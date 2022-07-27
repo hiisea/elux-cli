@@ -1,7 +1,8 @@
 export = function loader(this: any, source: string): string {
   const arr = source.match(/\bexportModule\s*\(([^)]+)\)/m);
   const elux = source.match(/['"](@elux\/.+?)['"]/);
-  if (arr && elux) {
+  const model = source.match(/['"](\.\/model)['"]/);
+  if (arr && elux && model) {
     const args = arr[1].replace(/\s/gm, '');
     const [modelName, ModelHandlers] = args.split(',', 3);
     const strs = [
