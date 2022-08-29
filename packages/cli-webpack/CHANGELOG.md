@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.1](https://github.com/hiisea/elux/compare/@elux/cli-webpack@2.3.0...@elux/cli-webpack@2.3.1) (2022-08-29)
+
+
+### Bug Fixes
+
+* webpack-dev-server新版本废弃了onBeforeSetupMiddleware ([4a13621](https://github.com/hiisea/elux/commit/4a13621e4c40d57c42b22f852825c7602656cd13))
+
+
+
+
+
 # [2.3.0](https://github.com/hiisea/elux/compare/@elux/cli-webpack@2.2.2...@elux/cli-webpack@2.3.0) (2022-08-09)
 
 
