@@ -40,7 +40,7 @@
     "fork-ts-checker-webpack-plugin": "^7.2.1",
     "html-replace-webpack-plugin": "^2.6.0",
     "html-webpack-plugin": "^5.5.0",
-    "launch-editor-middleware": "^2.3.0",
+    "launch-editor-middleware": "^2.6.0",
     "loader-utils": "^2.0.0",
     "mini-css-extract-plugin": "^2.4.3",
     "null-loader": "^4.0.0",

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import {getCssScopedName} from '@elux/cli-utils';
-import {Express} from 'express';
+import {Express, RequestHandler} from 'express';
 import webpack from 'webpack';
 import getSsrInjectPlugin from '../plugin/ssr-inject';
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
@@ -34,8 +34,7 @@ interface DevServerConfig {
   https?: boolean;
   host?: string;
   devMiddleware?: {publicPath?: string; serverSideRender?: boolean};
-  onBeforeSetupMiddleware?: (server: {app: Express}) => void;
-  onAfterSetupMiddleware?: (server: {app: Express}) => void;
+  setupMiddlewares?: (middlewares: Array<RequestHandler | {path: string; middleware: RequestHandler}>, server: {app: Express}) => void;
   [key: string]: any;
 }
 
@@ -611,8 +610,10 @@ function moduleExports({
         errors: true,
       },
     },
-    onBeforeSetupMiddleware: function (devServer: {app: Express}) {
-      devServer.app.use('/__open-in-editor', openInEditor());
+    setupMiddlewares: function (middlewares) {
+      middlewares.unshift({path: '/__open-in-editor', middleware: openInEditor()});
+      return middlewares;
+      //devServer.app.use('/__open-in-editor', openInEditor());
     },
   };
   if (useSSR) {
@@ -630,8 +631,9 @@ function moduleExports({
     };
     devServerConfig.historyApiFallback = false;
     devServerConfig.devMiddleware = {serverSideRender: true};
-    devServerConfig.onAfterSetupMiddleware = function (devServer: {app: Express}) {
-      devServer.app.use((req, res, next) => {
+    devServerConfig.setupMiddlewares = function (middlewares) {
+      middlewares.unshift({path: '/__open-in-editor', middleware: openInEditor()});
+      middlewares.push((req, res, next) => {
         const passUrls = [/\w+.hot-update.\w+$/];
         if (passUrls.some((reg) => reg.test(req.url))) {
           next();
@@ -649,7 +651,28 @@ function moduleExports({
           }
         }
       });
+      return middlewares;
     };
+    // devServerConfig.onAfterSetupMiddleware = function (devServer: {app: Express}) {
+    //   devServer.app.use((req, res, next) => {
+    //     const passUrls = [/\w+.hot-update.\w+$/];
+    //     if (passUrls.some((reg) => reg.test(req.url))) {
+    //       next();
+    //     } else {
+    //       const serverBundle = require(SsrPlugin.getEntryPath(res));
+    //       try {
+    //         serverBundle
+    //           .default(req, res)
+    //           .then((str: string) => {
+    //             res.end(str);
+    //           })
+    //           .catch((e: any) => errorHandler(e, res));
+    //       } catch (e: any) {
+    //         errorHandler(e, res);
+    //       }
+    //     }
+    //   });
+    // };
   }
   return {clientWebpackConfig, serverWebpackConfig, devServerConfig};
 }

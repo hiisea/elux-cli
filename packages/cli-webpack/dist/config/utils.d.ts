@@ -1,4 +1,4 @@
-import { Express } from 'express';
+import { Express, RequestHandler } from 'express';
 interface WebpackLoader {
     loader?: string;
     options?: Record<string, any>;
@@ -16,10 +16,10 @@ interface DevServerConfig {
         publicPath?: string;
         serverSideRender?: boolean;
     };
-    onBeforeSetupMiddleware?: (server: {
-        app: Express;
-    }) => void;
-    onAfterSetupMiddleware?: (server: {
+    setupMiddlewares?: (middlewares: Array<RequestHandler | {
+        path: string;
+        middleware: RequestHandler;
+    }>, server: {
         app: Express;
     }) => void;
     [key: string]: any;

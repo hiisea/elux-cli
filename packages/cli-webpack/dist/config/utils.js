@@ -488,8 +488,9 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                 errors: true,
             },
         },
-        onBeforeSetupMiddleware: function (devServer) {
-            devServer.app.use('/__open-in-editor', openInEditor());
+        setupMiddlewares: function (middlewares) {
+            middlewares.unshift({ path: '/__open-in-editor', middleware: openInEditor() });
+            return middlewares;
         },
     };
     if (useSSR) {
@@ -509,8 +510,9 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
         };
         devServerConfig.historyApiFallback = false;
         devServerConfig.devMiddleware = { serverSideRender: true };
-        devServerConfig.onAfterSetupMiddleware = function (devServer) {
-            devServer.app.use((req, res, next) => {
+        devServerConfig.setupMiddlewares = function (middlewares) {
+            middlewares.unshift({ path: '/__open-in-editor', middleware: openInEditor() });
+            middlewares.push((req, res, next) => {
                 const passUrls = [/\w+.hot-update.\w+$/];
                 if (passUrls.some((reg) => reg.test(req.url))) {
                     next();
@@ -530,6 +532,7 @@ function moduleExports({ cache, sourceMap, nodeEnv, rootPath, srcPath, distPath,
                     }
                 }
             });
+            return middlewares;
         };
     }
     return { clientWebpackConfig, serverWebpackConfig, devServerConfig };
